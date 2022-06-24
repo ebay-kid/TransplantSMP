@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ml.ikwid.transplantsmp.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinItemEntity",
+    "MixinPlayerEntity",
+    "MixinServerPlayerEntity",
+    "armtransplant.MixinPlayerInventory",
+    "skintransplant.MixinEntityAttributes",
+    "skintransplant.MixinLivingEntity",
+    "skintransplant.MixinPlayerScreenHandler",
+    "skintransplant.MixinScreenHandler",
+    "stomachtransplant.MixinHungerManager"
+  ],
+  "client": [
+    "MixinClientPlayerEntity",
+    "MixinInGameHud",
+    "armtransplant.MixinInventoryScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

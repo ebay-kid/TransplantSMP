@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.client.screen;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -36,7 +37,7 @@ public class ChooseTransplantScreen extends Screen {
 		}));
 
 		addDrawableChild(new ButtonWidget(15, height - 20, 10, 10, Text.of(">"), b-> {
-			if(this.index < transplantTypes.length) {
+			if(this.index < transplantTypes.length - 1) {
 				this.index++;
 			}
 		}));
@@ -69,6 +70,12 @@ public class ChooseTransplantScreen extends Screen {
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
+		String desc = transplantTypes[index].getDescription();
+		String[] descLines = desc.split("\n");
+		TransplantSMP.LOGGER.info(descLines.length);
+		for(int i = 0; i < descLines.length; i++) {
+			textRenderer.draw(matrices, descLines[i], width / 3f, height / 2f + i * 20, 0xCCCCCC);
+		}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp;
 
+import io.netty.buffer.ByteBuf;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.command.Register;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
@@ -9,6 +10,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,22 +22,26 @@ public class TransplantSMP implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> Register.register(dispatcher)));
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			ServerPlayerEntity player = handler.getPlayer();
-			ITransplantable transplantable = (ITransplantable) player;
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Register.register(dispatcher));
 
-			if(transplantable.getTransplantType() == null) {
-				ServerPlayNetworking.send(player, NetworkingConstants.NEEDS_TRANSPLANT, PacketByteBufs.empty());
-			}
-		});
+		ServerPlayNetworking.registerGlobalReceiver(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, ((server, player, handler, buf, responseSender) -> {
+			String chosenType = buf.readString();
+			server.execute(() -> {
+				ITransplantable transplantable = (ITransplantable) player;
+				if(transplantable.getTransplantType() == null) {
+					TransplantType transplantType = TransplantType.get(chosenType);
 
-		ServerPlayNetworking.registerGlobalReceiver(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, ((server, player, handler, buf, responseSender) -> server.execute(() -> {
-			ITransplantable transplantable = (ITransplantable) player;
-			if(transplantable.getTransplantType() == null) {
-				transplantable.setTransplantType(TransplantType.valueOf(buf.readString()));
-			}
-		})));
+					transplantable.setTransplantType(transplantType);
+					transplantable.setTransplantedAmount(0);
+
+					PacketByteBuf buf3 = PacketByteBufs.create();
+					buf3.writeString(chosenType);
+					ServerPlayNetworking.send(player, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf3);
+				} else {
+					LOGGER.info("someone's being sussy (" + player.getName().getString() + ")!");
+				}
+			});
+		}));
 		LOGGER.info("time for medical transplants");
 	}
 }

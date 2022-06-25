@@ -162,6 +162,9 @@ public abstract class MixinPlayerInventory {
 	}
 
 	public int halvedTransplantedAmount() {
+		if(transplantable == null) {
+			return 0;
+		}
 		return this.transplantable.getTransplantedAmount() / 2;
 	}
 }

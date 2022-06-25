@@ -19,8 +19,22 @@ public class TransplantSMPClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		TransplantSMP.LOGGER.info("hello medical patient, welcome to the deadliest minecraft smp aka a hospital");
 
-		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.UPDATE_ORGAN_COUNT, (client, handler, buf, responseSender) -> client.execute(() -> transplants = buf.readInt()));
-		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.UPDATE_TRANSPLANT_TYPE, (client, handler, buf, responseSender) -> client.execute(() -> transplantType = TransplantType.valueOf(buf.readString())));
+		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.UPDATE_ORGAN_COUNT, (client, handler, buf, responseSender) -> {
+			int count = buf.readInt();
+			client.execute(() -> {
+				transplants = count;
+				TransplantSMP.LOGGER.info("count updated -client");
+			});
+		});
+		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.UPDATE_TRANSPLANT_TYPE, (client, handler, buf, responseSender) -> {
+			String type = buf.readString();
+			client.execute(() -> {
+				transplantType = TransplantType.get(type);
+				client.setScreen(null);
+
+				TransplantSMP.LOGGER.info("type updated -client");
+			});
+		});
 		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.NEEDS_TRANSPLANT, (client, handler, buf, responseSender) -> client.execute(() -> client.setScreen(new ChooseTransplantScreen())));
 	}
 }

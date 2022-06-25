@@ -2,7 +2,6 @@ package ml.ikwid.transplantsmp.mixin.skintransplant;
 
 import com.mojang.datafixers.util.Pair;
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -20,16 +19,16 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(PlayerScreenHandler.class)
 public class MixinPlayerScreenHandler {
 	@Shadow @Final private PlayerEntity owner;
 	@Shadow @Final private static EquipmentSlot[] EQUIPMENT_SLOT_ORDER;
-	@Shadow @Final private static Identifier[] EMPTY_ARMOR_SLOT_TEXTURES;
+	@Shadow @Final
+	static Identifier[] EMPTY_ARMOR_SLOT_TEXTURES;
 
 	private final ITransplantable transplantable = (ITransplantable) owner;
 
@@ -38,12 +37,17 @@ public class MixinPlayerScreenHandler {
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9, ordinal = 2))
 	private int drawMoreOrLessSlots(int constant) {
+		if(transplantable == null) {
+			return constant;
+		}
 		return transplantable.getHotbarDraws();
 	}
 
 	// I don't know why MCDev complains... it looks perfectly fine
 	// A redirect doesn't work either, the @At refuses to accept it exists?
 	// Any number below 3 works for the other ones but not 3.
+
+	/*
 	@ModifyArgs(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;<init>(Lnet/minecraft/inventory/Inventory;III)V", ordinal = 3))
 	private void setXandIndices(Args args) {
 		int index = args.get(1);
@@ -53,9 +57,26 @@ public class MixinPlayerScreenHandler {
 		// it appears the shift is 18 for this one, so...
 		args.set(2, (int)(args.get(2)) + this.xShift());
 	}
+	*/
+
+	// HOW TF DOES THIS ONE WORK
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
+	public Slot changeSlot(PlayerScreenHandler instance, Slot slot) {
+		int index = slot.getIndex();
+		int newIndex = slot.getIndex();
+		if(index > 8) {
+			newIndex = index - 9 + TransplantSMP.NEW_HOTBAR_START_LOC;
+		}
+		int x = slot.x + this.xShift();
+
+		return ((MixinScreenHandler) self).addSlotAccess(new Slot(slot.inventory, newIndex, x, slot.y));
+	}
 
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
 	private void addSecondSet(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
+		if(transplantable == null) {
+			return;
+		}
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			for(int i = 0; i < 4; i++) { // copy the code
 				final EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
@@ -96,6 +117,9 @@ public class MixinPlayerScreenHandler {
 	}
 
 	private int xShift() {
+		if(transplantable == null) {
+			return 9/2 * SLOT_WIDTH;
+		}
 		return -(transplantable.getHotbarDraws() * SLOT_WIDTH / 2);
 	}
 }

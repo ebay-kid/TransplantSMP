@@ -23,6 +23,11 @@ public class MixinInventoryScreen {
 
 	@Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void specialRender(InventoryScreen instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
+		if(transplantable == null) {
+			instance.drawTexture(matrices, x, y, u, v, width, height);
+			return;
+		}
+
 		// draw hotbar ourselves with the exact same texture as the HUD because i'm slightly lazy
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
 		int bottom = y + height;

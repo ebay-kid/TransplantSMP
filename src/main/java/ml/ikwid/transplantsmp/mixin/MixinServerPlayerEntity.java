@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
@@ -18,39 +19,49 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity extends MixinPlayerEntity {
 	private final ServerPlayerEntity self = (ServerPlayerEntity)(Object) this;
 
 	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
 	public void writeTransplantData(NbtCompound nbt, CallbackInfo ci) {
-		nbt.putString("transplantType", this.transplantType.name());
+		nbt.putString("transplantType", this.transplantType.toString());
 
 		nbt.putInt("transplanted", this.transplanted);
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
 	public void readTransplantData(NbtCompound nbt, CallbackInfo ci) {
-		this.transplantType = TransplantType.valueOf(nbt.getString("transplantType"));
+		String transplantStored = nbt.getString("transplantType");
+		if(transplantStored.equals("") || TransplantType.get(transplantStored) == null) {
+			this.transplanted = 0;
+			ServerPlayNetworking.send(self, NetworkingConstants.NEEDS_TRANSPLANT, PacketByteBufs.empty());
 
-		this.transplanted = nbt.getInt("transplanted");
-		this.updateTransplants();
+			TransplantSMP.LOGGER.info("nothing found, needs transplant");
+		} else {
+			this.setTransplantType(Objects.requireNonNull(TransplantType.get(transplantStored)));
+			this.transplanted = nbt.getInt("transplanted");
+			this.updateTransplants();
+
+			TransplantSMP.LOGGER.info("found something, doesn't need new transplant");
+		}
 	}
 
 	@Unique
 	@Override
 	public void updateTransplants() {
+		TransplantSMP.LOGGER.info("update transplants -server");
 		switch(this.transplantType) {
 			case HEART_TRANSPLANT: // DONE (aka the easiest one)
 				EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
 				attribute.setBaseValue(20 + this.transplanted);
 				break;
 
-			case ARM_TRANSPLANT: // TODO: RENDERER
+			case ARM_TRANSPLANT: // Apparently needs nothing so...
 
-				break;
-
-			case SKIN_TRANSPLANT: // TODO: RENDERER
+			case SKIN_TRANSPLANT:
 
 				break;
 
@@ -81,5 +92,7 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeString(transplantType.toString());
 		ServerPlayNetworking.send(self, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf);
+
+		this.updateTransplants();
 	}
 }

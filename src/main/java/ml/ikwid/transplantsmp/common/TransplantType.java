@@ -1,5 +1,7 @@
 package ml.ikwid.transplantsmp.common;
 
+import java.util.Objects;
+
 public enum TransplantType {
 	HEART_TRANSPLANT("Heart Transplant", """
 		Hearts.
@@ -19,7 +21,7 @@ public enum TransplantType {
 		"""),
 	SKIN_TRANSPLANT("Skin Transplant", """
 		Armor bars.
-		
+
 		Killing allows you to utilize more armor bars.
 		Dying removes armor bars.
 		
@@ -56,5 +58,14 @@ public enum TransplantType {
 
 	public String getDescription() {
 		return this.description;
+	}
+
+	public static TransplantType get(String string) {
+		for(TransplantType transplantType : values()) {
+			if(Objects.equals(string, transplantType.toString())) {
+				return transplantType;
+			}
+		}
+		return null;
 	}
 }

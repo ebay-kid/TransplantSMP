@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(InGameHud.class)
 public class MixinInGameHud {
-	@Shadow @Final private MinecraftClient client;
+	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final PlayerEntity playerEntity = this.client.player;
 	private final InGameHud self = (InGameHud)(Object) this;
 
@@ -39,7 +39,7 @@ public class MixinInGameHud {
 
 	@Shadow private int ticks;
 	@Shadow @Final private Random random;
-	private final ITransplantable transplantable = (ITransplantable) (client.player);
+	private final ITransplantable transplantable = (ITransplantable) (this.client.player);
 
 	private LivingEntity riddenEntity() { // too lazy to get an accessor or anything
 		PlayerEntity playerEntity = this.cameraPlayer();
@@ -63,6 +63,9 @@ public class MixinInGameHud {
 
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 4))
 	private int armorBars(int constant) {
+		if(transplantable == null) {
+			return constant;
+		}
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			return Math.min(transplantable.getTransplantedAmount(), 10);
 		}
@@ -71,6 +74,9 @@ public class MixinInGameHud {
 
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 5))
 	private int hungerBars(int constant) {
+		if(transplantable == null) {
+			return constant;
+		}
 		if(transplantable.getTransplantType() == TransplantType.STOMACH_TRANSPLANT) {
 			return Math.min(transplantable.getTransplantedAmount(), 10);
 		}
@@ -79,6 +85,9 @@ public class MixinInGameHud {
 
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 6))
 	private int airModifier(int constant) { // shift air bubbles if necessary
+		if(transplantable == null) {
+			return constant;
+		}
 		if(transplantable.getTransplantType() == TransplantType.STOMACH_TRANSPLANT && transplantable.getTransplantedAmount() > 0) {
 			return 20;
 		}
@@ -87,6 +96,10 @@ public class MixinInGameHud {
 
 	@Redirect(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void drawAllHotbarSlots(InGameHud instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
+		if(transplantable == null) {
+			instance.drawTexture(matrices, x, y, u, v, width, height);
+			return;
+		}
 		int draws = this.transplantable.getHotbarDraws(); // shift to handle the other transplants/vanilla
 		for(int i = 0; i < draws; i++) {
 			// keep matrices, y, u, v, height as these will be constant (i hope)
@@ -99,25 +112,34 @@ public class MixinInGameHud {
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 1), index = 1)
 	private int fixSelectedSlotLocation(int x) {
+		if(this.transplantable == null || playerEntity == null) {
+			return x;
+		}
 		int i = this.scaledWidth / 2;
-		int draws = this.transplantable.getHotbarDraws();
 		return (i - 91) + transplantable.xShift() + (playerEntity.getInventory().selectedSlot * TransplantSMPClient.SLOT_WIDTH); // mimic the previous shifts
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 2), index = 1)
 	private int rightOffHandShift(int x) {
-		int draws = this.transplantable.getHotbarDraws();
+		if(this.transplantable == null) {
+			return x;
+		}
 		return x + transplantable.xShift();
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 3), index = 1)
 	private int leftOffHandShift(int x) {
-		int draws = this.transplantable.getHotbarDraws();
+		if(this.transplantable == null) {
+			return x;
+		}
 		return x - transplantable.xShift(); // not sure about this one
 	}
 
 	@Inject(method = "renderStatusBars", at = @At("TAIL"))
 	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) {
+		if(this.transplantable == null || this.playerEntity == null) {
+			return;
+		}
 		int transplants = this.transplantable.getTransplantedAmount();
 		TransplantType transplantType = this.transplantable.getTransplantType();
 		if(transplantType == TransplantType.HEART_TRANSPLANT || transplantType == TransplantType.ARM_TRANSPLANT || transplants <= 0) {

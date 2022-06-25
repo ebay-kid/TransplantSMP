@@ -27,11 +27,6 @@ public class MixinHungerManager implements IStomachTransplanted {
 	}
 
 	@Override
-	public int getMaxFoodLevel() {
-		return this.maxFoodLevel;
-	}
-
-	@Override
 	public void setMaxFoodLevel(int foodLevel) {
 		this.maxFoodLevel = foodLevel;
 	}

@@ -41,9 +41,10 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 
 			TransplantSMP.LOGGER.info("nothing found, needs transplant");
 		} else {
-			this.setTransplantType(Objects.requireNonNull(TransplantType.get(transplantStored)));
-			this.transplanted = nbt.getInt("transplanted");
-			this.updateTransplants();
+			// Don't do any updates here because we can't send any packets yet.
+			// Update in MixinPlayerManager at tail after everything is initialized.
+			this.setTransplantedAmountNoUpdate(nbt.getInt("transplanted"));
+			this.setTransplantTypeNoUpdate(Objects.requireNonNull(TransplantType.get(transplantStored)));
 
 			TransplantSMP.LOGGER.info("found something, doesn't need new transplant");
 		}
@@ -52,10 +53,14 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Unique
 	@Override
 	public void updateTransplants() {
-		TransplantSMP.LOGGER.info("update transplants -server");
+		TransplantSMP.LOGGER.info("update transplants -server, amount = " + this.transplanted);
 		switch(this.transplantType) {
 			case HEART_TRANSPLANT: // DONE (aka the easiest one)
 				EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+				if(attribute == null) {
+					TransplantSMP.LOGGER.warn("attribute shouldn't be null uhhh you're kinda screwed");
+					return;
+				}
 				attribute.setBaseValue(20 + this.transplanted);
 				break;
 
@@ -94,5 +99,17 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 		ServerPlayNetworking.send(self, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf);
 
 		this.updateTransplants();
+	}
+
+	@Inject(method = "copyFrom", at = @At("TAIL"))
+	private void copyTransplantData(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+		ITransplantable oldTransplantable = (ITransplantable) oldPlayer;
+
+		this.setTransplantedAmountNoUpdate(oldTransplantable.getTransplantedAmount());
+		this.setTransplantType(oldTransplantable.getTransplantType());
+
+		if(this.getTransplantType() == TransplantType.HEART_TRANSPLANT) {
+			self.setHealth(20 + this.getTransplantedAmount()); // make sure heart ppl spawn with full hearts
+		}
 	}
 }

@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.client.screen;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -72,7 +71,7 @@ public class ChooseTransplantScreen extends Screen {
 		super.render(matrices, mouseX, mouseY, delta);
 		String desc = transplantTypes[index].getDescription();
 		String[] descLines = desc.split("\n");
-		TransplantSMP.LOGGER.info(descLines.length);
+		// TransplantSMP.LOGGER.info(descLines.length);
 		for(int i = 0; i < descLines.length; i++) {
 			textRenderer.draw(matrices, descLines[i], width / 3f, height / 2f + i * 20, 0xCCCCCC);
 		}

@@ -23,7 +23,7 @@ public class TransplantSMPClient implements ClientModInitializer {
 			int count = buf.readInt();
 			client.execute(() -> {
 				transplants = count;
-				TransplantSMP.LOGGER.info("count updated -client");
+				TransplantSMP.LOGGER.info("count updated -client, count = " + count);
 			});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.UPDATE_TRANSPLANT_TYPE, (client, handler, buf, responseSender) -> {
@@ -32,7 +32,7 @@ public class TransplantSMPClient implements ClientModInitializer {
 				transplantType = TransplantType.get(type);
 				client.setScreen(null);
 
-				TransplantSMP.LOGGER.info("type updated -client");
+				TransplantSMP.LOGGER.info("type updated -client, type = " + type);
 			});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(NetworkingConstants.NEEDS_TRANSPLANT, (client, handler, buf, responseSender) -> client.execute(() -> client.setScreen(new ChooseTransplantScreen())));

@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
@@ -29,7 +28,7 @@ public abstract class MixinPlayerInventory {
 	@Shadow @Final public DefaultedList<ItemStack> main;
 
 	@Shadow @Final public DefaultedList<ItemStack> armor;
-	private final ITransplantable transplantable = (ITransplantable) player;
+	private ITransplantable transplantable;
 
 	@Inject(method = "getHotbarSize", at = @At(value = "HEAD"), cancellable = true)
 	private static void customHotbarSize(CallbackInfoReturnable<Integer> cir) {
@@ -38,12 +37,17 @@ public abstract class MixinPlayerInventory {
 
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;ofSize(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;", ordinal = 0), index = 0)
 	private int fixInvSize(int size) {
-		return 50;
+		return 45;
 	}
 
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;ofSize(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;", ordinal = 1), index = 0)
 	private int fixArmorSlots(int size) {
 		return 8;
+	}
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void setPlayer(PlayerEntity player, CallbackInfo ci) {
+		this.transplantable = (ITransplantable) player;
 	}
 
 	/**
@@ -70,20 +74,17 @@ public abstract class MixinPlayerInventory {
 		}
 	}
 
-	@Redirect(method = "getEmptySlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;size()I"))
-	private int preventEmptyChecks(DefaultedList instance) {
-		if(player instanceof ServerPlayerEntity) {
-			return this.halvedTransplantedAmount();
-		}
-		return instance.size();
-	}
-
 	/**
 	 * @author 6Times
 	 * @reason Handle my unwillingness to change the other slot indices
 	 */
 	@Overwrite
 	public void scrollInHotbar(double scrollAmount) {
+		if(this.transplantable == null) {
+			this.selectedSlot = 0;
+			TransplantSMP.LOGGER.info("get screwed no scrolling for you bozo");
+			return;
+		}
 		int i = (int)(Math.signum(scrollAmount));
 		this.selectedSlot -= i;
 
@@ -92,7 +93,7 @@ public abstract class MixinPlayerInventory {
 			if(slots <= 9) {
 				this.selectedSlot += slots;
 			} else {
-				this.selectedSlot = TransplantSMP.NEW_HOTBAR_START_LOC + 17 - this.halvedTransplantedAmount(); // 49 is highest index, so we do 9 - halvedTransplantedAmount() to see how many less than the max the player has.
+				this.selectedSlot = TransplantSMP.NEW_HOTBAR_START_LOC + 17 - transplantable.getHalvedTransplantedAmount(); // 49 is highest index, so we do 9 - halvedTransplantedAmount() to see how many less than the max the player has.
 			}
 		}
 		while((this.selectedSlot > 8 && this.selectedSlot < TransplantSMP.NEW_HOTBAR_START_LOC) || this.selectedSlot > TransplantSMP.NEW_HOTBAR_START_LOC + 8) {
@@ -111,10 +112,14 @@ public abstract class MixinPlayerInventory {
 
 	/**
 	 * @author 6Times
-	 * @reason mostly rewritten also what does this even do???
+	 * @reason mostly rewritten. also what does this even do???
 	 */
 	@Overwrite
 	public int getSwappableHotbarSlot() {
+		if(transplantable == null) {
+			TransplantSMP.LOGGER.info("REEEEEEEEEEEEE NO HOTBAR SWAP FOR YOU IDIOT");
+			return selectedSlot;
+		}
 		int i, j;
 		for(i = 0; i < transplantable.getHotbarDraws(); i++) {
 			j = (selectedSlot + i) % transplantable.getHotbarDraws();
@@ -136,7 +141,7 @@ public abstract class MixinPlayerInventory {
 			if(!this.main.get(i).isEmpty()) {
 				continue; // not empty so skip
 			}
-			if(isValidHotbarIndex(i)) { // if it's a valid hotbar then do this
+			if(isValidMainHotbar(i)) { // if it's a valid hotbar then do this
 				if(transplantable.getTransplantType() != TransplantType.ARM_TRANSPLANT) { // not arm transplant
 					if(i > 8) {
 						continue; // the special hotbar slots that we can't touch
@@ -144,27 +149,24 @@ public abstract class MixinPlayerInventory {
 					return i; // otherwise return
 				}
 				// is arm transplant
-				if(this.halvedTransplantedAmount() <= 0) { // if you've lost a slot or gained none
-					if(i > 8 + this.halvedTransplantedAmount()) { // if it's a slot that's hidden
+				if(transplantable.getHalvedTransplantedAmount() <= 0) { // if you've lost a slot or gained none
+					if(i > 8 + transplantable.getHalvedTransplantedAmount()) { // if it's a slot that's hidden
 						continue;
 					}
 					return i; // otherwise return
 				}
 				// slots gained
-				if(i >= 41 + this.halvedTransplantedAmount()) { // slots gained >= 1
+				if(i > 36 + transplantable.getHalvedTransplantedAmount()) { // slots gained >= 1
 					continue;
 				}
-				return i; // otherwise return
+				return i + 5; // otherwise return, +5 to account for the other crap
 			}
 			return i; // otherwise return
 		}
 		return -1; // none found
 	}
 
-	public int halvedTransplantedAmount() {
-		if(transplantable == null) {
-			return 0;
-		}
-		return this.transplantable.getTransplantedAmount() / 2;
+	public boolean isValidMainHotbar(int slot) {
+		return slot < 9 || slot >= 36;
 	}
 }

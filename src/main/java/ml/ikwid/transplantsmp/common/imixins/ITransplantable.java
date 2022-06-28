@@ -8,11 +8,15 @@ public interface ITransplantable {
 
 	void setTransplantedAmount(int organs);
 
+	void setTransplantedAmountNoUpdate(int organs);
+
 	void transplantOrgan(boolean gain);
 
 	TransplantType getTransplantType();
 
 	void setTransplantType(TransplantType transplantType);
+
+	void setTransplantTypeNoUpdate(TransplantType transplantType);
 
 	void updateTransplants();
 
@@ -22,5 +26,9 @@ public interface ITransplantable {
 
 	default int xShift() {
 		return -(this.getHotbarDraws() * TransplantSMPClient.SLOT_WIDTH / 2);
+	}
+
+	default int getHalvedTransplantedAmount() {
+		return this.getTransplantedAmount() / 2;
 	}
 }

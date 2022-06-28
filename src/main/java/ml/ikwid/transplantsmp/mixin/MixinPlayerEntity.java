@@ -26,6 +26,11 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 	}
 
 	@Override
+	public void setTransplantedAmountNoUpdate(int organs) {
+		this.transplanted = organs;
+	}
+
+	@Override
 	public void transplantOrgan(boolean gain) {
 		this.transplanted += (gain ? 2 : -2);
 		this.updateTransplants();
@@ -40,6 +45,12 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 
 	@Override
 	public void setTransplantType(TransplantType transplantType) {
+		this.transplantType = transplantType;
+		this.updateTransplants();
+	}
+
+	@Override
+	public void setTransplantTypeNoUpdate(TransplantType transplantType) {
 		this.transplantType = transplantType;
 	}
 }

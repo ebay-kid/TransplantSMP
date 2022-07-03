@@ -117,9 +117,9 @@ public class MixinInGameHud {
 			// keep matrices, y, u, v, height as these will be constant (i hope)
 
 			// Shift x back for the first hotbar slot, then forward every round
-			TransplantSMP.LOGGER.info("before" + x);
-			x += transplantable.xShift() + (i * TransplantSMPClient.SLOT_WIDTH);
-			TransplantSMP.LOGGER.info("after" + x);
+			// TransplantSMP.LOGGER.info("before: " + x);
+			x = transplantable.xShift() + (i * TransplantSMPClient.SLOT_WIDTH);
+			// TransplantSMP.LOGGER.info("after: " + x);
 			instance.drawTexture(matrices, x, y, u, v, TransplantSMPClient.SLOT_WIDTH, height);
 		}
 	}

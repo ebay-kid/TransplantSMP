@@ -21,19 +21,22 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 
 	@Override
 	public void setTransplantedAmount(int organs) {
+		int prev = this.getTransplantedAmount();
 		this.transplanted = organs;
+		if(illegalTransplantAmount()) {
+			this.transplanted = prev;
+			return;
+		}
 		this.updateTransplants();
 	}
 
 	@Override
 	public void setTransplantedAmountNoUpdate(int organs) {
+		int prev = this.getTransplantedAmount();
 		this.transplanted = organs;
-	}
-
-	@Override
-	public void transplantOrgan(boolean gain) {
-		this.transplanted += (gain ? 2 : -2);
-		this.updateTransplants();
+		if(illegalTransplantAmount()) {
+			this.transplanted = prev;
+		}
 	}
 
 	public abstract void updateTransplants();

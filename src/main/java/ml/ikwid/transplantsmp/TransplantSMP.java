@@ -1,8 +1,9 @@
 package ml.ikwid.transplantsmp;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
-import ml.ikwid.transplantsmp.common.command.Register;
+import ml.ikwid.transplantsmp.common.command.CommandRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -19,7 +20,8 @@ public class TransplantSMP implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Register.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandRegister.register(dispatcher));
+		ItemRegister.register();
 
 		ServerPlayNetworking.registerGlobalReceiver(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, ((server, player, handler, buf, responseSender) -> {
 			String chosenType = buf.readString(); // read before main thread always remember this

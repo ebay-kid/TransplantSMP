@@ -1,9 +1,9 @@
 package ml.ikwid.transplantsmp.mixin.skintransplant;
 
 import com.mojang.datafixers.util.Pair;
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -33,7 +33,6 @@ public class MixinPlayerScreenHandler {
 	private final ITransplantable transplantable = (ITransplantable) owner;
 
 	private final PlayerScreenHandler self = (PlayerScreenHandler)(Object) this;
-	private final int SLOT_WIDTH = 18;
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9, ordinal = 2))
 	private int drawMoreOrLessSlots(int constant) {
@@ -43,29 +42,22 @@ public class MixinPlayerScreenHandler {
 		return transplantable.getHotbarDraws();
 	}
 
-	// I don't know why MCDev complains... it looks perfectly fine
-	// A redirect doesn't work either, the @At refuses to accept it exists?
-	// Any number below 3 works for the other ones but not 3.
-
-	/*
-	@ModifyArgs(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;<init>(Lnet/minecraft/inventory/Inventory;III)V", ordinal = 3))
-	private void setXandIndices(Args args) {
-		int index = args.get(1);
-		if(index > 8) {
-			args.set(1, index - 9 + TransplantSMP.NEW_HOTBAR_START_LOC); // n slots in inventory, so index - 9 + n to occupy next available slot at index n
-		}
-		// it appears the shift is 18 for this one, so...
-		args.set(2, (int)(args.get(2)) + this.xShift());
+	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 39))
+	private int armorIndex(int constant) {
+		return Constants.NEW_ARMOR_START_LOC;
 	}
-	*/
 
-	// HOW TF DOES THIS ONE WORK
+	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 40))
+	private int offHandIndex(int constant) {
+		return Constants.OFF_HAND;
+	}
+
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
 	public Slot changeSlot(PlayerScreenHandler instance, Slot slot) {
 		int index = slot.getIndex();
 		int newIndex = slot.getIndex();
 		if(index > 8) {
-			newIndex = index - 9 + TransplantSMP.NEW_HOTBAR_START_LOC;
+			newIndex = index - 9 + Constants.NEW_HOTBAR_START_LOC;
 		}
 		int x = slot.x + this.xShift();
 
@@ -118,8 +110,8 @@ public class MixinPlayerScreenHandler {
 
 	private int xShift() {
 		if(transplantable == null) {
-			return 9/2 * SLOT_WIDTH;
+			return 9/2 * Constants.INNER_SLOT_WIDTH;
 		}
-		return -(transplantable.getHotbarDraws() * SLOT_WIDTH / 2);
+		return -((transplantable.getHotbarDraws() - 9) * Constants.INNER_SLOT_WIDTH / 2);
 	}
 }

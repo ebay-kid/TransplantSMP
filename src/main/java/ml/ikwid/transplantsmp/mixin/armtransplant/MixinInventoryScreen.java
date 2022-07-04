@@ -1,9 +1,9 @@
 package ml.ikwid.transplantsmp.mixin.armtransplant;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -30,20 +30,20 @@ public class MixinInventoryScreen {
 
 		// draw hotbar ourselves with the exact same texture as the HUD because i'm slightly lazy
 		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
-		int bottom = y + height;
+		int bottom = y + height - Constants.HOTBAR_SPACE_IN_INV_SCREEN;
 		int draws = transplantable.getHotbarDraws();
 		for(int i = 0; i < draws; i++) {
-			self.drawTexture(matrices, x + transplantable.xShift() + (i * TransplantSMPClient.SLOT_WIDTH), bottom, 0, 0, TransplantSMPClient.SLOT_WIDTH, 22);
+			self.drawTexture(matrices, x + transplantable.xShift() + (i * Constants.OUTER_SLOT_WIDTH), bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 		}
 
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) { // Armor slots
 			for(int i = 0; i < 4; i++) {
-				self.drawTexture(matrices, 8 - TransplantSMPClient.SLOT_WIDTH, 8 + i * 22, 0, 0, TransplantSMPClient.SLOT_WIDTH, 22);
+				self.drawTexture(matrices, 8 - Constants.OUTER_SLOT_WIDTH, 8 + i * 22, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 			}
 		}
 
 		RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
-		self.drawTexture(matrices, x, y, u, v, width, height);
+		self.drawTexture(matrices, x, y, u, v, width, height - Constants.HOTBAR_SPACE_IN_INV_SCREEN);
 	}
 
 	@Redirect(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;", ordinal = 0))

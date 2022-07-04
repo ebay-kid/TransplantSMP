@@ -44,6 +44,7 @@ public enum TransplantType {
 		If you have less than 10 hunger bars, the requirement to heal will be scaled down.
 		""");
 
+	public static final TransplantType[] transplantTypes = values();
 	private final String name, description;
 
 	TransplantType(String name, String description) {

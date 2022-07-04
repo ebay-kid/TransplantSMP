@@ -16,7 +16,6 @@ public class ChooseTransplantScreen extends Screen {
 	private static final int width = client.currentScreen.width;
 	private static final int height = client.currentScreen.height;
 
-	public static final TransplantType[] transplantTypes = TransplantType.values();
 	protected final boolean background;
 	private int index = 0;
 
@@ -36,14 +35,14 @@ public class ChooseTransplantScreen extends Screen {
 		}));
 
 		addDrawableChild(new ButtonWidget(15, height - 20, 10, 10, Text.of(">"), b-> {
-			if(this.index < transplantTypes.length - 1) {
+			if(this.index < TransplantType.transplantTypes.length - 1) {
 				this.index++;
 			}
 		}));
 
 		addDrawableChild(new ButtonWidget(width - 50, height - 20, 40, 10, Text.of("Choose"), b-> {
 			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeString(transplantTypes[index].toString());
+			buf.writeString(TransplantType.transplantTypes[index].toString());
 			ClientPlayNetworking.send(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, buf);
 		}));
 		// whoopsies I can't identify what it is once it's drawn there
@@ -69,7 +68,7 @@ public class ChooseTransplantScreen extends Screen {
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
-		String desc = transplantTypes[index].getDescription();
+		String desc = TransplantType.transplantTypes[index].getDescription();
 		String[] descLines = desc.split("\n");
 		// TransplantSMP.LOGGER.info(descLines.length);
 		for(int i = 0; i < descLines.length; i++) {

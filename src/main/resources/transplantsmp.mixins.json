@@ -16,7 +16,9 @@
   ],
   "client": [
     "MixinClientPlayerEntity",
+    "MixinHandledScreen",
     "MixinInGameHud",
+    "armtransplant.MixinGameOptions",
     "armtransplant.MixinInventoryScreen"
   ],
   "injectors": {

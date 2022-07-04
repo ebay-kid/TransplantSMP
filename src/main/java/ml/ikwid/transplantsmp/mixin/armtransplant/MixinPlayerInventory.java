@@ -1,7 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.armtransplant;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
@@ -15,19 +13,28 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Under this mixin, here are the new slot number layouts:
+ * VANILLA HOTBAR: 0 - 8
+ * ADDON HOTBAR: 9 - 17
+ * MAIN: 18 - 44
+ * ARMOR: 45 - 48
+ * EXTRA ARMOR SLOTS: 49 - 52
+ * OFF HAND: 53
+ */
 @Mixin(PlayerInventory.class)
 public abstract class MixinPlayerInventory {
 	@Shadow @Final public PlayerEntity player;
-	@Shadow public int selectedSlot;
-
-	@Shadow @Final public DefaultedList<ItemStack> main;
 
 	@Shadow @Final public DefaultedList<ItemStack> armor;
+
 	private ITransplantable transplantable;
 
 	@Inject(method = "getHotbarSize", at = @At(value = "HEAD"), cancellable = true)
@@ -42,7 +49,7 @@ public abstract class MixinPlayerInventory {
 
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;ofSize(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;", ordinal = 1), index = 0)
 	private int fixArmorSlots(int size) {
-		return 8;
+		return 4;
 	}
 
 	@Inject(method = "<init>", at = @At("TAIL"))
@@ -64,109 +71,57 @@ public abstract class MixinPlayerInventory {
 		}
 		for(int i : slots) {
 			ItemStack inv1 = this.armor.get(i);
-			ItemStack inv2 = this.armor.get(i * 2);
+			// ItemStack inv2 = this.armor.get(i * 2);
 			if(!(damageSource.isFire() && inv1.getItem().isFireproof() || !(inv1.getItem() instanceof ArmorItem))) {
 				inv1.damage((int)amount, this.player, player -> player.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, i)));
 			}
+			/*
 			if(!(damageSource.isFire() && inv2.getItem().isFireproof() || !(inv2.getItem() instanceof ArmorItem))) {
 				inv2.damage((int)amount, this.player, player -> player.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, i * 2)));
 			}
+			*/
 		}
 	}
 
-	/**
-	 * @author 6Times
-	 * @reason Handle my unwillingness to change the other slot indices
-	 */
-	@Overwrite
-	public void scrollInHotbar(double scrollAmount) {
-		if(this.transplantable == null) {
-			this.selectedSlot = 0;
-			TransplantSMP.LOGGER.info("get screwed no scrolling for you bozo");
-			return;
-		}
-		int i = (int)(Math.signum(scrollAmount));
-		this.selectedSlot -= i;
-
-		int slots = this.transplantable.getHotbarDraws();
-		while(this.selectedSlot < 0) {
-			if(slots <= 9) {
-				this.selectedSlot += slots;
-			} else {
-				this.selectedSlot = TransplantSMP.NEW_HOTBAR_START_LOC + 17 - transplantable.getHalvedTransplantedAmount(); // 49 is highest index, so we do 9 - halvedTransplantedAmount() to see how many less than the max the player has.
-			}
-		}
-		while((this.selectedSlot > 8 && this.selectedSlot < TransplantSMP.NEW_HOTBAR_START_LOC) || this.selectedSlot > TransplantSMP.NEW_HOTBAR_START_LOC + 8) {
-			this.selectedSlot = 0;
-		}
+	@ModifyConstant(method = "isValidHotbarIndex", constant = @Constant(intValue = 9, ordinal = 0))
+	private static int increaseCheckedHotbar(int constant) {
+		return 18;
+		// this is incredibly janky and it would be more hack-proof to redirect the 8 method calls, but more code
+		// the current plan is to just... not enable the hotkeys to disabled slots lmfao
 	}
 
-	/**
-	 * @author 6Times
-	 * @reason complete rewrite
-	 */
-	@Overwrite
-	public static boolean isValidHotbarIndex(int slot) {
-		return (slot >= 0 && slot < 9) || (slot >= 41 && slot < 50);
+	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 0))
+	private int increaseCheckedHotbar2(int constant) {
+		return transplantable.getHotbarDraws();
 	}
 
-	/**
-	 * @author 6Times
-	 * @reason mostly rewritten. also what does this even do???
-	 */
-	@Overwrite
-	public int getSwappableHotbarSlot() {
-		if(transplantable == null) {
-			TransplantSMP.LOGGER.info("REEEEEEEEEEEEE NO HOTBAR SWAP FOR YOU IDIOT");
-			return selectedSlot;
-		}
-		int i, j;
-		for(i = 0; i < transplantable.getHotbarDraws(); i++) {
-			j = (selectedSlot + i) % transplantable.getHotbarDraws();
-			if(main.get(j).isEmpty() || !main.get(j).hasEnchantments()) {
-				return j;
-			}
-		}
-		return selectedSlot;
+	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 1))
+	private int increaseCheckedHotbar3(int constant) {
+		return transplantable.getHotbarDraws();
 	}
 
-
-	/**
-	 * @author 6Times
-	 * @reason mostly rewritten
-	 */
-	@Overwrite
-	public int getEmptySlot() {
-		for(int i = 0; i < this.main.size(); i++) {
-			if(!this.main.get(i).isEmpty()) {
-				continue; // not empty so skip
-			}
-			if(isValidMainHotbar(i)) { // if it's a valid hotbar then do this
-				if(transplantable.getTransplantType() != TransplantType.ARM_TRANSPLANT) { // not arm transplant
-					if(i > 8) {
-						continue; // the special hotbar slots that we can't touch
-					}
-					return i; // otherwise return
-				}
-				// is arm transplant
-				if(transplantable.getHalvedTransplantedAmount() <= 0) { // if you've lost a slot or gained none
-					if(i > 8 + transplantable.getHalvedTransplantedAmount()) { // if it's a slot that's hidden
-						continue;
-					}
-					return i; // otherwise return
-				}
-				// slots gained
-				if(i > 36 + transplantable.getHalvedTransplantedAmount()) { // slots gained >= 1
-					continue;
-				}
-				return i + 5; // otherwise return, +5 to account for the other crap
-			}
-			return i; // otherwise return
-		}
-		return -1; // none found
+	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 2))
+	private int increaseCheckedHotbar4(int constant) {
+		return transplantable.getHotbarDraws();
 	}
 
-	public boolean isValidMainHotbar(int slot) {
-		return slot < 9 || slot >= 36;
+	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 3))
+	private int increaseCheckedHotbar5(int constant) {
+		return transplantable.getHotbarDraws();
+	}
+
+	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 0))
+	private int increaseCheckedHotbar6(int constant) {
+		return transplantable.getHotbarDraws();
+	}
+
+	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 1))
+	private int increaseCheckedHotbar7(int constant) {
+		return transplantable.getHotbarDraws();
+	}
+
+	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 2))
+	private int increaseCheckedHotbar8(int constant) {
+		return transplantable.getHotbarDraws();
 	}
 }

@@ -1,8 +1,7 @@
 package ml.ikwid.transplantsmp.common.imixins;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.util.Constants;
 
 public interface ITransplantable {
 	int TRANSPLANT_GIVES = 2;
@@ -33,16 +32,21 @@ public interface ITransplantable {
 
 	void updateTransplants();
 
+	/**
+	 * @return the number of slots required to be drawn for the hotbar.
+	 */
 	default int getHotbarDraws() {
-		int draws = (this.getTransplantType() == TransplantType.ARM_TRANSPLANT ? this.getHalvedTransplantedAmount() : 0) + 9;
-		// TransplantSMP.LOGGER.info("draws: " + draws);
-		return draws;
+		return (this.getTransplantType() == TransplantType.ARM_TRANSPLANT ? this.getHalvedTransplantedAmount() : 0) + 9;
 	}
 
+	/**
+	 * For Arm Transplant users, their increase (or decrease, for that matter) of hotbar slots should
+	 * still keep their hotbar centered.
+	 *
+	 * @return the shift required for the hotbar.
+	 */
 	default int xShift() {
-		int shift = -((this.getHotbarDraws() - 9) * TransplantSMPClient.SLOT_WIDTH / 2);
-		// TransplantSMP.LOGGER.info("xshift: " + shift);
-		return shift;
+		return -((this.getHotbarDraws() - 9) * Constants.OUTER_SLOT_WIDTH / 2);
 	}
 
 	default int getHalvedTransplantedAmount() {

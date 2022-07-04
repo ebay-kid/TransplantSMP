@@ -14,7 +14,6 @@ public class TransplantSMPClient implements ClientModInitializer {
 	public static TransplantType transplantType;
 	public static int transplants;
 
-	public static final int SLOT_WIDTH = 21;
 	@Override
 	public void onInitializeClient() {
 		TransplantSMP.LOGGER.info("hello medical patient, welcome to the deadliest minecraft smp aka a hospital");

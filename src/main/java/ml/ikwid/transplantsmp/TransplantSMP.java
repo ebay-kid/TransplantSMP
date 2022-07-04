@@ -15,8 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 public class TransplantSMP implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("transplantsmp");
-	public static final int NEW_HOTBAR_START_LOC = 44;
-	public static final int ARMOR_START_LOC = NEW_HOTBAR_START_LOC + 1;
 
 	@Override
 	public void onInitialize() {

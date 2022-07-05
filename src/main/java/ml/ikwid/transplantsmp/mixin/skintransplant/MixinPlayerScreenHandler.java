@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
+import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -44,7 +45,7 @@ public class MixinPlayerScreenHandler {
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 39))
 	private int armorIndex(int constant) {
-		return Constants.NEW_ARMOR_START_LOC;
+		return Constants.NEW_ARMOR_START_LOC + 3; // for SOME REASON it goes backwards instead of forwards
 	}
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 40))
@@ -54,25 +55,26 @@ public class MixinPlayerScreenHandler {
 
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
 	public Slot changeSlot(PlayerScreenHandler instance, Slot slot) {
-		int index = slot.getIndex();
-		int newIndex = slot.getIndex();
-		if(index > 8) {
-			newIndex = index - 9 + Constants.NEW_HOTBAR_START_LOC;
-		}
-		int x = slot.x + this.xShift();
+		int x = slot.x + Utils.innerSlotXShift(this.owner);
 
-		return ((MixinScreenHandler) self).addSlotAccess(new Slot(slot.inventory, newIndex, x, slot.y));
+		return ((MixinScreenHandlerInvoker) self).addSlotAccess(new Slot(slot.inventory, slot.getIndex(), x, slot.y));
+	}
+
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 3))
+	public Slot changeInventorySlotIndices(PlayerScreenHandler instance, Slot slot) {
+		int newIndex = slot.getIndex() + 9;
+		return ((MixinScreenHandlerInvoker) self).addSlotAccess(new Slot(slot.inventory, newIndex, slot.x, slot.y));
 	}
 
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
-	private void addSecondSet(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
+	private void addSecondSetOfArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		if(transplantable == null) {
 			return;
 		}
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			for(int i = 0; i < 4; i++) { // copy the code
 				final EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
-				((MixinScreenHandler) self).addSlotAccess(new Slot(inventory, 39 - i, 8, 8 + i * 18){
+				((MixinScreenHandlerInvoker) self).addSlotAccess(new Slot(inventory, Constants.SECOND_ARMOR_START_LOC + i, 8, 8 + i * 18) {
 					@Override
 					public void setStack(ItemStack stack) {
 						ItemStack itemStack = this.getStack();
@@ -108,9 +110,9 @@ public class MixinPlayerScreenHandler {
 		}
 	}
 
-	private int xShift() {
+	public int xShift() {
 		if(transplantable == null) {
-			return 9/2 * Constants.INNER_SLOT_WIDTH;
+			return 0;
 		}
 		return -((transplantable.getHotbarDraws() - 9) * Constants.INNER_SLOT_WIDTH / 2);
 	}

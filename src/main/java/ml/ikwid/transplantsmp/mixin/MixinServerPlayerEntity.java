@@ -5,6 +5,7 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
+import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -74,13 +75,9 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 				IStomachTransplanted hungerMgr = (IStomachTransplanted) (this.self.getHungerManager());
 				hungerMgr.setMaxFoodLevel(20 + this.transplanted);
 				break;
-
-			default: // REEEEE
-				throw new IllegalStateException("Unexpected value: " + transplantType);
 		}
-		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeInt(this.transplanted);
-		ServerPlayNetworking.send(this.self, NetworkingConstants.UPDATE_ORGAN_COUNT, buf);
+
+		NetworkingUtil.sendTransplantCountUpdate(this.self);
 	}
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
@@ -94,10 +91,8 @@ public class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Override
 	public void setTransplantType(TransplantType transplantType) {
 		this.transplantType = transplantType;
-		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeString(transplantType.toString());
-		ServerPlayNetworking.send(self, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf);
 
+		NetworkingUtil.sendTransplantTypeUpdate(transplantType.toString(), this.self);
 		this.updateTransplants();
 	}
 

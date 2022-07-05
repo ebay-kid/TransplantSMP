@@ -5,6 +5,7 @@ import ml.ikwid.transplantsmp.common.command.CommandRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
+import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -29,14 +30,12 @@ public class TransplantSMP implements ModInitializer {
 					TransplantType transplantType = TransplantType.get(chosenType);
 
 					transplantable.setTransplantTypeNoUpdate(transplantType);
-					transplantable.setTransplantedAmount(0); // don't update twice.
+					transplantable.setTransplantedAmount(0);
 
-					PacketByteBuf buf3 = PacketByteBufs.create();
-					buf3.writeString(chosenType);
-					ServerPlayNetworking.send(player, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf3);
-					LOGGER.info("time to choose your transplant, " + player.getName().getString());
+					NetworkingUtil.sendTransplantTypeUpdate(chosenType, player);
+					LOGGER.info("transplant chosen for " + player.getName().getString());
 				} else {
-					LOGGER.info("someone's being sussy (" + player.getName().getString() + ")!");
+					LOGGER.info("someone's being sussy and trying to change transplants (" + player.getName().getString() + ")!");
 				}
 			});
 		}));

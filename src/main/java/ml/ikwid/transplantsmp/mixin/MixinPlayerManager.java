@@ -3,6 +3,7 @@ package ml.ikwid.transplantsmp.mixin;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
+import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.ClientConnection;
@@ -23,6 +24,7 @@ public class MixinPlayerManager {
 
 			TransplantSMP.LOGGER.info("nothing found, needs transplant");
 		} else {
+			NetworkingUtil.sendTransplantTypeUpdate(transplantable.getTransplantType().toString(), player);
 			transplantable.updateTransplants();
 		}
 	}

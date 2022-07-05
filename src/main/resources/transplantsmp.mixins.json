@@ -7,15 +7,17 @@
     "MixinPlayerEntity",
     "MixinPlayerManager",
     "MixinServerPlayerEntity",
+    "MixinSlotAccessor",
     "armtransplant.MixinPlayerInventory",
     "skintransplant.MixinEntityAttributes",
     "skintransplant.MixinLivingEntity",
     "skintransplant.MixinPlayerScreenHandler",
-    "skintransplant.MixinScreenHandler",
+    "skintransplant.MixinScreenHandlerInvoker",
     "stomachtransplant.MixinHungerManager"
   ],
   "client": [
     "MixinClientPlayerEntity",
+    "MixinDebugHud",
     "MixinHandledScreen",
     "MixinInGameHud",
     "armtransplant.MixinGameOptions",

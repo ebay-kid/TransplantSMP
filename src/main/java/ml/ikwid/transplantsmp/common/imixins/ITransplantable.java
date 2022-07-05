@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.common.imixins;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.util.Constants;
 

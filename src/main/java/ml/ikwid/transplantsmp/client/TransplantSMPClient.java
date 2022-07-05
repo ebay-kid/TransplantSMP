@@ -12,7 +12,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 @Environment(EnvType.CLIENT)
 public class TransplantSMPClient implements ClientModInitializer {
 	public static TransplantType transplantType;
-	public static int transplants;
+	public static int transplants = 0;
 
 	@Override
 	public void onInitializeClient() {

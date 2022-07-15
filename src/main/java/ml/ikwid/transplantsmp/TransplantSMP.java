@@ -8,9 +8,7 @@ import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
 import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,10 +27,10 @@ public class TransplantSMP implements ModInitializer {
 				if(transplantable.getTransplantType() == null) {
 					TransplantType transplantType = TransplantType.get(chosenType);
 
-					transplantable.setTransplantTypeNoUpdate(transplantType);
-					transplantable.setTransplantedAmount(0);
+					transplantable.setTransplantType(transplantType, false);
+					transplantable.setTransplantedAmount(0, true, true);
 
-					NetworkingUtil.sendTransplantTypeUpdate(chosenType, player);
+
 					LOGGER.info("transplant chosen for " + player.getName().getString());
 				} else {
 					LOGGER.info("someone's being sussy and trying to change transplants (" + player.getName().getString() + ")!");

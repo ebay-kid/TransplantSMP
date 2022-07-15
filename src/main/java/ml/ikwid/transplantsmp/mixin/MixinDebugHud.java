@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(DebugHud.class)
-public class MixinDebugHud {
+public abstract class MixinDebugHud {
 	@Inject(method = "getLeftText", at = @At("TAIL"))
 	private void modifyLeftText(CallbackInfoReturnable<List<String>> cir) {
 		List<String> debugText = cir.getReturnValue();

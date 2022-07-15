@@ -14,8 +14,8 @@ public class SetTransplantType {
 		if(transplantable == null) {
 			throw new CommandException(Text.of("Unable to cast player to an ITransplantable"));
 		}
-		transplantable.setTransplantType(TransplantType.valueOf(StringArgumentType.getString(ctx, "type")));
+		transplantable.setTransplantType(TransplantType.valueOf(StringArgumentType.getString(ctx, "type")), true);
 
-		return 0;
+		return 1;
 	}
 }

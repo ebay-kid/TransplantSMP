@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.armtransplant;
 
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +35,13 @@ public abstract class MixinPlayerInventory {
 	@Shadow @Final public PlayerEntity player;
 
 	@Shadow @Final public DefaultedList<ItemStack> armor;
+
+	@Shadow @Final public DefaultedList<ItemStack> main;
+
+	@Shadow
+	public static boolean isValidHotbarIndex(int slot) {
+		throw new AssertionError();
+	}
 
 	private ITransplantable transplantable;
 
@@ -87,7 +95,26 @@ public abstract class MixinPlayerInventory {
 	private static int increaseCheckedHotbar(int constant) {
 		return 18;
 		// this is incredibly janky and it would be more hack-proof to redirect the 8 method calls, but more code
-		// the current plan is to just... not enable the hotkeys to disabled slots lmfao
+		// the current plan is to just... not enable the hotkeys to disabled slots
+	}
+
+	/**
+	 * @author 6Times
+	 * @reason Pretty much an entire rewrite
+	 */
+	@Overwrite
+	public int getEmptySlot() {
+		for(int i = 0; i < this.main.size(); i++) {
+			if(isValidHotbarIndex(i)) {
+				if(i > this.transplantable.getHotbarDraws() - 1) {
+					continue;
+				}
+			}
+			if(this.main.get(i).isEmpty()) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 0))
@@ -123,5 +150,15 @@ public abstract class MixinPlayerInventory {
 	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 2))
 	private int increaseCheckedHotbar8(int constant) {
 		return transplantable.getHotbarDraws();
+	}
+
+	@ModifyConstant(method = "getOccupiedSlotWithRoomForStack", constant = @Constant(intValue = 40, ordinal = 0))
+	private int changeOffHandSlot(int constant) {
+		return Constants.OFF_HAND;
+	}
+
+	@ModifyConstant(method = "getOccupiedSlotWithRoomForStack", constant = @Constant(intValue = 40, ordinal = 1))
+	private int changeOffHandSlot2(int constant) {
+		return Constants.OFF_HAND;
 	}
 }

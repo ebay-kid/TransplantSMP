@@ -22,7 +22,7 @@ public class CommandRegister {
 				.then(
 					CommandManager
 						.argument("count", IntegerArgumentType.integer())
-							.executes(SetTransplants::run)
+							.executes(SetTransplantCount::run)
 				)
 			.build();
 		LiteralCommandNode<ServerCommandSource> setTransplantType = CommandManager
@@ -42,6 +42,10 @@ public class CommandRegister {
 				)
 			.executes(GetTransplantItem::run)
 			.build();
+		LiteralCommandNode<ServerCommandSource> dumpInventory = CommandManager
+			.literal("invdump")
+			.executes(InventoryDump::run)
+			.build();
 
 		dispatcher.getRoot().addChild(transplantSMP);
 		dispatcher.getRoot().addChild(alias);
@@ -49,5 +53,6 @@ public class CommandRegister {
 		transplantSMP.addChild(setTransplantCount);
 		transplantSMP.addChild(setTransplantType);
 		transplantSMP.addChild(getOrganItem);
+		transplantSMP.addChild(dumpInventory);
 	}
 }

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
-public class MixinHungerManager implements IStomachTransplanted {
+public abstract class MixinHungerManager implements IStomachTransplanted {
 	private ITransplantable transplantable;
 	@Unique
 	private int maxFoodLevel = 20;

@@ -62,7 +62,7 @@ public enum TransplantType {
 	}
 
 	public static TransplantType get(String string) {
-		for(TransplantType transplantType : values()) {
+		for(TransplantType transplantType : transplantTypes) {
 			if(Objects.equals(string, transplantType.toString())) {
 				return transplantType;
 			}

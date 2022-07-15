@@ -31,13 +31,13 @@ public class GetTransplantItem {
 			amount /= 2;
 			if(transplantable.getHalvedTransplantedAmount() - amount > -9) {
 				amount *= 2;
-				transplantable.setTransplantedAmount(transplanted - amount);
+				transplantable.setTransplantedAmount(transplanted - amount, true, false);
 			} else {
 				throw notEnough;
 			}
 		} else {
 			if(transplanted - amount > -18) {
-				transplantable.setTransplantedAmount(transplanted - amount);
+				transplantable.setTransplantedAmount(transplanted - amount, true, false);
 			} else {
 				throw notEnough;
 			}

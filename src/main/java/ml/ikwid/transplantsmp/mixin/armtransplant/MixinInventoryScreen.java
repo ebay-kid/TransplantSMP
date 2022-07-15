@@ -12,14 +12,26 @@ import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(InventoryScreen.class)
-public class MixinInventoryScreen {
+public abstract class MixinInventoryScreen {
 	private final Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
 	private final InventoryScreen self = (InventoryScreen)(Object) this;
 	private final ITransplantable transplantable = (ITransplantable) (MinecraftClient.getInstance().player);
+
+	/**
+	 * Slight side effect of forcing you to use the drop button but idc that's the superior way
+	 *
+	 * @author 6Times
+	 * @reason Allow Arm/Skin transplant users to click outside of bounds
+	 */
+	@Overwrite
+	protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
+		return false;
+	}
 
 	@Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void specialRender(InventoryScreen instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {

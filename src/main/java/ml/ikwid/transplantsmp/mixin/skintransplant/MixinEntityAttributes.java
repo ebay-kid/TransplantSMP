@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.skintransplant;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -12,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 @Mixin(EntityAttributes.class)
-public class MixinEntityAttributes {
+public abstract class MixinEntityAttributes {
 	// how does one target something that's not in a method
 	@Inject(method = "register", at = @At("HEAD"), cancellable = true)
 	private static void changeGenericArmor(String id, EntityAttribute attribute, CallbackInfoReturnable<EntityAttribute> cir) {
+		TransplantSMP.LOGGER.info("injected into register of EntityAttributes");
 		if(Objects.equals(id, "generic.armor")) {
 			cir.setReturnValue(Registry.register(Registry.ATTRIBUTE, id, new ClampedEntityAttribute("attribute.name.generic.armor", 0.0, 0.0, 40.0).setTracked(true)));
 		} else if(Objects.equals(id, "generic.armor_toughness")) {

@@ -45,14 +45,6 @@ public class ChooseTransplantScreen extends Screen {
 			buf.writeString(TransplantType.transplantTypes[index].toString());
 			ClientPlayNetworking.send(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, buf);
 		}));
-		// whoopsies I can't identify what it is once it's drawn there
-		/*
-		for(int i = 0; i < transplantTypes.length; i++) {
-			addDrawableChild(new ButtonWidget((int)(0.125 * width) + (int)(0.75 * width * i / transplantTypes.length), (int)(0.25 * height), (int)(0.75 * width / transplantTypes.length - 10), (int)(height * 0.1), Text.of(transplantTypes[i].toString()), b -> {
-
-			}));
-		}
-		*/
 	}
 
 	@Override

@@ -20,4 +20,8 @@ public class NetworkingUtil {
 		buf.writeInt(transplantable.getTransplantedAmount());
 		ServerPlayNetworking.send(player, NetworkingConstants.UPDATE_ORGAN_COUNT, buf);
 	}
+
+	public static void sendTransplantNeedsChoose(ServerPlayerEntity player) {
+		ServerPlayNetworking.send(player, NetworkingConstants.NEEDS_TRANSPLANT, PacketByteBufs.empty());
+	}
 }

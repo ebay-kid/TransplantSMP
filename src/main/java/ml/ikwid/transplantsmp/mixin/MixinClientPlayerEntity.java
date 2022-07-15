@@ -2,9 +2,9 @@ package ml.ikwid.transplantsmp.mixin;
 
 import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.imixins.ISlotTransplanted;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.common.util.Utils;
-import ml.ikwid.transplantsmp.mixin.skintransplant.MixinPlayerScreenHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -12,7 +12,7 @@ import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ClientPlayerEntity.class)
-public class MixinClientPlayerEntity extends MixinPlayerEntity {
+public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
 	private final ClientPlayerEntity self = (ClientPlayerEntity)(Object) this;
 
 	@Override
@@ -26,23 +26,29 @@ public class MixinClientPlayerEntity extends MixinPlayerEntity {
 	}
 
 	@Override
-	public void updateTransplants() {
-		switch(this.getTransplantType()) {
-			case ARM_TRANSPLANT:
-				PlayerScreenHandler playerScreenHandler = this.self.playerScreenHandler;
-				DefaultedList<Slot> slots = playerScreenHandler.slots;
-				int transplanted = this.getTransplantedAmount();
+	public void updateTransplants(boolean updateCount, boolean updateType) {
+		if(updateCount) {
+			switch (this.getTransplantType()) {
+				case ARM_TRANSPLANT:
+					PlayerScreenHandler playerScreenHandler = this.self.playerScreenHandler;
+					DefaultedList<Slot> slots = playerScreenHandler.slots;
 
-				for(int i = 0; i < 18; i++) {
-					((MixinSlotAccessor)(slots.get(i))).setX(Utils.innerSlotXShift(this.self) + Constants.INNER_SLOT_WIDTH * i);
-				}
+					for (int i = 0; i < 18; i++) {
+						int slotWithIndex = Utils.mapSlotIndexToID(i);
+						if(slotWithIndex == -1) { // no slot found
 
-				break;
+						}
+						((ISlotTransplanted)(slots.get(slotWithIndex))).setX(Utils.innerSlotXShift(this.self) + Constants.INNER_SLOT_WIDTH * i);
+					}
 
-			case SKIN_TRANSPLANT:
-			case STOMACH_TRANSPLANT:
-			case HEART_TRANSPLANT:
-				break;
+					break;
+
+				case SKIN_TRANSPLANT:
+				case STOMACH_TRANSPLANT:
+				case HEART_TRANSPLANT:
+					break;
+			}
 		}
+		super.updateTransplants(updateCount, updateType);
 	}
 }

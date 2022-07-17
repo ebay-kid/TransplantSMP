@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin;
+package ml.ikwid.transplantsmp.mixin.hud;
 
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.client.MinecraftClient;

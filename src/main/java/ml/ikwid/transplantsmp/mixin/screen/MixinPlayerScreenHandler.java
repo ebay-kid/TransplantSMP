@@ -1,10 +1,9 @@
-package ml.ikwid.transplantsmp.mixin.skintransplant;
+package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.datafixers.util.Pair;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
-import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -21,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerScreenHandler.class)
@@ -45,11 +43,16 @@ public abstract class MixinPlayerScreenHandler {
 		return Constants.OFF_HAND;
 	}
 
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
-	public Slot changeHotbarSlot(PlayerScreenHandler instance, Slot slot) {
-		int x = slot.x + Utils.innerSlotXShift(this.owner);
+	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9, ordinal = 2))
+	private int changeDrawnSlotCounts(int constant) {
+		return ((ITransplantable)(this.owner)).getHotbarDraws();
+	}
 
-		return ((MixinScreenHandlerAccessor) self).addSlotAccess(new Slot(slot.inventory, slot.getIndex(), x, slot.y));
+	/*
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
+	private Slot changeHotbarSlotLocation(PlayerScreenHandler instance, Slot slot) {
+		((ISlotTransplanted) slot).setX(slot.x + Utils.innerSlotXShift(this.owner));
+		return ((MixinScreenHandlerAccessor) self).addSlotAccess(slot);
 	}
 
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 3))
@@ -57,12 +60,15 @@ public abstract class MixinPlayerScreenHandler {
 		int newIndex = slot.getIndex() + 9;
 		return ((MixinScreenHandlerAccessor) self).addSlotAccess(new Slot(slot.inventory, newIndex, slot.x, slot.y));
 	}
+	*/
 
+	/*
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
-	private void addSecondSetOfArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
+	private void addExtraSlots(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		if(transplantable == null) {
 			return;
 		}
+
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			for(int i = 0; i < 4; i++) { // copy the code
 				EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
@@ -101,4 +107,5 @@ public abstract class MixinPlayerScreenHandler {
 			}
 		}
 	}
+	*/
 }

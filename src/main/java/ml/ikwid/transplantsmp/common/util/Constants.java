@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.common.util;
 
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class Constants {
@@ -17,7 +18,7 @@ public class Constants {
 	public static final int OUTER_SLOT_HEIGHT = 22;
 	public static final int HOTBAR_SPACE_IN_INV_SCREEN = 25;
 
-
+	public static final Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
 
 	public static final KeyBinding[] NEW_HOTBAR_KEYS = new KeyBinding[] {
 		new KeyBinding("key.hotbar.10", GLFW.GLFW_KEY_BACKSLASH, KeyBinding.INVENTORY_CATEGORY),

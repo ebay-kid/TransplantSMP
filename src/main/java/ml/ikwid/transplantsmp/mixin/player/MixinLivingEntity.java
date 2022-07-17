@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin.skintransplant;
+package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.LivingEntity;

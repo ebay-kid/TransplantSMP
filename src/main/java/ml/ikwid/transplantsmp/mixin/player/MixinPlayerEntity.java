@@ -1,16 +1,15 @@
-package ml.ikwid.transplantsmp.mixin;
+package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ISlotTransplanted;
+import ml.ikwid.transplantsmp.common.imixins.IHotbarScreenHandler;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
-import ml.ikwid.transplantsmp.common.util.Utils;
-import ml.ikwid.transplantsmp.mixin.skintransplant.MixinScreenHandlerAccessor;
+import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.screen.ScreenHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+
+import java.util.ArrayList;
 
 @Unique
 @Mixin(PlayerEntity.class)
@@ -44,7 +43,15 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType) {
 		if(updateCount) {
-			if (this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
+			if(this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
+				ScreenHandler screenHandler = this.self.currentScreenHandler;
+				ArrayList<HotbarSlot> slots = ((IHotbarScreenHandler) screenHandler).getHotbarSlots();
+
+				for(HotbarSlot slot : slots) {
+					slot.updateEnabledState();
+				}
+
+				/*
 				PlayerScreenHandler screenHandler = this.self.playerScreenHandler;
 				DefaultedList<Slot> slots = screenHandler.slots;
 				int transplanted = this.getTransplantedAmount();
@@ -68,6 +75,7 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 						((ISlotTransplanted) slot).setX(slot.x - Utils.calcSlotXShiftArb(draws - 1) + innerXShift);
 					}
 				}
+				*/
 			}
 		}
 	}

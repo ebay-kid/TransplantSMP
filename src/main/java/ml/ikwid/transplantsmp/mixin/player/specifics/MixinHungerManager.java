@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin.stomachtransplant;
+package ml.ikwid.transplantsmp.mixin.player.specifics;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;

@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin.armtransplant;
+package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import ml.ikwid.transplantsmp.common.TransplantType;
@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(InventoryScreen.class)
 public abstract class MixinInventoryScreen {
-	private final Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
 	private final InventoryScreen self = (InventoryScreen)(Object) this;
 	private final ITransplantable transplantable = (ITransplantable) (MinecraftClient.getInstance().player);
 
@@ -33,6 +31,7 @@ public abstract class MixinInventoryScreen {
 		return false;
 	}
 
+	/*
 	@Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void specialRender(InventoryScreen instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
 		if(transplantable == null) {
@@ -41,7 +40,7 @@ public abstract class MixinInventoryScreen {
 		}
 
 		// draw hotbar ourselves with the exact same texture as the HUD because i'm slightly lazy
-		RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+		RenderSystem.setShaderTexture(0, Constants.WIDGETS_TEXTURE);
 		int bottom = y + height - Constants.HOTBAR_SPACE_IN_INV_SCREEN;
 		int draws = transplantable.getHotbarDraws();
 		for(int i = 0; i < draws; i++) {
@@ -57,6 +56,7 @@ public abstract class MixinInventoryScreen {
 		RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
 		self.drawTexture(matrices, x, y, u, v, width, height - Constants.HOTBAR_SPACE_IN_INV_SCREEN);
 	}
+	*/
 
 	@Redirect(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;", ordinal = 0))
 	private Element screwTheRecipeBook(InventoryScreen instance, Element element) {

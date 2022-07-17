@@ -39,7 +39,7 @@ public interface ITransplantable {
 	 * For Arm Transplant users, their increase (or decrease, for that matter) of hotbar slots should
 	 * still keep their hotbar centered.
 	 *
-	 * @return the shift required for the hotbar.
+	 * @return the shift required for the hotbar. This should be ADDED to the vanilla value.
 	 */
 	default int xShift() {
 		return -((this.getHotbarDraws() - 9) * Constants.OUTER_SLOT_WIDTH / 2);

@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin.skintransplant;
+package ml.ikwid.transplantsmp.mixin.player.specifics;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;

@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin.armtransplant;
+package ml.ikwid.transplantsmp.mixin.inventory;
 
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;

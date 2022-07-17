@@ -1,4 +1,4 @@
-package ml.ikwid.transplantsmp.mixin;
+package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;

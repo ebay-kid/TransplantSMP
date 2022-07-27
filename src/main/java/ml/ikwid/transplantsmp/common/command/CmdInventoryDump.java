@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
-public class InventoryDump {
+public class CmdInventoryDump {
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		ServerPlayerEntity player = ctx.getSource().getPlayer();
 		if(player == null) {
@@ -22,7 +22,11 @@ public class InventoryDump {
 		TransplantSMP.LOGGER.info("Main: ");
 		DefaultedList<ItemStack> main = inventory.main;
 		for(int i = 0; i < main.size(); i++) {
-			TransplantSMP.LOGGER.info(i + ": " + main.get(i));
+			TransplantSMP.LOGGER.info(i + ": " + main.get(i++) + ", " + i + ": " + main.get(i));
+		}
+
+		if(main.size() % 2 == 1) {
+			TransplantSMP.LOGGER.info(main.size() - 1 + ": " + main.get(main.size() - 1));
 		}
 
 		TransplantSMP.LOGGER.info("Armor: ");

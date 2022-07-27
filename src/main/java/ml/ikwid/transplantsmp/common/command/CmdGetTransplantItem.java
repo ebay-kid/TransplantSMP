@@ -11,7 +11,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-public class GetTransplantItem {
+public class CmdGetTransplantItem {
 	private static final CommandException nonPlayer = new CommandException(Text.of("Cannot take organs from a non-player..."));
 	private static final CommandException notEnough = new CommandException(Text.of("Not enough organs"));
 	public static int run(CommandContext<ServerCommandSource> ctx) {

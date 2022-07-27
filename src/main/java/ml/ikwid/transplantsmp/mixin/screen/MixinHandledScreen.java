@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
@@ -22,38 +22,39 @@ public abstract class MixinHandledScreen {
 	@Shadow protected int x;
 	@Shadow protected int y;
 	@Shadow protected int backgroundHeight;
-	private final ClientPlayerEntity player = MinecraftClient.getInstance().player;
-	private final ITransplantable transplantable = (ITransplantable) player;
+	private ClientPlayerEntity player;// = MinecraftClient.getInstance().player;
+	private ITransplantable transplantable;// = (ITransplantable) player;
 	@SuppressWarnings("rawtypes")
 	private final HandledScreen self = (HandledScreen)(Object) this;
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 166, ordinal = 0))
 	private int renderShorterBackground(int constant) {
+		this.player = MinecraftClient.getInstance().player;
+		this.transplantable = (ITransplantable) (this.player);
+
+		TransplantSMP.LOGGER.info("set the shorter background space");
 		return constant - Constants.HOTBAR_SPACE_IN_INV_SCREEN;
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawBackground(Lnet/minecraft/client/util/math/MatrixStack;FII)V"))
 	private void renderHotbarSection(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		// draw hotbar ourselves with the exact same texture as the HUD because i'm slightly lazy
+		// draw hotbar ourselves with the exact same texture as the HUD because I'm slightly lazy
 		RenderSystem.setShaderTexture(0, Constants.WIDGETS_TEXTURE);
 
 		int x = this.x;
 		int y = this.y;
 		int height = this.backgroundHeight;
 
-		int bottom = y + height - Constants.HOTBAR_SPACE_IN_INV_SCREEN;
+		// TransplantSMP.LOGGER.info("bg height: " + height);
+		int bottom = y + height;
+		// TransplantSMP.LOGGER.info("render y: " + bottom);
+
 		int draws = transplantable.getHotbarDraws();
 		for(int i = 0; i < draws; i++) {
 			self.drawTexture(matrices, x + transplantable.xShift() + (i * Constants.OUTER_SLOT_WIDTH), bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 		}
 
-		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) { // Armor slots
-			for(int i = 0; i < 4; i++) {
-				self.drawTexture(matrices, 8 - Constants.OUTER_SLOT_WIDTH, 8 + i * 22, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
-			}
-		}
-
-		RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
+		// RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
 	}
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 9))

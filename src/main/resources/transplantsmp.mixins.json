@@ -4,7 +4,7 @@
   "package": "ml.ikwid.transplantsmp.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "inventory.MixinPlayerInventory",
+    "player.MixinPlayerInventory",
     "inventory.MixinSlot",
     "player.MixinLivingEntity",
     "player.MixinPlayerEntity",
@@ -23,6 +23,7 @@
     "player.MixinClientPlayerEntity",
     "player.specifics.MixinGameOptions",
     "player.specifics.MixinMinecraftClient",
+    "screen.MixinGenericContainerScreen",
     "screen.MixinHandledScreen",
     "screen.MixinInventoryScreen"
   ],

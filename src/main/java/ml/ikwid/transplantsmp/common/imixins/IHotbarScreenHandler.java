@@ -6,4 +6,6 @@ import java.util.ArrayList;
 
 public interface IHotbarScreenHandler {
 	ArrayList<HotbarSlot> getHotbarSlots();
+
+	int getHighestEnabledSlot();
 }

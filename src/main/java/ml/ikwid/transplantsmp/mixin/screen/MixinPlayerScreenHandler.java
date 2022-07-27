@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerScreenHandler.class)
@@ -45,7 +46,7 @@ public abstract class MixinPlayerScreenHandler {
 
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9, ordinal = 2))
 	private int changeDrawnSlotCounts(int constant) {
-		return ((ITransplantable)(this.owner)).getHotbarDraws();
+		return 18;
 	}
 
 	/*
@@ -54,13 +55,12 @@ public abstract class MixinPlayerScreenHandler {
 		((ISlotTransplanted) slot).setX(slot.x + Utils.innerSlotXShift(this.owner));
 		return ((MixinScreenHandlerAccessor) self).addSlotAccess(slot);
 	}
+	*/
 
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 3))
 	public Slot changeInventorySlotIndices(PlayerScreenHandler instance, Slot slot) {
-		int newIndex = slot.getIndex() + 9;
-		return ((MixinScreenHandlerAccessor) self).addSlotAccess(new Slot(slot.inventory, newIndex, slot.x, slot.y));
+		return ((MixinScreenHandlerAccessor) self).addSlotAccess(new Slot(slot.inventory, slot.getIndex() + 9, slot.x, slot.y));
 	}
-	*/
 
 	/*
 	@Inject(method = "<init>", at = @At(value = "TAIL"))

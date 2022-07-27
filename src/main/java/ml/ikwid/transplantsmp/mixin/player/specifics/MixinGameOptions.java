@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.player.specifics;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
@@ -23,14 +24,13 @@ public abstract class MixinGameOptions {
 	@Mutable
 	@Shadow @Final public KeyBinding[] allKeys;
 
-	@Inject(method = "<init>", at = @At("TAIL"))
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;load()V"))
 	private void immediateOverrideKeybind(MinecraftClient client, File optionsFile, CallbackInfo ci) {
-		KeyBinding[] newHotbarKeys = new KeyBinding[18];
-		System.arraycopy(this.hotbarKeys, 0, newHotbarKeys, 0, this.hotbarKeys.length);
-		this.hotbarKeys = ArrayUtils.addAll(newHotbarKeys, Constants.NEW_HOTBAR_KEYS);
+		// TransplantSMP.LOGGER.info("Hotbar keys overridden, OG: " + this.hotbarKeys.length + ", All Keys: " + this.allKeys.length);
 
-		KeyBinding[] newAllKeys = new KeyBinding[this.allKeys.length + 9];
-		System.arraycopy(this.allKeys, 0, newAllKeys, 0, this.allKeys.length);
-		this.allKeys = ArrayUtils.addAll(newAllKeys, Constants.NEW_HOTBAR_KEYS);
+		this.hotbarKeys = ArrayUtils.addAll(this.hotbarKeys, Constants.NEW_HOTBAR_KEYS);
+		this.allKeys = ArrayUtils.addAll(this.allKeys, Constants.NEW_HOTBAR_KEYS);
+
+		// TransplantSMP.LOGGER.info("Hotbar Keys: " + this.hotbarKeys.length + ", All Keys: " + this.allKeys.length);
 	}
 }

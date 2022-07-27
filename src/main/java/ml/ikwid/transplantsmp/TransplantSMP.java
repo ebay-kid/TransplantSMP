@@ -5,7 +5,6 @@ import ml.ikwid.transplantsmp.common.command.CommandRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
-import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

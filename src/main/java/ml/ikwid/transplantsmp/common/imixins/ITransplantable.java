@@ -2,9 +2,11 @@ package ml.ikwid.transplantsmp.common.imixins;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.util.Constants;
+import net.minecraft.entity.player.PlayerEntity;
 
 public interface ITransplantable {
 	int TRANSPLANT_GIVES = 2;
+
 	default boolean illegalTransplantAmount() {
 		int transplants = this.getTransplantedAmount();
 
@@ -43,6 +45,15 @@ public interface ITransplantable {
 	 */
 	default int xShift() {
 		return -((this.getHotbarDraws() - 9) * Constants.OUTER_SLOT_WIDTH / 2);
+	}
+
+	/**
+	 * Align the actual slot with the slot border.
+	 *
+	 * @return the shift required for the hotbar slot. This should be ADDED to the vanilla value.
+	 */
+	default int innerSlotXShift() {
+		return -((this.getHotbarDraws() - 9) * Constants.INNER_SLOT_WIDTH / 2);
 	}
 
 	default int getHalvedTransplantedAmount() {

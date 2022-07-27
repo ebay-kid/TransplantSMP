@@ -17,10 +17,12 @@ public abstract class MixinEntityAttributes {
 	// how does one target something that's not in a method
 	@Inject(method = "register", at = @At("HEAD"), cancellable = true)
 	private static void changeGenericArmor(String id, EntityAttribute attribute, CallbackInfoReturnable<EntityAttribute> cir) {
-		TransplantSMP.LOGGER.info("injected into register of EntityAttributes");
+		// TransplantSMP.LOGGER.info("injected into register of EntityAttributes");
 		if(Objects.equals(id, "generic.armor")) {
+			// TransplantSMP.LOGGER.info("armor injected");
 			cir.setReturnValue(Registry.register(Registry.ATTRIBUTE, id, new ClampedEntityAttribute("attribute.name.generic.armor", 0.0, 0.0, 40.0).setTracked(true)));
 		} else if(Objects.equals(id, "generic.armor_toughness")) {
+			// TransplantSMP.LOGGER.info("toughness injected");
 			cir.setReturnValue(Registry.register(Registry.ATTRIBUTE, id, new ClampedEntityAttribute("attribute.name.generic.armor_toughness", 0.0, 0.0, 24.0).setTracked(true)));
 		}
 	}

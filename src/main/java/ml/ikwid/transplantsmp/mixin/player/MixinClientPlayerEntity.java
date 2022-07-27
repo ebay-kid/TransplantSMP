@@ -24,12 +24,10 @@ public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
 		if(updateCount) {
 			switch (this.getTransplantType()) {
 				case ARM_TRANSPLANT:
-
-					break;
-
 				case SKIN_TRANSPLANT:
 				case STOMACH_TRANSPLANT:
 				case HEART_TRANSPLANT:
+
 					break;
 			}
 		}

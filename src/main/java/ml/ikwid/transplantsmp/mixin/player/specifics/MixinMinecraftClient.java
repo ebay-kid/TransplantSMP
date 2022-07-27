@@ -14,6 +14,6 @@ public class MixinMinecraftClient {
 
 	@ModifyConstant(method = "handleInputEvents", constant = @Constant(intValue = 9, ordinal = 0))
 	private int increaseCheckedHotkeys(int constant) {
-		return ((ITransplantable) (this.player)).getHotbarDraws() - 1;
+		return ((ITransplantable) (this.player)).getHotbarDraws();
 	}
 }

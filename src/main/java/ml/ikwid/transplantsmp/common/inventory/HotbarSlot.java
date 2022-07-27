@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ISlotTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -30,6 +31,11 @@ public class HotbarSlot extends Slot {
 	}
 
 	@Override
+	public boolean canTakeItems(PlayerEntity playerEntity) {
+		return this.isEnabled;
+	}
+
+	@Override
 	public boolean isEnabled() {
 		return this.isEnabled;
 	}
@@ -40,7 +46,9 @@ public class HotbarSlot extends Slot {
 	}
 
 	public void updateEnabledState() {
-		this.isEnabled = this.transplantable.getHotbarDraws() < this.getIndex();
+		this.isEnabled = this.transplantable.getHotbarDraws() >= this.getIndex();
 		((ISlotTransplanted) this).setX(this.originalX + ((Constants.INNER_SLOT_WIDTH / 2) * (this.transplantable.getHotbarDraws() - 9)));
+
+		TransplantSMP.LOGGER.info("Slot " + this.getIndex() + " is now " + this.isEnabled);
 	}
 }

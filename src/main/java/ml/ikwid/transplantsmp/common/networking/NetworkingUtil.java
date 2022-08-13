@@ -10,7 +10,7 @@ public class NetworkingUtil {
 	public static void sendTransplantTypeUpdate(String type, ServerPlayerEntity player) {
 		PacketByteBuf buf3 = PacketByteBufs.create();
 		buf3.writeString(type);
-		ServerPlayNetworking.send(player, NetworkingConstants.UPDATE_TRANSPLANT_TYPE, buf3);
+		ServerPlayNetworking.send(player, NetworkingIDs.UPDATE_TRANSPLANT_TYPE, buf3);
 	}
 
 	public static void sendTransplantCountUpdate(ServerPlayerEntity player) {
@@ -18,10 +18,10 @@ public class NetworkingUtil {
 
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeInt(transplantable.getTransplantedAmount());
-		ServerPlayNetworking.send(player, NetworkingConstants.UPDATE_ORGAN_COUNT, buf);
+		ServerPlayNetworking.send(player, NetworkingIDs.UPDATE_ORGAN_COUNT, buf);
 	}
 
 	public static void sendTransplantNeedsChoose(ServerPlayerEntity player) {
-		ServerPlayNetworking.send(player, NetworkingConstants.NEEDS_TRANSPLANT, PacketByteBufs.empty());
+		ServerPlayNetworking.send(player, NetworkingIDs.NEEDS_TRANSPLANT, PacketByteBufs.empty());
 	}
 }

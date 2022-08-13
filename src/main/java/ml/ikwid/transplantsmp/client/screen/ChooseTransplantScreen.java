@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.client.screen;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
-import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
+import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
@@ -43,7 +43,7 @@ public class ChooseTransplantScreen extends Screen {
 		addDrawableChild(new ButtonWidget(width - 50, height - 20, 40, 10, Text.of("Choose"), b-> {
 			PacketByteBuf buf = PacketByteBufs.create();
 			buf.writeString(TransplantType.transplantTypes[index].toString());
-			ClientPlayNetworking.send(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, buf);
+			ClientPlayNetworking.send(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE, buf);
 		}));
 	}
 

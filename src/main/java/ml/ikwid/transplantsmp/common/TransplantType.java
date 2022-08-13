@@ -3,6 +3,9 @@ package ml.ikwid.transplantsmp.common;
 import java.util.Objects;
 
 public enum TransplantType {
+	/**
+	 * Hearts
+	 */
 	HEART_TRANSPLANT("Heart Transplant", """
 		Hearts.
 		
@@ -11,6 +14,9 @@ public enum TransplantType {
 		
 		Standard Lifesteal.
 		"""),
+	/**
+	 * Hotbar slots
+	 */
 	ARM_TRANSPLANT("Arm Transplant", """
 		Hotbar slots.
 		
@@ -19,6 +25,9 @@ public enum TransplantType {
 		
 		Can be hotkeyed.
 		"""),
+	/**
+	 * Armor bars
+	 */
 	SKIN_TRANSPLANT("Skin Transplant", """
 		Armor bars.
 
@@ -32,6 +41,9 @@ public enum TransplantType {
 		
 		Having less than 10 bars by dying will reduce the effect of the first set of armor.
 		"""),
+	/**
+	 * Hunger bars
+	 */
 	STOMACH_TRANSPLANT("Stomach Transplant", """
 		Hunger bars.
 		

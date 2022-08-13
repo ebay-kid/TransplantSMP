@@ -3,11 +3,14 @@ package ml.ikwid.transplantsmp.mixin.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
+import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.slot.Slot;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,26 +18,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Objects;
 
 @Mixin(HandledScreen.class)
 public abstract class MixinHandledScreen {
 	@Shadow protected int x;
 	@Shadow protected int y;
 	@Shadow protected int backgroundHeight;
-	private ClientPlayerEntity player;// = MinecraftClient.getInstance().player;
-	private ITransplantable transplantable;// = (ITransplantable) player;
 	@SuppressWarnings("rawtypes")
 	private final HandledScreen self = (HandledScreen)(Object) this;
-
-	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 166, ordinal = 0))
-	private int renderShorterBackground(int constant) {
-		this.player = MinecraftClient.getInstance().player;
-		this.transplantable = (ITransplantable) (this.player);
-
-		TransplantSMP.LOGGER.info("set the shorter background space");
-		return constant - Constants.HOTBAR_SPACE_IN_INV_SCREEN;
-	}
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawBackground(Lnet/minecraft/client/util/math/MatrixStack;FII)V"))
 	private void renderHotbarSection(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
@@ -49,17 +44,41 @@ public abstract class MixinHandledScreen {
 		int bottom = y + height;
 		// TransplantSMP.LOGGER.info("render y: " + bottom);
 
-		int draws = transplantable.getHotbarDraws();
+		int draws = ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
 		for(int i = 0; i < draws; i++) {
-			self.drawTexture(matrices, x + transplantable.xShift() + (i * Constants.OUTER_SLOT_WIDTH), bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
+			self.drawTexture(matrices, x + ((ITransplantable) (MinecraftClient.getInstance().player)).xShift() + (i * Constants.OUTER_SLOT_WIDTH), bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 		}
 
 		// RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
 	}
 
+	@Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 0))
+	private int changeXHighlightRender(Slot slot) {
+		if(!(slot instanceof HotbarSlot hotbarSlot)) {
+			return slot.x;
+		}
+		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
+	}
+
+	@Redirect(method = "drawSlot", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 0))
+	private int changeXSlotRender1(Slot slot) {
+		if(!(slot instanceof HotbarSlot hotbarSlot)) {
+			return slot.x;
+		}
+		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
+	}
+
+	@Redirect(method = "drawSlot", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 1))
+	private int changeXSlotRender2(Slot slot) {
+		if(!(slot instanceof HotbarSlot hotbarSlot)) {
+			return slot.x;
+		}
+		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
+	}
+
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 9))
 	private int fixHotkey(int constant) {
-		return transplantable.getHotbarDraws();
+		return ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 40))
@@ -74,7 +93,7 @@ public abstract class MixinHandledScreen {
 
 	@ModifyConstant(method = "handleHotbarKeyPressed", constant = @Constant(intValue = 9))
 	private int fixHotkey2(int constant) {
-		return transplantable.getHotbarDraws();
+		return ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
 	}
 
 	/**

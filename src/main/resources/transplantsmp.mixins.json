@@ -4,18 +4,18 @@
   "package": "ml.ikwid.transplantsmp.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "player.MixinPlayerInventory",
+    "AccessorPlayerScreenHandler",
     "inventory.MixinSlot",
     "player.MixinLivingEntity",
     "player.MixinPlayerEntity",
+    "player.MixinPlayerInventory",
     "player.MixinPlayerManager",
     "player.MixinServerPlayerEntity",
     "player.specifics.MixinEntityAttributes",
     "player.specifics.MixinHungerManager",
     "screen.MixinGenericContainerScreenHandler",
     "screen.MixinPlayerScreenHandler",
-    "screen.MixinScreenHandler",
-    "screen.MixinScreenHandlerAccessor"
+    "screen.MixinScreenHandler"
   ],
   "client": [
     "hud.MixinDebugHud",

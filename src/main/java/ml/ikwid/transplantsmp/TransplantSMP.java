@@ -1,42 +1,43 @@
 package ml.ikwid.transplantsmp;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.command.CommandRegister;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
-import ml.ikwid.transplantsmp.common.networking.NetworkingConstants;
+import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
+import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerServer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TransplantSMP implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger("transplantsmp");
 
+	public static String VERSION;
+	public static int[] SEMVER;
+
 	@Override
 	public void onInitialize() {
+		FabricLoader.getInstance().getModContainer("transplantsmp").ifPresent(modContainer -> {
+			VERSION = modContainer.getMetadata().getVersion().getFriendlyString();
+			String[] versionSplit = VERSION.split("\\.");
+			SEMVER = new int[versionSplit.length];
+
+			for(int i = 0; i < SEMVER.length; i++) {
+				SEMVER[i] = Integer.parseInt(versionSplit[i]);
+			}
+		});
+
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandRegister.register(dispatcher));
 		ItemRegister.register();
 
-		ServerPlayNetworking.registerGlobalReceiver(NetworkingConstants.CHOOSE_TRANSPLANT_TYPE, ((server, player, handler, buf, responseSender) -> {
-			String chosenType = buf.readString(); // read before main thread always remember this
-			server.execute(() -> {
-				ITransplantable transplantable = (ITransplantable) player;
-				if(transplantable.getTransplantType() == null) {
-					TransplantType transplantType = TransplantType.get(chosenType);
+		ServerPlayNetworking.registerGlobalReceiver(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE, NetworkingHandlerServer::chosenTransplantType);
 
-					transplantable.setTransplantType(transplantType, false);
-					transplantable.setTransplantedAmount(0, true, true);
-
-
-					LOGGER.info("transplant chosen for " + player.getName().getString());
-				} else {
-					LOGGER.info("someone's being sussy and trying to change transplants (" + player.getName().getString() + ")!");
-				}
-			});
-		}));
-
+		ServerLoginConnectionEvents.QUERY_START.register(NetworkingHandlerServer::handshake);
+		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE, NetworkingHandlerServer::handleHandshakeServerSide);
 
 		LOGGER.info("time for medical transplants");
 	}

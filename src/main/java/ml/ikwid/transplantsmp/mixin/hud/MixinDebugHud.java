@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
-import ml.ikwid.transplantsmp.common.imixins.IHotbarScreenHandler;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
@@ -33,8 +32,5 @@ public abstract class MixinDebugHud {
 		}
 		ITransplantable transplantable = (ITransplantable) playerEntity;
 		debugText.add("transplant smp -- transplant type: " + transplantable.getTransplantType() + ", transplanted amt: " + transplantable.getTransplantedAmount() + ", hotbar draws: " + transplantable.getHotbarDraws());
-		if(playerEntity.currentScreenHandler != null) {
-			debugText.add("transplant smp -- max enabled slot: " + ((IHotbarScreenHandler) (playerEntity.currentScreenHandler)).getHighestEnabledSlot());
-		}
 	}
 }

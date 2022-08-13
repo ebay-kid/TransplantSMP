@@ -5,6 +5,7 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
+import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -87,6 +88,11 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
 	private void transplant(DamageSource damageSource, CallbackInfo ci) {
+		if(Utils.bannableAmount((ITransplantable) (this.self))) {
+			Utils.ban(this.self);
+			return;
+		}
+
 		this.transplantOrgan(false);
 		if(damageSource.getAttacker() instanceof ServerPlayerEntity) {
 			((ITransplantable) damageSource.getAttacker()).transplantOrgan(true);

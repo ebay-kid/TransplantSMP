@@ -1,19 +1,23 @@
 package ml.ikwid.transplantsmp.common.util;
 
+import ml.ikwid.transplantsmp.mixin.player.MixinPlayerInventory;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * See {@link MixinPlayerInventory} for the explanation of the inventory indices
+ * <p>
+ * Index values are 0 based
+ */
 public class Constants {
-	// See mixin/armtransplant/MixinPlayerInventory.java for the explanation
-	// Index value (0 based)
 	public static final int EXTRA_HOTBAR_START_LOC = 9;
 	public static final int NEW_ARMOR_START_LOC = EXTRA_HOTBAR_START_LOC + 36; // 9 for the hotbar, 27 for the rest of inv
 	public static final int EXTRA_ARMOR_START_LOC = NEW_ARMOR_START_LOC + 4;
 	public static final int OFF_HAND = EXTRA_ARMOR_START_LOC + 4;
 
 	// Other constants for render use
-	public static final int OUTER_SLOT_WIDTH = 21;
+	public static final int OUTER_SLOT_WIDTH = 22;
 	public static final int INNER_SLOT_WIDTH = 18;
 	public static final int OUTER_SLOT_HEIGHT = 22;
 	public static final int HOTBAR_SPACE_IN_INV_SCREEN = 25;

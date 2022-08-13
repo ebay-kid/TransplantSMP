@@ -22,13 +22,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
+ * In vanilla, here are the normal slot number layouts:
+ *
+ * <pre>
+ * HOTBAR: 0 - 8
+ * MAIN: 9 - 35
+ * ARMOR: 36 - 39 (36 head -> 39 foot)
+ * OFF HAND: 40
+ * </pre>
  * Under this mixin, here are the new slot number layouts:
+ *
+ * <pre>
  * VANILLA HOTBAR: 0 - 8
  * ADDON HOTBAR: 9 - 17
  * MAIN: 18 - 44
- * ARMOR: 45 - 48
- * EXTRA ARMOR SLOTS: 49 - 52
+ * ARMOR: 45 - 48 (45 head -> 48 foot)
+ * EXTRA ARMOR SLOTS: 49 - 52 (49 head -> 52 foot)
  * OFF HAND: 53
+ *
+ * </pre>
+ *
+ * See {@link Constants} for the impl.
  */
 @Mixin(PlayerInventory.class)
 public abstract class MixinPlayerInventory {
@@ -93,9 +107,7 @@ public abstract class MixinPlayerInventory {
 
 	@ModifyConstant(method = "isValidHotbarIndex", constant = @Constant(intValue = 9, ordinal = 0))
 	private static int increaseCheckedHotbar(int constant) {
-		return 18;
-		// this is incredibly janky and it would be more hack-proof to redirect the 8 method calls, but more code
-		// the current plan is to just... not enable the hotkeys to disabled slots
+		return 18; // This doesn't matter because the hotkeys won't work for slots above the actually allowed amount.
 	}
 
 	/**

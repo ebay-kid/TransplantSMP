@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.common.command;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.context.CommandContext;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import net.minecraft.command.CommandException;
@@ -10,6 +11,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.util.List;
+
 public class CmdInventoryDump {
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		ServerPlayerEntity player = ctx.getSource().getPlayer();
@@ -19,26 +22,13 @@ public class CmdInventoryDump {
 		PlayerInventory inventory = player.getInventory();
 		TransplantSMP.LOGGER.info("Inventory dump for " + player.getName().getString() + ":");
 
-		TransplantSMP.LOGGER.info("Main: ");
-		DefaultedList<ItemStack> main = inventory.main;
-		for(int i = 0; i < main.size(); i++) {
-			TransplantSMP.LOGGER.info(i + ": " + main.get(i++) + ", " + i + ": " + main.get(i));
-		}
+		List<DefaultedList<ItemStack>> combinedInventory = ImmutableList.of(inventory.main, inventory.armor, inventory.offHand);
+		int idx = 0;
 
-		if(main.size() % 2 == 1) {
-			TransplantSMP.LOGGER.info(main.size() - 1 + ": " + main.get(main.size() - 1));
-		}
-
-		TransplantSMP.LOGGER.info("Armor: ");
-		DefaultedList<ItemStack> armor = inventory.armor;
-		for(int i = 0; i < armor.size(); i++) {
-			TransplantSMP.LOGGER.info(i + ": " + armor.get(i));
-		}
-
-		TransplantSMP.LOGGER.info("Off Hand: ");
-		DefaultedList<ItemStack> offhand = inventory.offHand;
-		for(int i = 0; i < offhand.size(); i++) {
-			TransplantSMP.LOGGER.info(i + ": " + offhand.get(i));
+		for (DefaultedList<ItemStack> defaultedList : combinedInventory) {
+			for (ItemStack itemStack : defaultedList) {
+				TransplantSMP.LOGGER.info(idx++ + ": " + itemStack);
+			}
 		}
 
 		return 1;

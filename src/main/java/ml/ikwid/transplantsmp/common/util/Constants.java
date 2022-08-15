@@ -13,8 +13,8 @@ import org.lwjgl.glfw.GLFW;
 public class Constants {
 	public static final int EXTRA_HOTBAR_START_LOC = 9;
 	public static final int NEW_ARMOR_START_LOC = EXTRA_HOTBAR_START_LOC + 36; // 9 for the hotbar, 27 for the rest of inv
-	public static final int EXTRA_ARMOR_START_LOC = NEW_ARMOR_START_LOC + 4;
-	public static final int OFF_HAND = EXTRA_ARMOR_START_LOC + 4;
+	public static final int OFF_HAND = NEW_ARMOR_START_LOC + 4;
+	public static final int EXTRA_ARMOR_START_LOC = OFF_HAND + 1;
 
 	// Other constants for render use
 	public static final int OUTER_SLOT_WIDTH = 22;

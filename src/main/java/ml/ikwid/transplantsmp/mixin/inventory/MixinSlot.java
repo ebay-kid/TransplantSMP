@@ -36,6 +36,4 @@ public abstract class MixinSlot implements ISlotTransplanted {
 	public void setIndex(int index) {
 		this.index = index;
 	}
-
-
 }

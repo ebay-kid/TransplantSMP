@@ -1,15 +1,18 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -24,12 +27,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(HandledScreen.class)
-public abstract class MixinHandledScreen {
+public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen implements ScreenHandlerProvider<T> {
 	@Shadow protected int x;
 	@Shadow protected int y;
 	@Shadow protected int backgroundHeight;
+
+	@Shadow public abstract T getScreenHandler();
+
+	protected MixinHandledScreen(Text title) {
+		super(title);
+	}
+
 	@SuppressWarnings("rawtypes")
 	private final HandledScreen self = (HandledScreen)(Object) this;
+
+	private static final boolean DEBUG = true;
+	@Inject(method = "render", at = @At("TAIL"))
+	private void debug(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		if(DEBUG) {
+			for(Slot slot : this.getScreenHandler().slots) {
+				if(slot != null) {
+					this.textRenderer.draw(matrices, Text.of("" + slot.getIndex()), slot.x + this.x, slot.y + this.y, 0xFFFFFF);
+				}
+			}
+		}
+	}
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawBackground(Lnet/minecraft/client/util/math/MatrixStack;FII)V"))
 	private void renderHotbarSection(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
@@ -45,13 +67,14 @@ public abstract class MixinHandledScreen {
 		// TransplantSMP.LOGGER.info("render y: " + bottom);
 
 		int draws = ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
-		for(int i = 0; i < draws; i++) {
-			self.drawTexture(matrices, x + ((ITransplantable) (MinecraftClient.getInstance().player)).xShift() + (i * Constants.OUTER_SLOT_WIDTH), bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
+		for(int i = 0; i < Math.max(draws - 9, 0); i++) {
+			self.drawTexture(matrices, x + i * Constants.OUTER_SLOT_WIDTH, bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 		}
 
 		// RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
 	}
 
+	/*
 	@Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 0))
 	private int changeXHighlightRender(Slot slot) {
 		if(!(slot instanceof HotbarSlot hotbarSlot)) {
@@ -75,6 +98,7 @@ public abstract class MixinHandledScreen {
 		}
 		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
 	}
+	*/
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 9))
 	private int fixHotkey(int constant) {

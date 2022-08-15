@@ -8,18 +8,26 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * In vanilla, here are the normal slot number layouts:
@@ -37,8 +45,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * ADDON HOTBAR: 9 - 17
  * MAIN: 18 - 44
  * ARMOR: 45 - 48 (45 head -> 48 foot)
- * EXTRA ARMOR SLOTS: 49 - 52 (49 head -> 52 foot)
- * OFF HAND: 53
+ * OFF HAND: 49 <-- this took me way too long to figure out because apparently packing the extra armor behind it was causing sync issues.
+ * EXTRA ARMOR SLOTS: 50 - 53 (50 head -> 53 foot)
  *
  * </pre>
  *
@@ -52,12 +60,25 @@ public abstract class MixinPlayerInventory {
 
 	@Shadow @Final public DefaultedList<ItemStack> main;
 
+	@Mutable @Shadow @Final private List<DefaultedList<ItemStack>> combinedInventory;
+
+	@Unique
+	public final DefaultedList<ItemStack> secondaryArmor = DefaultedList.ofSize(4, ItemStack.EMPTY);
+
 	@Shadow
 	public static boolean isValidHotbarIndex(int slot) {
 		throw new AssertionError();
 	}
 
 	private ITransplantable transplantable;
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void expandCombinedInventory(PlayerEntity player, CallbackInfo ci) {
+		var mutable = new ArrayList<>(this.combinedInventory);
+		mutable.add(this.secondaryArmor); // h
+
+		this.combinedInventory = mutable;
+	}
 
 	@Inject(method = "getHotbarSize", at = @At(value = "HEAD"), cancellable = true)
 	private static void customHotbarSize(CallbackInfoReturnable<Integer> cir) {
@@ -69,14 +90,35 @@ public abstract class MixinPlayerInventory {
 		return 45;
 	}
 
-	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;ofSize(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;", ordinal = 1), index = 0)
-	private int fixArmorSlots(int size) {
-		return 4;
-	}
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void setPlayer(PlayerEntity player, CallbackInfo ci) {
 		this.transplantable = (ITransplantable) player;
+	}
+
+	@Inject(method = "writeNbt", at = @At("TAIL"))
+	private void writeExtraArmor(NbtList nbtList, CallbackInfoReturnable<NbtList> cir) {
+		for (ItemStack itemStack : this.secondaryArmor) {
+			if (itemStack.isEmpty()) {
+				continue;
+			}
+			NbtCompound nbtCompound = new NbtCompound();
+			itemStack.writeNbt(nbtCompound); // why does it return when it... writes straight to it?
+			nbtList.add(nbtCompound);
+		}
+	}
+
+	@Redirect(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtList;size()I"))
+	private int returnLess(NbtList instance) {
+		return instance.size() - 4; // loool
+	}
+
+	@Inject(method = "readNbt", at = @At("TAIL"))
+	private void readExtraArmor(NbtList nbtList, CallbackInfo ci) {
+		int size = nbtList.size();
+		for(int i = 0; i < 4; i++) { // more scuff
+			NbtCompound nbtCompound = nbtList.getCompound(size - 4 + i);
+			this.secondaryArmor.set(i, ItemStack.fromNbt(nbtCompound));
+		}
 	}
 
 	/**

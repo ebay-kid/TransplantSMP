@@ -44,10 +44,10 @@ public abstract class MixinScreenHandler {
 					if (index < 9) {
 						// TransplantSMP.LOGGER.info("it is also a hotbar slot");
 
-						slot = new HotbarSlot(playerInventory, index, Utils.calcSlotXShiftArb(((ITransplantable)(playerInventory.player)).getHotbarDraws(), index), slot.y);
+						slot = new HotbarSlot(playerInventory, index, slot.x, slot.y);
 
 						// instead of doing it at the start, just do it here 5Head
-						this.addSlot(new HotbarSlot(playerInventory, index + 9, slot.x, slot.y)); // add those other ones 5Head
+						this.addSlot(new HotbarSlot(playerInventory, index + 9, slot.x, slot.y + Constants.OUTER_SLOT_HEIGHT)); // add those other ones 5Head
 
 						// TransplantSMP.LOGGER.info("New: " + slot.x + ", " + slot.y);
 					} else if (index < 36) {

@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.player.specifics;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;

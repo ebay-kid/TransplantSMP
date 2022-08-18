@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.EquipmentSlot;
@@ -21,7 +20,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -73,6 +71,7 @@ public abstract class MixinPlayerInventory {
 
 	private ITransplantable transplantable;
 
+	@SuppressWarnings("rawtypes")
 	@Redirect(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;clear()V", ordinal = 0))
 	private void noClear(DefaultedList instance) { // LLLL even though i don't need it i don't think
 	}
@@ -176,7 +175,7 @@ public abstract class MixinPlayerInventory {
 					continue;
 				}
 			}
-			if(((ItemStack)(this.main.get(i))).isEmpty()) {
+			if(this.main.get(i).isEmpty()) {
 				return i;
 			}
 		}

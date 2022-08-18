@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(PlayerScreenHandler.class)
 public interface AccessorPlayerScreenHandler {
 	@Accessor("EQUIPMENT_SLOT_ORDER")
-	public static EquipmentSlot[] getEquipmentSlotOrder() {
+	static EquipmentSlot[] getEquipmentSlotOrder() {
 		throw new AssertionError();
 	}
 
 	@Accessor("EMPTY_ARMOR_SLOT_TEXTURES")
-	public static Identifier[] getEmptyArmorSlotTextures() {
+	static Identifier[] getEmptyArmorSlotTextures() {
 		throw new AssertionError();
 	}
 }

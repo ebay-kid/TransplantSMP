@@ -1,9 +1,7 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
 public class HotbarSlot extends Slot {
@@ -32,9 +30,7 @@ public class HotbarSlot extends Slot {
 	*/
 	@Override
 	public boolean isEnabled() {
-		boolean bl = this.getIndex() < this.transplantable.getHotbarDraws();
-		// TransplantSMP.LOGGER.info("Hotbar slot " + this.getIndex() + " is " + bl);
-		return bl;
+		return this.getIndex() < this.transplantable.getHotbarDraws();
 	}
 
 	/*

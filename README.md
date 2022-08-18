@@ -58,3 +58,5 @@ https://www.youtube.com/playlist?list=PL5biciXbHO_xIDkh_xhxcY0TBVdb-MJ9G
 
 ##### Mod compatibility:
 Unknown.
+
+~~Wrecking mod compat, one line at a time.~~

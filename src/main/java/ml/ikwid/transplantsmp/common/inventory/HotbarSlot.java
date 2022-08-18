@@ -14,6 +14,7 @@ public class HotbarSlot extends Slot {
 		this.transplantable = (ITransplantable) (inventory.player);
 	}
 
+	/*
 	@Override
 	public boolean canInsert(ItemStack stack) {
 		return this.isEnabled();
@@ -28,7 +29,7 @@ public class HotbarSlot extends Slot {
 	public boolean canTakeItems(PlayerEntity playerEntity) {
 		return this.isEnabled();
 	}
-
+	*/
 	@Override
 	public boolean isEnabled() {
 		boolean bl = this.getIndex() < this.transplantable.getHotbarDraws();
@@ -36,12 +37,10 @@ public class HotbarSlot extends Slot {
 		return bl;
 	}
 
+	/*
 	@Override
 	public boolean canTakePartial(PlayerEntity player) {
 		return this.isEnabled() && super.canTakePartial(player);
 	}
-
-	public ITransplantable getTransplantable() {
-		return this.transplantable;
-	}
+	*/
 }

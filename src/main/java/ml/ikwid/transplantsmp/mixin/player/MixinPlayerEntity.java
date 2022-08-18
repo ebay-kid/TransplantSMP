@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,6 +28,7 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 		this.transplanted = organs;
 		if(illegalTransplantAmount()) {
 			this.transplanted = prev;
+			TransplantSMP.LOGGER.info("illegal amount of " + organs);
 			return;
 		}
 		this.updateTransplants(updateGeneral, updateAll);

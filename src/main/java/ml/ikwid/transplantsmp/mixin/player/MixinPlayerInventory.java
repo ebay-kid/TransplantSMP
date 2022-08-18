@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.EquipmentSlot;
@@ -58,7 +59,7 @@ public abstract class MixinPlayerInventory {
 
 	@Shadow @Final public DefaultedList<ItemStack> armor;
 
-	@Shadow @Final public DefaultedList<ItemStack> main;
+	@Mutable @Shadow @Final public DefaultedList<ItemStack> main;
 
 	@Mutable @Shadow @Final private List<DefaultedList<ItemStack>> combinedInventory;
 
@@ -72,10 +73,17 @@ public abstract class MixinPlayerInventory {
 
 	private ITransplantable transplantable;
 
+	@Redirect(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;clear()V", ordinal = 0))
+	private void noClear(DefaultedList instance) { // LLLL even though i don't need it i don't think
+	}
+
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void expandCombinedInventory(PlayerEntity player, CallbackInfo ci) {
 		var mutable = new ArrayList<>(this.combinedInventory);
 		mutable.add(this.secondaryArmor); // h
+
+		this.main = DefaultedList.ofSize(45, ItemStack.EMPTY);
+		mutable.set(0, this.main);
 
 		this.combinedInventory = mutable;
 	}
@@ -85,10 +93,12 @@ public abstract class MixinPlayerInventory {
 		cir.setReturnValue(18);
 	}
 
+	/*
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;ofSize(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;", ordinal = 0), index = 0)
 	private int fixInvSize(int size) {
 		return 45;
 	}
+	*/
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void setPlayer(PlayerEntity player, CallbackInfo ci) {
@@ -119,6 +129,8 @@ public abstract class MixinPlayerInventory {
 			NbtCompound nbtCompound = nbtList.getCompound(size - 4 + i);
 			this.secondaryArmor.set(i, ItemStack.fromNbt(nbtCompound));
 		}
+
+		// and also
 	}
 
 	/**
@@ -164,7 +176,7 @@ public abstract class MixinPlayerInventory {
 					continue;
 				}
 			}
-			if(this.main.get(i).isEmpty()) {
+			if(((ItemStack)(this.main.get(i))).isEmpty()) {
 				return i;
 			}
 		}

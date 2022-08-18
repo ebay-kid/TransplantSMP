@@ -2,9 +2,7 @@ package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
-import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
-import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -13,7 +11,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
@@ -70,35 +66,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		for(int i = 0; i < Math.max(draws - 9, 0); i++) {
 			self.drawTexture(matrices, x + i * Constants.OUTER_SLOT_WIDTH, bottom, 0, 0, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
 		}
-
-		// RenderSystem.setShaderTexture(0, HandledScreen.BACKGROUND_TEXTURE); // fix it for the rest of the code
 	}
-
-	/*
-	@Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 0))
-	private int changeXHighlightRender(Slot slot) {
-		if(!(slot instanceof HotbarSlot hotbarSlot)) {
-			return slot.x;
-		}
-		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
-	}
-
-	@Redirect(method = "drawSlot", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 0))
-	private int changeXSlotRender1(Slot slot) {
-		if(!(slot instanceof HotbarSlot hotbarSlot)) {
-			return slot.x;
-		}
-		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
-	}
-
-	@Redirect(method = "drawSlot", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/Slot;x:I", opcode = Opcodes.GETFIELD, ordinal = 1))
-	private int changeXSlotRender2(Slot slot) {
-		if(!(slot instanceof HotbarSlot hotbarSlot)) {
-			return slot.x;
-		}
-		return Utils.calcSlotXShiftArb(hotbarSlot.getTransplantable().getHotbarDraws(), hotbarSlot.getIndex());
-	}
-	*/
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 9))
 	private int fixHotkey(int constant) {

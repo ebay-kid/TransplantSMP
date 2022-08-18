@@ -38,12 +38,12 @@ public class ArmorSlot extends Slot {
 
 	@Override
 	public int getMaxItemCount() {
-		return this.isEnabled() ? 1 : 0;
+		return /*this.isEnabled() ? 1 : 0;*/ 1;
 	}
 
 	@Override
 	public boolean canInsert(ItemStack stack) {
-		return equipmentSlot == MobEntity.getPreferredEquipmentSlot(stack) && this.isEnabled();
+		return equipmentSlot == MobEntity.getPreferredEquipmentSlot(stack) /*&& this.isEnabled()*/;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ArmorSlot extends Slot {
 		if (!itemStack.isEmpty() && !playerEntity.isCreative() && EnchantmentHelper.hasBindingCurse(itemStack)) {
 			return false;
 		}
-		return super.canTakeItems(playerEntity) && this.isEnabled();
+		return super.canTakeItems(playerEntity) /*&& this.isEnabled()*/;
 	}
 
 	@Override

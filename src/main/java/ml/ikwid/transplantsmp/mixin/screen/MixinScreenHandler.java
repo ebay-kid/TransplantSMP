@@ -2,11 +2,9 @@ package ml.ikwid.transplantsmp.mixin.screen;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ISlotTransplanted;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.inventory.ArmorSlot;
 import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
-import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
@@ -42,22 +40,23 @@ public abstract class MixinScreenHandler {
 					}
 				} else { // standard other 27 inventory slots
 					if (index < 9) {
-						// TransplantSMP.LOGGER.info("it is also a hotbar slot");
+						TransplantSMP.LOGGER.info("it is also a hotbar slot");
 
 						slot = new HotbarSlot(playerInventory, index, slot.x, slot.y);
 
 						// instead of doing it at the start, just do it here 5Head
-						this.addSlot(new HotbarSlot(playerInventory, index + 9, slot.x, slot.y + Constants.OUTER_SLOT_HEIGHT)); // add those other ones 5Head
-
-						// TransplantSMP.LOGGER.info("New: " + slot.x + ", " + slot.y);
+						this.addSlot(new HotbarSlot(playerInventory, index + 9, slot.x, slot.y + Constants.HOTBAR_SPACE_IN_INV_SCREEN)); // add those other ones 5Head
 					} else if (index < 36) {
+						TransplantSMP.LOGGER.info("shift inv slot index");
 						((ISlotTransplanted) slot).setIndex(index + 9);
 					} else if (index == 40) {
-						// TransplantSMP.LOGGER.info("it is the off hand");
+						TransplantSMP.LOGGER.info("it is the off hand");
 						slot = new Slot(playerInventory, Constants.OFF_HAND, slot.x, slot.y);
 					}
 				}
 			}
+
+			TransplantSMP.LOGGER.info("New: " + slot.getIndex() + " at " + slot.x + ", " + slot.y);
 		}
 
 		slot.id = id;

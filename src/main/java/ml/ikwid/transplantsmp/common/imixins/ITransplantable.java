@@ -10,9 +10,9 @@ public interface ITransplantable {
 		int transplants = this.getTransplantedAmount();
 
 		if(this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
-			return transplants >= 18 || transplants <= -18;
+			return transplants > 18 || transplants <= -18;
 		}
-		return transplants >= 20 || transplants <= -20;
+		return transplants > 20 || transplants <= -20;
 	}
 
 	int getTransplantedAmount();

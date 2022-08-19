@@ -49,10 +49,10 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		}
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawBackground(Lnet/minecraft/client/util/math/MatrixStack;FII)V"))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawBackground(Lnet/minecraft/client/util/math/MatrixStack;FII)V", shift = At.Shift.AFTER))
 	private void renderHotbarSection(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		// draw hotbar ourselves with the exact same texture as the HUD because I'm slightly lazy
-		RenderSystem.setShaderTexture(0, Constants.WIDGETS_TEXTURE);
+		// RenderSystem.setShaderTexture(0, Constants.WIDGETS_TEXTURE);
 
 		int x = this.x;
 		int y = this.y;

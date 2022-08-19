@@ -26,6 +26,7 @@ public abstract class MixinScreenHandler {
 	private boolean handleSpecialSlots(DefaultedList instance, Object o) {
 		Slot slot = (Slot) o;
 		int id = slot.id;
+		boolean shouldAddLater = false;
 
 		// TransplantSMP.LOGGER.info("Slot num: " + slot.getIndex());
 
@@ -38,19 +39,20 @@ public abstract class MixinScreenHandler {
 					if(index < 40) {
 						slot = new ArmorSlot(playerInventory, slot.getIndex() + 9, slot.x, slot.y);
 					}
-				} else { // standard other 27 inventory slots
+				} else {
 					if (index < 9) {
-						TransplantSMP.LOGGER.info("it is also a hotbar slot");
+						// TransplantSMP.LOGGER.info("it is also a hotbar slot");
 
 						slot = new HotbarSlot(playerInventory, index, slot.x, slot.y);
 
-						// instead of doing it at the start, just do it here 5Head
-						this.addSlot(new HotbarSlot(playerInventory, index + 9, slot.x, slot.y + Constants.HOTBAR_SPACE_IN_INV_SCREEN)); // add those other ones 5Head
+						if(index == 8) { // hopefully not a futile attempt to fix the bug
+							shouldAddLater = true;
+						}
 					} else if (index < 36) {
-						TransplantSMP.LOGGER.info("shift inv slot index");
+						// TransplantSMP.LOGGER.info("shift inv slot index");
 						((ISlotTransplanted) slot).setIndex(index + 9);
 					} else if (index == 40) {
-						TransplantSMP.LOGGER.info("it is the off hand");
+						// TransplantSMP.LOGGER.info("it is the off hand");
 						slot = new Slot(playerInventory, Constants.OFF_HAND, slot.x, slot.y);
 					}
 				}
@@ -60,7 +62,14 @@ public abstract class MixinScreenHandler {
 		}
 
 		slot.id = id;
-		return instance.add(slot);
+		TransplantSMP.LOGGER.info("index is 8, adding extra slots.");
+		boolean instanceAdd = instance.add(slot);
+		if(shouldAddLater) {
+			for (int i = 9; i < 18; i++) {
+				this.addSlot(new HotbarSlot((PlayerInventory) (slot.inventory), i, 8 + (i - 9) * 18, slot.y + 30));
+			}
+		}
+		return instanceAdd;
 	}
 
 	@Redirect(method = "internalOnSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z"))

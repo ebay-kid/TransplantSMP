@@ -36,9 +36,6 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		super(title);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private final HandledScreen self = (HandledScreen)(Object) this;
-
 	private static final boolean DEBUG = true;
 	@Inject(method = "render", at = @At("TAIL"))
 	private void debug(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
@@ -60,9 +57,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		int y = this.y;
 		int height = this.backgroundHeight;
 
-		// TransplantSMP.LOGGER.info("bg height: " + height);
 		int bottom = y + height;
-		// TransplantSMP.LOGGER.info("render y: " + bottom);
 
 		int draws = ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
 		if(draws > 9) {
@@ -91,8 +86,10 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 	}
 
 	/**
+	 * Slight side effect of forcing you to use the drop button but idc that's the superior way
+	 *
 	 * @author 6Times
-	 * @reason For Arm/Skin Transplant users to access their slots.
+	 * @reason Allow Arm/Skin transplant users to click outside of bounds
 	 */
 	@Overwrite
 	protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {

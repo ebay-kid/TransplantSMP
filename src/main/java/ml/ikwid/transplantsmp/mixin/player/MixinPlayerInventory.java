@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
+import ml.ikwid.transplantsmp.common.imixins.IPlayerInventoryTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.EquipmentSlot;
@@ -52,7 +53,7 @@ import java.util.List;
  * See {@link Constants} for the impl.
  */
 @Mixin(PlayerInventory.class)
-public abstract class MixinPlayerInventory {
+public abstract class MixinPlayerInventory implements IPlayerInventoryTransplanted {
 	@Shadow @Final public PlayerEntity player;
 
 	@Shadow @Final public DefaultedList<ItemStack> armor;
@@ -225,5 +226,10 @@ public abstract class MixinPlayerInventory {
 	@ModifyConstant(method = "getOccupiedSlotWithRoomForStack", constant = @Constant(intValue = 40, ordinal = 1))
 	private int changeOffHandSlot2(int constant) {
 		return Constants.OFF_HAND;
+	}
+
+	@Override
+	public DefaultedList<ItemStack> getSecondaryArmor() {
+		return this.secondaryArmor;
 	}
 }

@@ -1,8 +1,10 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.inventory.ArmorSlot;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -23,15 +25,14 @@ public abstract class MixinPlayerScreenHandler extends ScreenHandler {
 		super(type, syncId);
 	}
 
-	private final PlayerScreenHandler self = (PlayerScreenHandler)(Object) this;
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void addExtraArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		ITransplantable transplantable = (ITransplantable) owner;
 
 		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+			TransplantSMP.LOGGER.info("adding 4 extra armor slots");
 			for(int i = 0; i < 4; i++) {
-				this.addSlot(new ArmorSlot(inventory, 48 - i, -10, 9 + i * 18));
+				this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 30, 9 + i * 18));
 			}
 		}
 	}

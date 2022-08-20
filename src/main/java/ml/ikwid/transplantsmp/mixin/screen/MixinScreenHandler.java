@@ -37,7 +37,7 @@ public abstract class MixinScreenHandler {
 			if(!(slot instanceof HotbarSlot)) { // if it's a hotbar slot, just skip as we dealt with it earlier
 				if(slot instanceof ArmorSlot) {
 					if(index < 40) {
-						TransplantSMP.LOGGER.info("armor slot initialized");
+						// TransplantSMP.LOGGER.info("armor slot initialized");
 						slot = new ArmorSlot(playerInventory, index + 9, slot.x, slot.y);
 					}
 				} else {
@@ -63,7 +63,7 @@ public abstract class MixinScreenHandler {
 		}
 
 		slot.id = id;
-		TransplantSMP.LOGGER.info("index is 8, adding extra slots.");
+		// TransplantSMP.LOGGER.info("index is 8, adding extra slots.");
 		boolean instanceAdd = instance.add(slot);
 		if(shouldAddLater) {
 			for (int i = 9; i < 18; i++) {
@@ -77,7 +77,7 @@ public abstract class MixinScreenHandler {
 	private boolean log(Slot instance, PlayerEntity playerEntity) {
 		boolean canTake = instance.canTakeItems(playerEntity);
 		if(instance.inventory instanceof PlayerInventory) {
-			TransplantSMP.LOGGER.info("Slot " + instance.getIndex() + " is " + canTake);
+			// TransplantSMP.LOGGER.info("Slot " + instance.getIndex() + " is " + canTake);
 		}
 		return canTake;
 	}

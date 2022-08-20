@@ -32,13 +32,13 @@ public class Utils {
 	}
 
 	/**
-	 * Given an arbitrary slot index and the number of draws needed, calculate the exact starting x (left-side) to draw the slot. Note that it is the SLOT, not the hotbar icon itself.
-	 * @param draws The total number of hotbar draws (see {@link ITransplantable#getHotbarDraws()})
-	 * @param slotIndex The being-drawn slot's index
-	 * @return The x of the left side of the slot (where drawing begins)
+	 * Scales armor toughness to the amount of armor bars.
+	 * @param toughness The original toughness
+	 * @param scaleTo The amount of armor bars the player has. This should be <20 because scaling upwards doesn't make sense in this mod's use case.
+	 * @return The scaled toughness
 	 */
-	public static int calcSlotXShiftArb(int draws, int slotIndex) {
-		return 8 + (slotIndex * Constants.INNER_SLOT_WIDTH) -((draws - 9) * Constants.INNER_SLOT_WIDTH / 2);
+	public static double scaleArmorToughness(double toughness, int scaleTo) {
+		return scaleTo >= 20 ? scaleTo : toughness * scaleTo / 20.0d;
 	}
 
 	public static boolean bannableAmount(ITransplantable transplantable) {

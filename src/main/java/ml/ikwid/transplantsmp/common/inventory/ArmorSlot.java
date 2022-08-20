@@ -3,6 +3,7 @@ package ml.ikwid.transplantsmp.common.inventory;
 import com.mojang.datafixers.util.Pair;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.mixin.AccessorPlayerScreenHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
@@ -36,12 +37,12 @@ public class ArmorSlot extends Slot {
 
 	@Override
 	public int getMaxItemCount() {
-		return /*this.isEnabled() ? 1 : 0;*/ 1;
+		return 1;
 	}
 
 	@Override
 	public boolean canInsert(ItemStack stack) {
-		return equipmentSlot == MobEntity.getPreferredEquipmentSlot(stack) /*&& this.isEnabled()*/;
+		return equipmentSlot == MobEntity.getPreferredEquipmentSlot(stack);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ArmorSlot extends Slot {
 		if (!itemStack.isEmpty() && !playerEntity.isCreative() && EnchantmentHelper.hasBindingCurse(itemStack)) {
 			return false;
 		}
-		return super.canTakeItems(playerEntity) /*&& this.isEnabled()*/;
+		return super.canTakeItems(playerEntity);
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public class ArmorSlot extends Slot {
 	@Override
 	public boolean isEnabled() {
 		boolean bl = true;
-		if(this.getIndex() > 39) {
+		if(this.getIndex() >= Constants.EXTRA_ARMOR_START_LOC) {
 			bl = transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT;
 		}
 		return bl;

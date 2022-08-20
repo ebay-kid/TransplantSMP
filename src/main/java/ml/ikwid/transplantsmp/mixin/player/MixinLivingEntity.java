@@ -23,8 +23,8 @@ public abstract class MixinLivingEntity {
 	private void changeArmorBarsAndToughness(Args args) {
 		if(self instanceof ServerPlayerEntity serverPlayerEntity && ((ITransplantable) serverPlayerEntity).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			ITransplantable transplantable = (ITransplantable) serverPlayerEntity;
-			int armorBars = args.get(1);
-			double toughness = args.get(2);
+			float armorBars = args.get(1);
+			float toughness = args.get(2);
 
 			if(transplantable.getTransplantedAmount() > 20) {
 				for (ItemStack itemStack : ((IPlayerInventoryTransplanted) (serverPlayerEntity.getInventory())).getSecondaryArmor()) {
@@ -33,7 +33,7 @@ public abstract class MixinLivingEntity {
 					toughness += armorItem.getToughness();
 				}
 			} else {
-				toughness = Utils.scaleArmorToughness(toughness, transplantable.getTransplantedAmount() + 20);
+				toughness = (float) Utils.scaleArmorToughness(toughness, transplantable.getTransplantedAmount() + 20);
 			}
 			args.set(1, Math.min(transplantable.getTransplantedAmount() + 20, armorBars));
 			args.set(2, toughness);

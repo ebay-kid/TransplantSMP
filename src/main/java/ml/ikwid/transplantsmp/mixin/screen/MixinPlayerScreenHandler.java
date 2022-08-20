@@ -25,21 +25,20 @@ public abstract class MixinPlayerScreenHandler extends ScreenHandler {
 		super(type, syncId);
 	}
 
+
+
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void addExtraArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
-		ITransplantable transplantable = (ITransplantable) owner;
-
-		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
-			TransplantSMP.LOGGER.info("adding 4 extra armor slots");
-			for(int i = 0; i < 4; i++) {
-				this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 30, 9 + i * 18));
-			}
+		TransplantSMP.LOGGER.info("adding 4 extra armor slots");
+		for(int i = 0; i < 4; i++) {
+			this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 30, 9 + i * 18));
 		}
 	}
 
+
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 2))
 	private Slot antiAnonymous(Slot slot) {
-		return new ArmorSlot(slot.inventory, slot.getIndex(), slot.x, slot.y);
+		return new ArmorSlot(slot.inventory, slot.getIndex() + 9, slot.x, slot.y); // we do it here because it initializes here and i don't wanna deal with it somewhere else
 	}
 
 	/*

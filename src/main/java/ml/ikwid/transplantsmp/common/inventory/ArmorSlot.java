@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
 import com.mojang.datafixers.util.Pair;
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -25,7 +26,14 @@ public class ArmorSlot extends Slot {
 		super(inventory, index, x, y);
 		this.owner = ((PlayerInventory)(inventory)).player;
 		this.transplantable = (ITransplantable)(this.owner);
-		this.equipmentSlot = AccessorPlayerScreenHandler.getEquipmentSlotOrder()[(index <= 39 ? 39 : 48) - index];
+
+		// 45, 46, 47, 48 <- vanilla, 49 <- offhand, 50, 51, 52, 53 <- new
+		boolean isVanillaArmor = index <= Constants.NEW_ARMOR_START_LOC + 3;
+		TransplantSMP.LOGGER.info("index: " + index + ", isVanilla: " + isVanillaArmor);
+		int subtractIndex = (isVanillaArmor ? Constants.NEW_ARMOR_START_LOC : Constants.EXTRA_ARMOR_START_LOC) + 3;
+		TransplantSMP.LOGGER.info("subtractIdx: " + subtractIndex);
+
+		this.equipmentSlot = AccessorPlayerScreenHandler.getEquipmentSlotOrder()[subtractIndex - index];
 	}
 
 	@Override

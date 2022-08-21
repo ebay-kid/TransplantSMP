@@ -1,15 +1,10 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ISlotTransplanted;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.inventory.ArmorSlot;
 import ml.ikwid.transplantsmp.common.inventory.HotbarSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
@@ -22,16 +17,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinScreenHandler {
 	@Shadow protected abstract Slot addSlot(Slot slot);
 
-	private final ScreenHandler self = (ScreenHandler) (Object) this;
-
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Redirect(method = "addSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;add(Ljava/lang/Object;)Z", ordinal = 0))
 	private boolean handleSpecialSlots(DefaultedList instance, Object o) {
 		Slot slot = (Slot) o;
 		int id = slot.id;
 		boolean shouldAddHBSlotsLater = false;
-		boolean shouldAddArmorSlotsLater = false;
-
 		// TransplantSMP.LOGGER.info("Slot num: " + slot.getIndex());
 
 		if(slot.inventory instanceof PlayerInventory playerInventory) {
@@ -53,12 +44,8 @@ public abstract class MixinScreenHandler {
 				} else if (index == 40) {
 					// TransplantSMP.LOGGER.info("it is the off hand");
 					slot = new Slot(playerInventory, Constants.OFF_HAND, slot.x, slot.y);
-					shouldAddArmorSlotsLater = self instanceof PlayerScreenHandler;
 				}
 			}
-			shouldAddArmorSlotsLater &= ((ITransplantable)(playerInventory.player)).getTransplantType() == TransplantType.SKIN_TRANSPLANT;
-
-			// TransplantSMP.LOGGER.info("New: " + slot.getIndex() + " at " + slot.x + ", " + slot.y);
 		}
 
 		slot.id = id;
@@ -68,21 +55,8 @@ public abstract class MixinScreenHandler {
 			for (int i = 9; i < 18; i++) {
 				this.addSlot(new HotbarSlot((PlayerInventory) (slot.inventory), i, 8 + (i - 9) * 18, slot.y + Constants.HOTBAR_SPACE_IN_INV_SCREEN));
 			}
-		} else if(shouldAddArmorSlotsLater) {
-			TransplantSMP.LOGGER.info("adding 4 extra armor slots");
-			for(int i = 0; i < 4; i++) {
-				this.addSlot(new ArmorSlot(slot.inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 30, 9 + i * 18));
-			}
 		}
-		return instanceAdd;
-	}
 
-	@Redirect(method = "internalOnSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z"))
-	private boolean log(Slot instance, PlayerEntity playerEntity) {
-		boolean canTake = instance.canTakeItems(playerEntity);
-		if(instance.inventory instanceof PlayerInventory) {
-			// TransplantSMP.LOGGER.info("Slot " + instance.getIndex() + " is " + canTake);
-		}
-		return canTake;
+		return instanceAdd;
 	}
 }

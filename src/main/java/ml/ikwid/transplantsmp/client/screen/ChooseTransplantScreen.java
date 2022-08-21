@@ -62,7 +62,7 @@ public class ChooseTransplantScreen extends Screen {
 		super.render(matrices, mouseX, mouseY, delta);
 		String desc = TransplantType.transplantTypes[index].getDescription();
 		String[] descLines = desc.split("\n");
-		// TransplantSMP.LOGGER.info(descLines.length);
+
 		for(int i = 0; i < descLines.length; i++) {
 			textRenderer.draw(matrices, descLines[i], width / 3f, height / 2f + i * 20, 0xCCCCCC);
 		}

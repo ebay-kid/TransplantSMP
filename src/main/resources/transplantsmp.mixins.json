@@ -23,7 +23,8 @@
     "player.specifics.MixinGameOptions",
     "player.specifics.MixinMinecraftClient",
     "screen.MixinHandledScreen",
-    "screen.MixinInventoryScreen"
+    "screen.MixinInventoryScreen",
+    "screen.MixinRecipeBookWidget"
   ],
   "injectors": {
     "defaultRequire": 1

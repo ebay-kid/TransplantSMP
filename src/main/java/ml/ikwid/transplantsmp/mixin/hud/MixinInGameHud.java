@@ -149,23 +149,22 @@ public abstract class MixinInGameHud {
 		}
 	}
 
-	/*
+
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 2), index = 1)
 	private int rightOffHandShift(int x) {
-		if(this.transplantable == null) {
+		if(this.client.player == null) {
 			return x;
 		}
-		return x + transplantable.xShift();
+		return x + ((ITransplantable)(this.client.player)).xShift();
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 3), index = 1)
 	private int leftOffHandShift(int x) {
-		if(this.transplantable == null) {
+		if(this.client.player == null) {
 			return x;
 		}
-		return x - transplantable.xShift(); // not sure about this one
+		return x - ((ITransplantable)(this.client.player)).xShift(); // not sure about this one
 	}
-	*/
 
 	@Inject(method = "renderStatusBars", at = @At("TAIL"))
 	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) {

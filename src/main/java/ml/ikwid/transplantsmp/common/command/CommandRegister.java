@@ -46,6 +46,10 @@ public class CommandRegister {
 			.literal("invdump")
 			.executes(CmdInventoryDump::run)
 			.build();
+		LiteralCommandNode<ServerCommandSource> getArmorInfo = CommandManager
+			.literal("armor")
+			.executes(CmdGetArmorInfo::run)
+			.build();
 
 		dispatcher.getRoot().addChild(transplantSMP);
 		dispatcher.getRoot().addChild(alias);
@@ -54,5 +58,6 @@ public class CommandRegister {
 		transplantSMP.addChild(setTransplantType);
 		transplantSMP.addChild(getOrganItem);
 		transplantSMP.addChild(dumpInventory);
+		transplantSMP.addChild(getArmorInfo);
 	}
 }

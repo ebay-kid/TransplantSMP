@@ -27,10 +27,10 @@ public class ArmorSlot extends Slot {
 		this.owner = ((PlayerInventory)(inventory)).player;
 		this.transplantable = (ITransplantable)(this.owner);
 
-		// 45, 46, 47, 48 <- vanilla, 49 <- offhand, 50, 51, 52, 53 <- new
-		boolean isVanillaArmor = index <= Constants.NEW_ARMOR_START_LOC + 3;
-		TransplantSMP.LOGGER.info("index: " + index + ", isVanilla: " + isVanillaArmor);
-		int subtractIndex = (isVanillaArmor ? Constants.NEW_ARMOR_START_LOC : Constants.EXTRA_ARMOR_START_LOC) + 3;
+		// 45, 46, 47, 48 <- new, 49, 50, 51, 52 <- vanilla, 53 <- offhand
+		boolean isExtraArmor = index <= Constants.EXTRA_ARMOR_START_LOC + 3;
+		TransplantSMP.LOGGER.info("index: " + index + ", isExtraArmor: " + isExtraArmor);
+		int subtractIndex = (isExtraArmor ? Constants.EXTRA_ARMOR_START_LOC : Constants.NEW_ARMOR_START_LOC) + 3;
 		TransplantSMP.LOGGER.info("subtractIdx: " + subtractIndex);
 
 		this.equipmentSlot = AccessorPlayerScreenHandler.getEquipmentSlotOrder()[subtractIndex - index];

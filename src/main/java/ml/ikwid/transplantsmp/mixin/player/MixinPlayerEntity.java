@@ -15,8 +15,6 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 	@Unique
 	protected int transplanted = 0;
 
-	private final PlayerEntity self = (PlayerEntity)(Object) this;
-
 	@Override
 	public int getTransplantedAmount() {
 		return this.transplanted;

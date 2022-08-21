@@ -4,12 +4,14 @@ import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(DebugHud.class)
 public abstract class MixinDebugHud {
@@ -32,5 +34,6 @@ public abstract class MixinDebugHud {
 		}
 		ITransplantable transplantable = (ITransplantable) playerEntity;
 		debugText.add("transplant smp -- transplant type: " + transplantable.getTransplantType() + ", transplanted amt: " + transplantable.getTransplantedAmount() + ", hotbar draws: " + transplantable.getHotbarDraws());
+		debugText.add("armor info -- active bars: " + Objects.requireNonNull(playerEntity).getArmor() + ", toughness: " + playerEntity.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS) + ", anti kb: " + playerEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
 	}
 }

@@ -1,8 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.inventory.ArmorSlot;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,51 +23,16 @@ public abstract class MixinPlayerScreenHandler extends ScreenHandler {
 		super(type, syncId);
 	}
 
-
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void addExtraArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		TransplantSMP.LOGGER.info("adding 4 extra armor slots");
 		for(int i = 0; i < 4; i++) {
-			this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 30, 9 + i * 18));
+			this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, -10, 8 + i * 18));
 		}
 	}
 
-
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 2))
 	private Slot antiAnonymous(Slot slot) {
-		return new ArmorSlot(slot.inventory, slot.getIndex() + 9, slot.x, slot.y); // we do it here because it initializes here and i don't wanna deal with it somewhere else
+		return new ArmorSlot(slot.inventory, -(39 - slot.getIndex()) + Constants.NEW_ARMOR_START_LOC + 3, slot.x, slot.y); // we do it here because it initializes here and i don't wanna deal with it somewhere else
 	}
-
-	/*
-	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 39))
-	private int armorIndex(int constant) {
-		return Constants.NEW_ARMOR_START_LOC + 3; // for SOME REASON it goes backwards instead of forwards
-	}
-
-	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 40))
-	private int offHandIndex(int constant) {
-		return Constants.OFF_HAND;
-	}
-
-	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9, ordinal = 2))
-	private int changeDrawnSlotCounts(int constant) {
-		return 18;
-	}
-	*/
-
-	/*
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 4))
-	private Slot changeHotbarSlotLocation(PlayerScreenHandler instance, Slot slot) {
-		((ISlotTransplanted) slot).setX(slot.x + Utils.innerSlotXShift(this.owner));
-		return ((MixinScreenHandlerAccessor) self).addSlotAccess(slot);
-	}
-	*/
-
-	/*
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;addSlot(Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;", ordinal = 3))
-	public Slot changeInventorySlotIndices(PlayerScreenHandler instance, Slot slot) {
-		return ((MixinScreenHandlerAccessor) self).addSlotAccess(new Slot(slot.inventory, slot.getIndex() + 9, slot.x, slot.y));
-	}
-	*/
 }

@@ -7,8 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
-	private final ClientPlayerEntity self = (ClientPlayerEntity)(Object) this;
-
 	@Override
 	public int getTransplantedAmount() {
 		return TransplantSMPClient.transplants;

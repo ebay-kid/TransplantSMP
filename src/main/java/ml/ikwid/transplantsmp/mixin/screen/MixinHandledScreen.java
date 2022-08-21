@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
@@ -93,6 +94,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 	 */
 	@Overwrite
 	protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
+		TransplantSMP.LOGGER.info("denied");
 		return false;
 	}
 }

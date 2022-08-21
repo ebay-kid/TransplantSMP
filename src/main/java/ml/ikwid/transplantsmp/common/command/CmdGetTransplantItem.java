@@ -18,8 +18,8 @@ public class CmdGetTransplantItem {
 		int amount = 2;
 		try {
 			amount = IntegerArgumentType.getInteger(ctx, "amount") * 2;
-		} catch(IllegalArgumentException e) {
-			// none
+		} catch (Exception e) {
+			// moof.
 		}
 		ServerPlayerEntity serverPlayerEntity = ctx.getSource().getPlayer();
 		ITransplantable transplantable = (ITransplantable)(serverPlayerEntity);

@@ -105,8 +105,8 @@ public abstract class MixinInGameHud {
 		for(int i = 0; i < draws; i++) {
 			// keep matrices, y, u, v, height as these will be constant (i hope)
 
-			instance.drawTexture(matrices, x, y, u, v, Constants.OUTER_SLOT_WIDTH, height);
-			x += Constants.OUTER_SLOT_WIDTH;
+			instance.drawTexture(matrices, x, y, u, v, Constants.OUTER_SLOT_WIDTH - 1, height);
+			x += (Constants.OUTER_SLOT_WIDTH - 1);
 		}
 	}
 
@@ -119,7 +119,7 @@ public abstract class MixinInGameHud {
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		
 		int i = this.scaledWidth / 2;
-		return (i - 91) + transplantable.xShift() + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * Constants.OUTER_SLOT_WIDTH); // mimic the previous shifts
+		return (i - 91) + transplantable.xShift() + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * (Constants.OUTER_SLOT_WIDTH - 1)); // mimic the previous shifts
 	}
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 9))
@@ -143,12 +143,11 @@ public abstract class MixinInGameHud {
 		int m = 1; // idk wtf this does
 		
 		for(int n = 0; n < transplantable.getHotbarDraws(); n++) {
-			o = i - 91 + transplantable.xShift() + n * Constants.OUTER_SLOT_WIDTH + 2;
+			o = i - 91 + transplantable.xShift() + n * (Constants.OUTER_SLOT_WIDTH - 1) + 3;
 
 			this.renderHotbarItem(o, p, tickDelta, this.client.player, this.client.player.getInventory().main.get(Utils.translateHotbarToSlot(n)), m);
 		}
 	}
-
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 2), index = 1)
 	private int rightOffHandShift(int x) {
@@ -166,8 +165,40 @@ public abstract class MixinInGameHud {
 		return x - ((ITransplantable)(this.client.player)).xShift(); // not sure about this one
 	}
 
+	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V", ordinal = 1), index = 0)
+	private int leftOffHandShift2(int x) {
+		if(this.client.player == null) {
+			return x;
+		}
+		return x + ((ITransplantable)(this.client.player)).xShift();
+	}
+
+	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V", ordinal = 2), index = 0)
+	private int rightOffHandShift2(int x) {
+		if(this.client.player == null) {
+			return x;
+		}
+		return x - ((ITransplantable)(this.client.player)).xShift();
+	}
+
+	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 6, ordinal = 0))
+	private int leftAttackIndShift(int constant) {
+		if(this.client.player == null) {
+			return constant;
+		}
+		return constant - ((ITransplantable)(this.client.player)).xShift();
+	}
+
+	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 22, ordinal = 7))
+	private int rightAttackIndShift(int constant) {
+		if(this.client.player == null) {
+			return constant;
+		}
+		return constant - ((ITransplantable)(this.client.player)).xShift();
+	}
+
 	@Inject(method = "renderStatusBars", at = @At("TAIL"))
-	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) {
+	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) { // moof code
 		// TransplantSMP.LOGGER.info("renderStatusBars injected");
 
 		if(this.client.player == null) {

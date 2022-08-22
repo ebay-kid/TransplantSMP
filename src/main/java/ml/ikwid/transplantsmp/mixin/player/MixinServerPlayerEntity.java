@@ -55,7 +55,7 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 
 		if(updateCount) {
 			switch (this.transplantType) {
-				case HEART_TRANSPLANT: // DONE (aka the easiest one)
+				case HEART_TRANSPLANT:
 					EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
 					if (attribute == null) {
 						TransplantSMP.LOGGER.warn("attribute shouldn't be null uhhh you're kinda screwed");
@@ -64,13 +64,13 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 					attribute.setBaseValue(20 + this.transplanted);
 					break;
 
-				case ARM_TRANSPLANT: // Apparently needs nothing so...
+				case ARM_TRANSPLANT:
 
 				case SKIN_TRANSPLANT:
 
 					break;
 
-				case STOMACH_TRANSPLANT: // DONE (aka the second easiest one)
+				case STOMACH_TRANSPLANT:
 					IStomachTransplanted hungerMgr = (IStomachTransplanted) (this.self.getHungerManager());
 					hungerMgr.setMaxFoodLevel(20 + this.transplanted);
 					break;

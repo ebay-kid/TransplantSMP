@@ -29,7 +29,7 @@ public abstract class MixinInventoryScreen extends AbstractInventoryScreen<Playe
 		if(((ITransplantable)(Objects.requireNonNull(Objects.requireNonNull(this.client).player))).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
 			RenderSystem.setShaderTexture(0, InventoryScreen.BACKGROUND_TEXTURE);
 			for(int i = 0; i < 4; i++) {
-				this.drawTexture(matrices, -14, 6 + i * Constants.OUTER_SLOT_HEIGHT, 0, this.backgroundHeight - Constants.HOTBAR_SPACE_IN_INV_SCREEN, Constants.OUTER_SLOT_WIDTH, Constants.OUTER_SLOT_HEIGHT);
+				this.drawTexture(matrices, this.x - Constants.OUTER_SLOT_WIDTH + 4, this.y + 7 + i * (Constants.OUTER_SLOT_HEIGHT - 4), 7, this.backgroundHeight - 25, Constants.OUTER_SLOT_WIDTH - 4, Constants.OUTER_SLOT_HEIGHT - 5);
 			}
 		}
 	}

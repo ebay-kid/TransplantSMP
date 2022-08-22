@@ -56,7 +56,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 		int x = this.x;
 		int y = this.y;
-		int height = this.backgroundHeight;
+		int height = 166; // default HandledScreen value
 
 		int bottom = y + height;
 

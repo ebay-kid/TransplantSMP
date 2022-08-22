@@ -7,6 +7,7 @@ import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -17,13 +18,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
 public abstract class MixinHungerManager implements IStomachTransplanted {
+	@Shadow private int foodLevel;
+
+	@Shadow public abstract void add(int food, float saturationModifier);
+
 	private ITransplantable transplantable;
+
 	@Unique
 	private int maxFoodLevel = 20;
 
 	@ModifyArg(method = "add", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"), index = 1)
 	private int increaseMaxHunger(int a) {
-		return maxFoodLevel;
+		return this.maxFoodLevel;
 	}
 
 	@Override
@@ -32,8 +38,13 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 	}
 
 	@Inject(method = "update", at = @At("HEAD"))
-	public void stealPlayerEntity(PlayerEntity player, CallbackInfo ci) {
+	public void stealPlayerEntityAndRunChecks(PlayerEntity player, CallbackInfo ci) {
 		this.transplantable = (ITransplantable) player;
+
+		if(this.foodLevel > this.maxFoodLevel) {
+			this.foodLevel = this.maxFoodLevel;
+			this.add(0, 0); // make sure saturation is capped properly
+		}
 	}
 
 	@ModifyConstant(method = "update", constant = @Constant(intValue = 18))
@@ -50,5 +61,10 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 			return original;
 		}
 		return (int)(0.9 * (transplantable.getTransplantedAmount() + 20));
+	}
+
+	@ModifyConstant(method = "isNotFull", constant = @Constant(intValue = 20, ordinal = 0))
+	private int betterNotFull(int constant) {
+		return this.maxFoodLevel;
 	}
 }

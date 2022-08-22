@@ -27,7 +27,7 @@ public abstract class MixinPlayerScreenHandler extends ScreenHandler {
 	private void addExtraArmor(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		TransplantSMP.LOGGER.info("adding 4 extra armor slots");
 		for(int i = 0; i < 4; i++) {
-			this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, -10, 8 + i * 18));
+			this.addSlot(new ArmorSlot(inventory, Constants.EXTRA_ARMOR_START_LOC + 3 - i, 8 - Constants.HOTBAR_SPACE_IN_INV_SCREEN, 8 + i * 18));
 		}
 	}
 

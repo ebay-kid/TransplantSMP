@@ -21,6 +21,7 @@
     "hud.MixinInGameHud",
     "player.MixinClientPlayerEntity",
     "player.specifics.MixinGameOptions",
+    "player.specifics.MixinKeyBinding",
     "player.specifics.MixinMinecraftClient",
     "screen.MixinHandledScreen",
     "screen.MixinInventoryScreen",

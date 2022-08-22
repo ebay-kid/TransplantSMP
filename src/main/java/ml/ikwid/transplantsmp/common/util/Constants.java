@@ -2,7 +2,6 @@ package ml.ikwid.transplantsmp.common.util;
 
 import ml.ikwid.transplantsmp.mixin.player.MixinPlayerInventory;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -18,7 +17,6 @@ public class Constants {
 
 	// Other constants for render use
 	public static final int OUTER_SLOT_WIDTH = 22;
-	public static final int INNER_SLOT_WIDTH = 18;
 	public static final int OUTER_SLOT_HEIGHT = 22;
 	public static final int HOTBAR_SPACE_IN_INV_SCREEN = 25;
 

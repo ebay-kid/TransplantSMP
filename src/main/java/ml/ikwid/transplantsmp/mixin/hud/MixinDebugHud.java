@@ -31,7 +31,6 @@ public abstract class MixinDebugHud {
 			return;
 		}
 		ITransplantable transplantable = (ITransplantable) playerEntity;
-		debugText.add("transplant smp -- transplant type: " + transplantable.getTransplantType() + ", transplanted amt: " + transplantable.getTransplantedAmount() + ", hotbar draws: " + transplantable.getHotbarDraws());
-		debugText.add("hunger mgr -- food lvl: " + playerEntity.getHungerManager().getFoodLevel() + ", saturation lvl: " + playerEntity.getHungerManager().getSaturationLevel());
+		debugText.add("transplant smp -- transplant type: " + transplantable.getTransplantType() + ", transplanted amt: " + transplantable.getTransplantedAmount());
 	}
 }

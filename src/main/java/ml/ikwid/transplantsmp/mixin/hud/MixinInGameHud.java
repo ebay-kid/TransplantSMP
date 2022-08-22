@@ -86,7 +86,8 @@ public abstract class MixinInGameHud {
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		
 		if(transplantable.getTransplantType() == TransplantType.STOMACH_TRANSPLANT && transplantable.getTransplantedAmount() > 0) {
-			return 20;
+			// TransplantSMP.LOGGER.info("shifted air");
+			return 0;
 		}
 		return constant;
 	}
@@ -94,7 +95,7 @@ public abstract class MixinInGameHud {
 	@Redirect(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void drawEveryHotbarSlotNeeded(InGameHud instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in draw every slot");
+			// TransplantSMP.LOGGER.info("this.client.player in draw every slot");
 			instance.drawTexture(matrices, x, y, u, v, width, height);
 			return;
 		}
@@ -210,7 +211,7 @@ public abstract class MixinInGameHud {
 		int transplants = transplantable.getHalvedTransplantedAmount();
 		TransplantType transplantType = transplantable.getTransplantType();
 		if(transplantType == TransplantType.HEART_TRANSPLANT || transplantType == TransplantType.ARM_TRANSPLANT || transplants <= 0) {
-			// TransplantSMP.LOGGER.info("skipped drawing more bars");
+			TransplantSMP.LOGGER.info("skipped drawing more bars");
 			return;
 		}
 
@@ -218,7 +219,6 @@ public abstract class MixinInGameHud {
 
 		int o = this.scaledHeight - 39; // used either way
 		if(armor) { // skin transplant
-			// TransplantSMP.LOGGER.info("is skin transplant");
 			int x;
 
 			int i = MathHelper.ceil(this.client.player.getHealth());
@@ -231,28 +231,31 @@ public abstract class MixinInGameHud {
 			int s = o - (q - 1) * r - 10; // height stuff which i don't understand
 			int u = this.client.player.getArmor() - 20; // shift back by 20 to handle already-drawn textures
 
+			if(this.client.player.getArmor() == 0) {
+				return;
+			}
+
 			// Absorption doesn't get stacked when the player max health is <= 20 (10 hearts, aka vanilla).
 			// So, calculate the shift from 0 absorption -> 4 absorption at 20 health
 			// 0 absorption, s = o + 10
 			// 4 absorption, s = o + 20
 			// so in theory, we can call InGameHud.drawTexture(matrices, x, s + 10, u, v, width, height) with this
 
-			for (int w = 0; w < transplants - 10; w++) { // render however many extra there are
+			for (int w = 0; w < transplants; w++) { // render however many extra there are
 				x = m + w * 8;
 				if (w * 2 + 1 < u) {
-					self.drawTexture(matrices, x, s + 10, 34, 9, 9, 9);
+					self.drawTexture(matrices, x, s - 10, 34, 9, 9, 9);
 				}
 
 				if (w * 2 + 1 == u) {
-					self.drawTexture(matrices, x, s + 10, 25, 9, 9, 9);
+					self.drawTexture(matrices, x, s - 10, 25, 9, 9, 9);
 				}
 
 				if (w * 2 + 1 > u) {
-					self.drawTexture(matrices, x, s + 10, 16, 9, 9, 9);
+					self.drawTexture(matrices, x, s - 10, 16, 9, 9, 9);
 				}
 			}
 		} else { // stomach transplant
-			// TransplantSMP.LOGGER.info("is stomach transplant");
 			if(this.getRiddenEntity() != null) {
 				return;
 			}
@@ -266,7 +269,7 @@ public abstract class MixinInGameHud {
 			int aa;
 			int ab;
 			int ac;
-			for(y = 0; y < transplants - 10; ++y) {
+			for(y = 0; y < transplants; ++y) {
 				z = o;
 				aa = 16;
 				ab = 0;
@@ -281,13 +284,13 @@ public abstract class MixinInGameHud {
 
 				ac = n - y * 8 - 9;
 				// why 10? it apparently works for the previous one so YOLO (also it shifts around by 10)
-				self.drawTexture(matrices, ac, z + 10, 16 + ab * 9, 27, 9, 9); // wtf why is this different
+				self.drawTexture(matrices, ac, z - 10, 16 + ab * 9, 27, 9, 9); // wtf why is this different
 				if (y * 2 + 1 < k) {
-					self.drawTexture(matrices, ac, z + 10, aa + 36, 27, 9, 9);
+					self.drawTexture(matrices, ac, z - 10, aa + 36, 27, 9, 9);
 				}
 
 				if (y * 2 + 1 == k) {
-					self.drawTexture(matrices, ac, z + 10, aa + 45, 27, 9, 9);
+					self.drawTexture(matrices, ac, z - 10, aa + 45, 27, 9, 9);
 				}
 			}
 		}

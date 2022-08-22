@@ -29,7 +29,7 @@ public class NetworkingHandlerServer {
 		for(int i = 0; i < 3; i++) {
 			clientSemVer[i] = packetByteBuf.readInt();
 			if(clientSemVer[i] != TransplantSMP.SEMVER[i]) {
-				serverLoginNetworkHandler.disconnect(Text.literal("This server requires TransplantSMP version " + TransplantSMP.VERSION + "to join."));
+				serverLoginNetworkHandler.disconnect(Text.literal("This server requires TransplantSMP version " + TransplantSMP.VERSION + " to join."));
 			}
 		}
 	}

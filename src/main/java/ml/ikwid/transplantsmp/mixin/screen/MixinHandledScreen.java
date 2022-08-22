@@ -1,7 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
@@ -27,7 +26,6 @@ import java.util.Objects;
 public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen implements ScreenHandlerProvider<T> {
 	@Shadow protected int x;
 	@Shadow protected int y;
-	@Shadow protected int backgroundHeight;
 
 	@Shadow public abstract T getScreenHandler();
 
@@ -37,7 +35,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		super(title);
 	}
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	@Inject(method = "render", at = @At("TAIL"))
 	private void debug(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if(DEBUG) {
@@ -94,7 +92,6 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 	 */
 	@Overwrite
 	protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
-		TransplantSMP.LOGGER.info("denied");
 		return false;
 	}
 }

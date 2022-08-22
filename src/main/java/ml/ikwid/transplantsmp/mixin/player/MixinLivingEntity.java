@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -28,7 +27,6 @@ public abstract class MixinLivingEntity {
 
 			if(attribute == EntityAttributes.GENERIC_ARMOR) {
 				setRet = true;
-				// TransplantSMP.LOGGER.info("armor bars query");
 
 				for(int i = Constants.NEW_ARMOR_START_LOC; i <= Constants.NEW_ARMOR_START_LOC + 3; i++) {
 					Item item = playerEntity.getInventory().getStack(i).getItem();
@@ -53,7 +51,6 @@ public abstract class MixinLivingEntity {
 				ret = Math.min(ret, transplantable.getTransplantedAmount() + 20);
 			} else if(attribute == EntityAttributes.GENERIC_ARMOR_TOUGHNESS) {
 				setRet = true;
-				TransplantSMP.LOGGER.info("toughness query");
 
 				for(int i = Constants.NEW_ARMOR_START_LOC; i <= Constants.NEW_ARMOR_START_LOC + 3; i++) {
 					Item item = playerEntity.getInventory().getStack(i).getItem();
@@ -79,7 +76,6 @@ public abstract class MixinLivingEntity {
 				}
 			} else if(attribute == EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) {
 				setRet = true;
-				TransplantSMP.LOGGER.info("anti kb query");
 
 				for(int i = Constants.NEW_ARMOR_START_LOC; i < Constants.NEW_ARMOR_START_LOC + 3; i++) {
 					Item item = playerEntity.getInventory().getStack(i).getItem();

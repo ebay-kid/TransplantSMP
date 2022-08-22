@@ -31,16 +31,6 @@ public class Utils {
 		return slot < 9 ? slot : slot + Constants.EXTRA_HOTBAR_START_LOC - 9;
 	}
 
-	/**
-	 * Scales armor toughness to the amount of armor bars.
-	 * @param toughness The original toughness
-	 * @param scaleTo The amount of armor bars the player has. This should be <20 because scaling upwards doesn't make sense in this mod's use case.
-	 * @return The scaled toughness
-	 */
-	public static double scaleArmorToughness(double toughness, int scaleTo) {
-		return scaleTo >= 20 ? scaleTo : toughness * scaleTo / 20.0d;
-	}
-
 	public static boolean bannableAmount(ITransplantable transplantable) {
 		return transplantable.getTransplantType() == TransplantType.ARM_TRANSPLANT ? transplantable.getTransplantedAmount() <= -16 : transplantable.getTransplantedAmount() <= -18;
 	}

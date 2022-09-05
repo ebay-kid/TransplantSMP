@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.entity.LivingEntity;
@@ -43,7 +44,12 @@ public abstract class MixinLivingEntity {
 						// TransplantSMP.LOGGER.info("index " + i + " is a " + item.getName().getString());
 
 						if (item instanceof ArmorItem armorItem) {
-							ret += armorItem.getProtection();
+							int prot = armorItem.getProtection();
+							if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
+								prot *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_BAR_BALANCE_AMOUNT).get();
+							}
+
+							ret += prot;
 						}
 					}
 
@@ -60,9 +66,12 @@ public abstract class MixinLivingEntity {
 						ret += armorItem.getToughness();
 					}
 				}
-				if(transplantable.getTransplantedAmount() <= 0) {
-					ret *= (transplantable.getTransplantedAmount() + 20.0d) / 12.0d;
-				} else {
+				if(transplantable.getTransplantedAmount() < 0) {
+					ret *= 1 + transplantable.getTransplantedAmount() / 20.0d; // transplanted amount always negative, this is the same as (20 + amount)/20, which scales down the return value
+					if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
+						ret *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_DECREASING_BALANCE_AMOUNT).get();
+					}
+				} else if(transplantable.getTransplantedAmount() > 0){
 					for(int i = Constants.EXTRA_ARMOR_START_LOC; i <= Constants.EXTRA_ARMOR_START_LOC + 3; i++) {
 						Item item = playerEntity.getInventory().getStack(i).getItem();
 						// TransplantSMP.LOGGER.info("index " + i + " is a " + item.getName().getString());
@@ -71,8 +80,10 @@ public abstract class MixinLivingEntity {
 							ret += armorItem.getToughness();
 						}
 					}
-
-					ret = Math.min(ret, (transplantable.getTransplantedAmount() * 12.0d / 20.0d) + 12);
+					ret = Math.min(ret, (transplantable.getTransplantedAmount() * 12.0d / 20.0d) + 12); // caps it by scaling the transplanted amount (max 20) to a max of 12 (vanilla toughness) and multiplying.
+					if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
+						ret *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_INCREASING_BALANCE_AMOUNT).get();
+					}
 				}
 			} else if(attribute == EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) {
 				setRet = true;

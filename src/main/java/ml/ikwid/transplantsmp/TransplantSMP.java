@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp;
 
 import ml.ikwid.transplantsmp.common.command.CommandRegister;
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerServer;
@@ -38,6 +39,8 @@ public class TransplantSMP implements ModInitializer {
 
 		ServerLoginConnectionEvents.QUERY_START.register(NetworkingHandlerServer::handshake);
 		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE_S2C, NetworkingHandlerServer::handleHandshakeServerSide);
+
+		GameruleRegister.register();
 
 		LOGGER.info("time for medical transplants");
 	}

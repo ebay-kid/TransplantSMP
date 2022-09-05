@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.client;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
+import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerClient;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import net.fabricmc.api.ClientModInitializer;
@@ -11,6 +12,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 @Environment(EnvType.CLIENT)
 public class TransplantSMPClient implements ClientModInitializer {
+	public static int transplanted = 0;
+	public static TransplantType transplantType;
 	@Override
 	public void onInitializeClient() {
 		TransplantSMP.LOGGER.info("hello medical patient, welcome to the deadliest minecraft smp aka a hospital");

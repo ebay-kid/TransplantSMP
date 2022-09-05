@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(KillCommand.class)
-public class MixinKillCommand {
+public abstract class MixinKillCommand {
     @Redirect(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;kill()V"))
     private static void checkIfPlayerIsSettingTransplant(Entity entity, ServerCommandSource source) {
         if(entity instanceof ServerPlayerEntity player) {

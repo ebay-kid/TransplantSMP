@@ -211,7 +211,6 @@ public abstract class MixinInGameHud {
 		int transplants = transplantable.getHalvedTransplantedAmount();
 		TransplantType transplantType = transplantable.getTransplantType();
 		if(transplantType == TransplantType.HEART_TRANSPLANT || transplantType == TransplantType.ARM_TRANSPLANT || transplants <= 0) {
-			TransplantSMP.LOGGER.info("skipped drawing more bars");
 			return;
 		}
 

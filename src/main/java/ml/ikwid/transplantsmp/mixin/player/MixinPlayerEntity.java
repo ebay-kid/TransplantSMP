@@ -39,8 +39,19 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 	}
 
 	@Override
+	public TransplantType getTransplantType() {
+		return this.transplantType;
+	}
+
+	@Override
+	public void setTransplantType(TransplantType transplantType, boolean updateType) {
+		this.transplantType = transplantType;
+		this.updateTransplants(updateType, updateType);
+	}
+
+	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType) {
-		if(updateType) {
+		if (updateType) {
 			EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
 			if (attribute == null) {
 				TransplantSMP.LOGGER.warn("attribute shouldn't be null uhhh you're kinda screwed");
@@ -52,7 +63,7 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 			hungerMgr.setMaxFoodLevel(20);
 		}
 
-		if(updateCount) {
+		if (updateCount) {
 			switch (this.getTransplantType()) {
 				case HEART_TRANSPLANT:
 					EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
@@ -73,16 +84,5 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 					break;
 			}
 		}
-	}
-
-	@Override
-	public TransplantType getTransplantType() {
-		return this.transplantType;
-	}
-
-	@Override
-	public void setTransplantType(TransplantType transplantType, boolean updateType) {
-		this.transplantType = transplantType;
-		this.updateTransplants(updateType, updateType);
 	}
 }

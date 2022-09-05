@@ -33,7 +33,7 @@ public class NetworkingHandlerClient {
 		int count = packetByteBuf.readInt();
 		minecraftClient.execute(() -> {
 			//noinspection ConstantConditions
-			((ITransplantable)(minecraftClient.player)).setTransplantedAmount(count, true, true);
+			((ITransplantable)(minecraftClient.player)).setTransplantedAmount(count, true, false);
 			TransplantSMP.LOGGER.info("count updated -client, count = " + count);
 		});
 	}

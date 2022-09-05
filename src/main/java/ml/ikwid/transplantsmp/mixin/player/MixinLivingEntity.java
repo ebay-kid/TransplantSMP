@@ -44,7 +44,7 @@ public abstract class MixinLivingEntity {
 						// TransplantSMP.LOGGER.info("index " + i + " is a " + item.getName().getString());
 
 						if (item instanceof ArmorItem armorItem) {
-							int prot = armorItem.getProtection();
+							double prot = armorItem.getProtection();
 							if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
 								prot *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_BAR_BALANCE_AMOUNT).get();
 							}
@@ -77,13 +77,14 @@ public abstract class MixinLivingEntity {
 						// TransplantSMP.LOGGER.info("index " + i + " is a " + item.getName().getString());
 
 						if(item instanceof ArmorItem armorItem) {
-							ret += armorItem.getToughness();
+							float toughness = armorItem.getToughness();
+							if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
+								toughness *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_INCREASING_BALANCE_AMOUNT).get();
+							}
+							ret += toughness;
 						}
 					}
 					ret = Math.min(ret, (transplantable.getTransplantedAmount() * 12.0d / 20.0d) + 12); // caps it by scaling the transplanted amount (max 20) to a max of 12 (vanilla toughness) and multiplying.
-					if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
-						ret *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_INCREASING_BALANCE_AMOUNT).get();
-					}
 				}
 			} else if(attribute == EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) {
 				setRet = true;

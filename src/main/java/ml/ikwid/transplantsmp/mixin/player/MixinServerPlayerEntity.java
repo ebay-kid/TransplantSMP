@@ -87,6 +87,8 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 
 		if(this.getTransplantType() == TransplantType.HEART_TRANSPLANT) {
 			self.setHealth(20 + this.getTransplantedAmount()); // make sure heart ppl spawn with full hearts
+		} else if(this.getTransplantType() == TransplantType.STOMACH_TRANSPLANT) {
+			self.getHungerManager().setFoodLevel(20 + this.getTransplantedAmount()); // make sure stomach ppl spawn with full hunger
 		}
 	}
 

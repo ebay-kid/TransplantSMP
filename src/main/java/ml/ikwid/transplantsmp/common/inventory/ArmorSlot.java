@@ -1,7 +1,6 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
 import com.mojang.datafixers.util.Pair;
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -30,7 +29,7 @@ public class ArmorSlot extends Slot {
 
 		// 45, 46, 47, 48 <- new, 49, 50, 51, 52 <- vanilla, 53 <- offhand
 		this.isExtraArmor = index <= Constants.EXTRA_ARMOR_START_LOC + 3;
-		TransplantSMP.LOGGER.info("index: " + index + ", isExtraArmor: " + isExtraArmor);
+		// TransplantSMP.LOGGER.info("index: " + index + ", isExtraArmor: " + isExtraArmor);
 		int subtractIndex = (isExtraArmor ? Constants.EXTRA_ARMOR_START_LOC : Constants.NEW_ARMOR_START_LOC) + 3;
 		// TransplantSMP.LOGGER.info("subtractIdx: " + subtractIndex);
 

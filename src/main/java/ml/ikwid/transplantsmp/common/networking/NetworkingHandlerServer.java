@@ -42,8 +42,8 @@ public class NetworkingHandlerServer {
 			if(transplantable.getTransplantType() == null) {
 				TransplantType transplantType = TransplantType.get(chosenType);
 
-				transplantable.setTransplantedAmount(0, true, false);
-				transplantable.setTransplantType(transplantType, false);
+				transplantable.setTransplantedAmount(0, false, false);
+				transplantable.setTransplantType(transplantType, true);
 
 				TransplantSMP.LOGGER.info("transplant chosen for " + player.getName().getString());
 				player.removeStatusEffect(StatusEffects.RESISTANCE);

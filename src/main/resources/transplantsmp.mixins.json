@@ -3,8 +3,10 @@
   "minVersion": "0.8",
   "package": "ml.ikwid.transplantsmp.mixin",
   "compatibilityLevel": "JAVA_17",
+  "plugin": "ml.ikwid.transplantsmp.TransplantSMPMixinPlugin",
   "mixins": [
     "AccessorPlayerScreenHandler",
+    "appleskin.MixinHUDOverlayHandler",
     "inventory.MixinSlot",
     "player.MixinKillCommand",
     "player.MixinLivingEntity",

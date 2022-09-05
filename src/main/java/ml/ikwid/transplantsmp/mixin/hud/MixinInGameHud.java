@@ -5,6 +5,7 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.common.util.Utils;
+import ml.ikwid.transplantsmp.common.util.render.HUDRenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -26,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameHud.class)
+@Mixin(value = InGameHud.class, priority = 900)
 public abstract class MixinInGameHud {
 	private final InGameHud self = (InGameHud)(Object) this;
 
@@ -198,7 +199,7 @@ public abstract class MixinInGameHud {
 		return constant - ((ITransplantable)(this.client.player)).xShift();
 	}
 
-	@Inject(method = "renderStatusBars", at = @At("TAIL"))
+	@Inject(method = "renderStatusBars", at = @At("HEAD"))
 	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) { // moof code
 		// TransplantSMP.LOGGER.info("renderStatusBars injected");
 
@@ -210,13 +211,19 @@ public abstract class MixinInGameHud {
 		
 		int transplants = transplantable.getHalvedTransplantedAmount();
 		TransplantType transplantType = transplantable.getTransplantType();
-		if(transplantType == TransplantType.HEART_TRANSPLANT || transplantType == TransplantType.ARM_TRANSPLANT || transplants <= 0) {
+		if((transplantType != TransplantType.SKIN_TRANSPLANT && transplantType != TransplantType.STOMACH_TRANSPLANT) || transplants <= 0) {
 			return;
 		}
 
 		boolean armor = (transplantType == TransplantType.SKIN_TRANSPLANT);
 
-		int o = this.scaledHeight - 39; // used either way
+		// int o = this.scaledHeight - 39; // used either way
+		if(armor) {
+			HUDRenderUtil.renderArmorBars(matrices, this.scaledHeight, this.renderHealthValue, this.scaledWidth, transplants);
+		} else {
+			HUDRenderUtil.renderHungerBars(matrices, this.getRiddenEntity(), this.scaledHeight, this.scaledWidth, transplants, this.ticks, this.random);
+		}
+		/*
 		if(armor) { // skin transplant
 			int x;
 
@@ -293,5 +300,6 @@ public abstract class MixinInGameHud {
 				}
 			}
 		}
+		*/
 	}
 }

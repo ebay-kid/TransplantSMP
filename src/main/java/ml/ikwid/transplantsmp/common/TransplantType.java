@@ -21,7 +21,7 @@ public enum TransplantType {
 		Hotbar slots.
 		
 		Killing gives you more hotbar slots (to the right).
-		Dying removes hotbar slots in the same order as they were added (right -> left).
+		Dying removes hotbar slots (right -> left).
 		
 		Can be hotkeyed.
 		"""),
@@ -34,12 +34,13 @@ public enum TransplantType {
 		Killing allows you to utilize more armor bars.
 		Dying removes armor bars.
 		
-		To utiliize this, you are allowed to wear 2 sets of armor.
-		The second set must be unenchanted (and is not externally visible).
-		The second set will only have the effect of the number of bars you already have;
-		(i.e. wearing 2 sets of diamond but only having 15 armor bars means only 15 armor bars will be applied).
+		To utilize this, you can wear 2 sets of armor.
+		The second set is not externally visible.
+		The extra bars only work up to the # of armor bars you have.
+		(i.e. wearing 2 sets of diamond but only having 15 armor bars,
+		only 15 armor bars will be utilized)
 		
-		Having less than 10 bars by dying will reduce the effect of the first set of armor.
+		Having < 10 bars will reduce the effect of the first set of armor.
 		"""),
 	/**
 	 * Hunger bars
@@ -50,10 +51,14 @@ public enum TransplantType {
 		Killing gives you more hunger bars.
 		Dying removes hunger bars.
 		
-		If you have above 10 hunger bars, the vanilla requirements to sprint/heal are kept;
-		so having 15 hunger bars will allow you to heal as long as you have > 9 hunger bars.
+		If you have above 10 hunger bars,
+		the vanilla requirements to sprint/heal are kept;
+		with 15 hunger bars, you can heal while you have > 9 hunger bars.
+		The max saturation = the # of hunger bars filled up in vanilla,
+		i.e. 9 hunger bars = 9 bars of saturation.
+		This is kept the same, so you can stack up on saturation.
 		
-		If you have less than 10 hunger bars, the requirement to heal will be scaled down.
+		If you have < 10 hunger bars, the requirement to heal scales down.
 		""");
 
 	public static final TransplantType[] transplantTypes = values();

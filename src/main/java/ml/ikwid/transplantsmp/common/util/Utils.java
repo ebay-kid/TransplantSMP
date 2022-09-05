@@ -17,8 +17,6 @@ public class Utils {
 	 * @return the corrected value
 	 */
 	public static int translateSlotToHotbar(int selSlot) {
-		// TransplantSMP.LOGGER.info("sel slot: " + selSlot);
-
 		return selSlot < 9 ? selSlot : selSlot - Constants.EXTRA_HOTBAR_START_LOC + 9;
 	}
 

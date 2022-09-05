@@ -18,7 +18,6 @@ public abstract class MixinPlayerManager {
 		ITransplantable transplantable = (ITransplantable) player;
 		if(transplantable.getTransplantType() == null) {
 			NetworkingUtil.sendTransplantNeedsChoose(player);
-
 			TransplantSMP.LOGGER.info("nothing found, sent needs transplant");
 		} else {
 			transplantable.updateTransplants(true, true);

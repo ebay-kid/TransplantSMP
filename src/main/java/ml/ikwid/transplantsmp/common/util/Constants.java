@@ -31,4 +31,6 @@ public class Constants {
 		new KeyBinding("key.hotbar.17", GLFW.GLFW_KEY_PERIOD, KeyBinding.INVENTORY_CATEGORY),
 		new KeyBinding("key.hotbar.18", GLFW.GLFW_KEY_COMMA, KeyBinding.INVENTORY_CATEGORY)
 	};
+
+    public static final int TRANSPLANT_GIVES = 2;
 }

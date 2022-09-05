@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
+import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;

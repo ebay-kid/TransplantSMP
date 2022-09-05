@@ -3,9 +3,9 @@ package ml.ikwid.transplantsmp.common.networking;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.client.screen.ChooseTransplantScreen;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -32,7 +32,8 @@ public class NetworkingHandlerClient {
 	public static void updateOrganCount(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
 		int count = packetByteBuf.readInt();
 		minecraftClient.execute(() -> {
-			TransplantSMPClient.transplants = count;
+			//noinspection ConstantConditions
+			((ITransplantable)(minecraftClient.player)).setTransplantedAmount(count, true, true);
 			TransplantSMP.LOGGER.info("count updated -client, count = " + count);
 		});
 	}
@@ -40,7 +41,8 @@ public class NetworkingHandlerClient {
 	public static void updateTransplantType(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
 		String type = packetByteBuf.readString();
 		minecraftClient.execute(() -> {
-			TransplantSMPClient.transplantType = TransplantType.get(type);
+			//noinspection ConstantConditions
+			((ITransplantable)(minecraftClient.player)).setTransplantType(TransplantType.get(type), true);
 			minecraftClient.setScreen(null);
 
 			TransplantSMP.LOGGER.info("type updated -client, type = " + type);

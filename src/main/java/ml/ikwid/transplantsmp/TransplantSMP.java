@@ -34,10 +34,10 @@ public class TransplantSMP implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandRegister.register(dispatcher));
 		ItemRegister.register();
 
-		ServerPlayNetworking.registerGlobalReceiver(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE, NetworkingHandlerServer::chosenTransplantType);
+		ServerPlayNetworking.registerGlobalReceiver(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, NetworkingHandlerServer::chosenTransplantType);
 
 		ServerLoginConnectionEvents.QUERY_START.register(NetworkingHandlerServer::handshake);
-		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE, NetworkingHandlerServer::handleHandshakeServerSide);
+		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE_S2C, NetworkingHandlerServer::handleHandshakeServerSide);
 
 		LOGGER.info("time for medical transplants");
 	}

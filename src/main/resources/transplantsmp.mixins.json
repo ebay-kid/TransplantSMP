@@ -6,6 +6,7 @@
   "mixins": [
     "AccessorPlayerScreenHandler",
     "inventory.MixinSlot",
+    "player.MixinKillCommand",
     "player.MixinLivingEntity",
     "player.MixinPlayerEntity",
     "player.MixinPlayerInventory",

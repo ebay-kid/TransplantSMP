@@ -8,16 +8,6 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
 	@Override
-	public int getTransplantedAmount() {
-		return TransplantSMPClient.transplants;
-	}
-
-	@Override
-	public TransplantType getTransplantType() {
-		return TransplantSMPClient.transplantType;
-	}
-
-	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType) {
 		if(updateCount) {
 			switch (this.getTransplantType()) {

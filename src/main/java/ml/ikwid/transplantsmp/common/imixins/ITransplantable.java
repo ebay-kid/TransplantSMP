@@ -4,8 +4,6 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.util.Constants;
 
 public interface ITransplantable {
-	int TRANSPLANT_GIVES = 2;
-
 	default boolean illegalTransplantAmount() {
 		int transplants = this.getTransplantedAmount();
 
@@ -17,15 +15,15 @@ public interface ITransplantable {
 
 	int getTransplantedAmount();
 
-	void setTransplantedAmount(int organs, boolean updateGeneral, boolean updateAll);
+	void setTransplantedAmount(int organs, boolean updateCount, boolean updateType);
 
 	default void transplantOrgan(boolean gain) {
-		this.setTransplantedAmount(this.getTransplantedAmount() + (gain ? TRANSPLANT_GIVES : -TRANSPLANT_GIVES), true, false);
+		this.setTransplantedAmount(this.getTransplantedAmount() + (gain ? Constants.TRANSPLANT_GIVES : -Constants.TRANSPLANT_GIVES), true, false);
 	}
 
 	TransplantType getTransplantType();
 
-	void setTransplantType(TransplantType transplantType, boolean updateGeneral);
+	void setTransplantType(TransplantType transplantType, boolean updateType);
 
 	void updateTransplants(boolean updateCount, boolean updateType);
 
@@ -49,4 +47,8 @@ public interface ITransplantable {
 	default int getHalvedTransplantedAmount() {
 		return this.getTransplantedAmount() / 2;
 	}
+
+	void setIsSettingTransplant(boolean isSettingTransplant);
+
+	boolean getIsSettingTransplant();
 }

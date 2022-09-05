@@ -22,6 +22,7 @@ import java.util.Objects;
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	private final ServerPlayerEntity self = (ServerPlayerEntity)(Object) this;
+	private boolean isSettingTransplant = false;
 
 	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
 	public void writeTransplantData(NbtCompound nbt, CallbackInfo ci) {
@@ -53,34 +54,12 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	public void updateTransplants(boolean updateCount, boolean updateType) {
 		TransplantSMP.LOGGER.info("update transplants -server, amount = " + this.transplanted);
 
-		if(updateCount) {
-			switch (this.transplantType) {
-				case HEART_TRANSPLANT:
-					EntityAttributeInstance attribute = this.self.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
-					if (attribute == null) {
-						TransplantSMP.LOGGER.warn("attribute shouldn't be null uhhh you're kinda screwed");
-						return;
-					}
-					attribute.setBaseValue(20 + this.transplanted);
-					break;
-
-				case ARM_TRANSPLANT:
-
-				case SKIN_TRANSPLANT:
-
-					break;
-
-				case STOMACH_TRANSPLANT:
-					IStomachTransplanted hungerMgr = (IStomachTransplanted) (this.self.getHungerManager());
-					hungerMgr.setMaxFoodLevel(20 + this.transplanted);
-					break;
-			}
-
-			NetworkingUtil.sendTransplantCountUpdate(this.self);
-		}
-
 		if(updateType) {
 			NetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
+		}
+
+		if(updateCount) {
+			NetworkingUtil.sendTransplantCountUpdate(this.self);
 		}
 
 		super.updateTransplants(updateCount, updateType);
@@ -99,12 +78,6 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		}
 	}
 
-	@Override
-	public void setTransplantType(TransplantType transplantType, boolean updateGeneral) {
-		this.transplantType = transplantType;
-		this.updateTransplants(updateGeneral, updateGeneral);
-	}
-
 	@Inject(method = "copyFrom", at = @At("TAIL"))
 	private void copyTransplantData(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
 		ITransplantable oldTransplantable = (ITransplantable) oldPlayer;
@@ -115,5 +88,15 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		if(this.getTransplantType() == TransplantType.HEART_TRANSPLANT) {
 			self.setHealth(20 + this.getTransplantedAmount()); // make sure heart ppl spawn with full hearts
 		}
+	}
+
+	@Override
+	public void setIsSettingTransplant(boolean isSettingTransplant) {
+		this.isSettingTransplant = isSettingTransplant;
+	}
+
+	@Override
+	public boolean getIsSettingTransplant() {
+		return this.isSettingTransplant;
 	}
 }

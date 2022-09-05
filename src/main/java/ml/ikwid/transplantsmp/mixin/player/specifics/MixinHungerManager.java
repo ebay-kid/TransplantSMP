@@ -27,14 +27,20 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 	@Unique
 	private int maxFoodLevel = 20;
 
-	@ModifyArg(method = "add", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"), index = 1)
+	@ModifyArg(method = "add", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I", ordinal = 0), index = 1)
 	private int increaseMaxHunger(int a) {
+		TransplantSMP.LOGGER.info("increaseMaxHunger called, max hunger: " + this.maxFoodLevel);
 		return this.maxFoodLevel;
 	}
 
 	@Override
 	public void setMaxFoodLevel(int foodLevel) {
 		this.maxFoodLevel = foodLevel;
+	}
+
+	@Override
+	public int getMaxFoodLevel() {
+		return this.maxFoodLevel;
 	}
 
 	@Inject(method = "update", at = @At("HEAD"))

@@ -22,16 +22,17 @@ public class ArmorSlot extends Slot {
 	private final ITransplantable transplantable;
 	private final EquipmentSlot equipmentSlot;
 
+	private final boolean isExtraArmor;
 	public ArmorSlot(Inventory inventory, int index, int x, int y) {
 		super(inventory, index, x, y);
 		this.owner = ((PlayerInventory)(inventory)).player;
 		this.transplantable = (ITransplantable)(this.owner);
 
 		// 45, 46, 47, 48 <- new, 49, 50, 51, 52 <- vanilla, 53 <- offhand
-		boolean isExtraArmor = index <= Constants.EXTRA_ARMOR_START_LOC + 3;
+		this.isExtraArmor = index <= Constants.EXTRA_ARMOR_START_LOC + 3;
 		TransplantSMP.LOGGER.info("index: " + index + ", isExtraArmor: " + isExtraArmor);
 		int subtractIndex = (isExtraArmor ? Constants.EXTRA_ARMOR_START_LOC : Constants.NEW_ARMOR_START_LOC) + 3;
-		TransplantSMP.LOGGER.info("subtractIdx: " + subtractIndex);
+		// TransplantSMP.LOGGER.info("subtractIdx: " + subtractIndex);
 
 		this.equipmentSlot = AccessorPlayerScreenHandler.getEquipmentSlotOrder()[subtractIndex - index];
 	}
@@ -69,10 +70,6 @@ public class ArmorSlot extends Slot {
 
 	@Override
 	public boolean isEnabled() {
-		boolean bl = true;
-		if(this.getIndex() >= Constants.EXTRA_ARMOR_START_LOC) {
-			bl = transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT;
-		}
-		return bl;
+		return !this.isExtraArmor || this.transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT;
 	}
 }

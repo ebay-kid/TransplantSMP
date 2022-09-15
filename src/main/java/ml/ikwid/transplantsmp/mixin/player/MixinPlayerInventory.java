@@ -1,21 +1,20 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
+import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
+import ml.ikwid.transplantsmp.common.util.Utils;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Nameable;
 import net.minecraft.util.collection.DefaultedList;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -45,7 +44,7 @@ import java.util.List;
  * See {@link Constants} for the impl.
  */
 @Mixin(PlayerInventory.class)
-public abstract class MixinPlayerInventory {
+public abstract class MixinPlayerInventory implements Inventory, Nameable {
 	@Shadow @Final public PlayerEntity player;
 
 	@Mutable @Shadow @Final public DefaultedList<ItemStack> main;
@@ -59,9 +58,8 @@ public abstract class MixinPlayerInventory {
 
 	private ITransplantable transplantable;
 
-	@SuppressWarnings("rawtypes")
 	@Redirect(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;clear()V", ordinal = 0))
-	private void noClear(DefaultedList instance) { // LLLL even though i don't need it i don't think
+	private void noClear(DefaultedList<?> instance) { // LLLL even though i don't need it i don't think
 	}
 
 	@Inject(method = "<init>", at = @At("TAIL"))
@@ -100,6 +98,9 @@ public abstract class MixinPlayerInventory {
 				if(i > this.transplantable.getHotbarDraws() - 1) {
 					continue;
 				}
+			}
+			if(Utils.isExtraArmorSlot(i)) {
+				continue;
 			}
 			if(this.main.get(i).isEmpty()) {
 				return i;
@@ -151,5 +152,20 @@ public abstract class MixinPlayerInventory {
 	@ModifyConstant(method = "getOccupiedSlotWithRoomForStack", constant = @Constant(intValue = 40, ordinal = 1))
 	private int changeOffHandSlot2(int constant) {
 		return Constants.OFF_HAND;
+	}
+
+	@Inject(method = "damageArmor", at = @At("TAIL"))
+	private void damageSecondSet(DamageSource damageSource, float amount, int[] slots, CallbackInfo ci) {
+		if(((ITransplantable)(this.player)).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+			for(int i = Constants.EXTRA_ARMOR_START_LOC; i < Constants.EXTRA_ARMOR_START_LOC + 4; i++) {
+				ItemStack itemStack = this.main.get(i);
+				if (damageSource.isFire() && itemStack.getItem().isFireproof() || !(itemStack.getItem() instanceof ArmorItem)) {
+					continue;
+				}
+
+				int finalI = i; // apparently i need this
+				itemStack.damage((int)amount, this.player, player -> player.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, finalI)));
+			}
+		}
 	}
 }

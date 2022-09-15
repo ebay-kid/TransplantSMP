@@ -41,4 +41,8 @@ public class Utils {
 
 		serverPlayerEntity.networkHandler.disconnect(Text.translatable("multiplayer.disconnect.banned"));
 	}
+
+	public static boolean isExtraArmorSlot(int slot) {
+		return slot >= Constants.EXTRA_ARMOR_START_LOC && slot <= Constants.EXTRA_ARMOR_START_LOC + 3;
+	}
 }

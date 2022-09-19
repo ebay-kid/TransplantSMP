@@ -4,20 +4,25 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity {
 	private final LivingEntity self = (LivingEntity)(Object) this;
+	private final ITransplantable transplantable = (ITransplantable) self;
 
 	@Inject(method = "getAttributeValue", at = @At("TAIL"), cancellable = true)
 	private void changeAttributeReturns(EntityAttribute attribute, CallbackInfoReturnable<Double> cir) {
@@ -104,5 +109,10 @@ public abstract class MixinLivingEntity {
 				cir.cancel();
 			}
 		}
+	}
+
+	@Redirect(method = "modifyAppliedDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getProtectionAmount(Ljava/lang/Iterable;Lnet/minecraft/entity/damage/DamageSource;)I"))
+	private int scaleProtection(Iterable<ItemStack> equipment, DamageSource source) {
+		return (int)(EnchantmentHelper.getProtectionAmount(equipment, source) * (this.transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT && this.transplantable.getTransplantedAmount() < 0 ? 1.0d + this.transplantable.getTransplantedAmount() / 20.0d : 1));
 	}
 }

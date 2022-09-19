@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Mixin(KeyBinding.class)
-public class MixinKeyBinding {
+public abstract class MixinKeyBinding {
 	@Shadow @Final private String category;
 
 	@Shadow @Final private String translationKey;

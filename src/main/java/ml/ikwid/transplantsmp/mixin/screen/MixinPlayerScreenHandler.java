@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerScreenHandler.class)
 public abstract class MixinPlayerScreenHandler extends ScreenHandler {
-
 	protected MixinPlayerScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId) {
 		super(type, syncId);
 	}

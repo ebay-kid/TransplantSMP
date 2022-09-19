@@ -11,7 +11,7 @@ import squeek.appleskin.client.HUDOverlayHandler;
 
 @SuppressWarnings("ConstantConditions")
 @Mixin(HUDOverlayHandler.class)
-public class MixinHUDOverlayHandler {
+public abstract class MixinHUDOverlayHandler {
     @Redirect(method = "drawSaturationOverlay(Lsqueek/appleskin/api/event/HUDOverlayEvent$Saturation;Lnet/minecraft/client/MinecraftClient;FF)V", at = @At(value = "INVOKE", target = "Lsqueek/appleskin/client/HUDOverlayHandler;drawSaturationOverlay(Lnet/minecraft/client/util/math/MatrixStack;FFLnet/minecraft/client/MinecraftClient;IIF)V", ordinal = 0))
     private void drawSecondSaturationRowIfNeeded(HUDOverlayHandler instance, MatrixStack matrices, float saturationGained, float saturation, MinecraftClient client, int x, int y, float alpha) {
         instance.drawSaturationOverlay(matrices, saturationGained, saturation, client, x, y, alpha);

@@ -14,10 +14,14 @@ import net.minecraft.text.Text;
 public class CmdGetTransplantItem {
 	private static final CommandException nonPlayer = new CommandException(Text.of("Cannot take organs from a non-player..."));
 	private static final CommandException notEnough = new CommandException(Text.of("Not enough organs"));
+	private static final CommandException badAmount = new CommandException(Text.of("Nice try bucko."));
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		int amount = 2;
 		try {
 			amount = IntegerArgumentType.getInteger(ctx, "amount") * 2;
+			if(amount < 0) {
+				throw badAmount;
+			}
 		} catch (Exception e) {
 			// moof.
 		}

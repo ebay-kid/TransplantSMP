@@ -2,9 +2,12 @@ package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
 import ml.ikwid.transplantsmp.common.util.Utils;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -97,5 +100,17 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Override
 	public boolean getIsSettingTransplant() {
 		return this.isSettingTransplant;
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void balanceArm(CallbackInfo ci) {
+		if(this.getTransplantType() == TransplantType.ARM_TRANSPLANT && self.world.getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM)) {
+			EntityAttributeInstance attributeInstance = this.self.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
+			if(attributeInstance == null) {
+				TransplantSMP.LOGGER.info("attribute instance is null, you're screwed lol");
+				return;
+			}
+			attributeInstance.setBaseValue(attributeInstance.getBaseValue() + this.self.world.getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get());
+		}
 	}
 }

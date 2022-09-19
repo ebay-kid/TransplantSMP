@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(RecipeBookWidget.class)
-public class MixinRecipeBookWidget {
+public abstract class MixinRecipeBookWidget {
 	/**
 	 * @author 6Times
 	 * @reason loooooool

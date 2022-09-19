@@ -10,27 +10,17 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = InGameHud.class, priority = 900)
+@Mixin(InGameHud.class)
 public abstract class MixinInGameHud {
-	private final InGameHud self = (InGameHud)(Object) this;
-
 	@Shadow private int scaledWidth;
 	@Shadow private int scaledHeight;
 	@Shadow private int renderHealthValue;
@@ -200,7 +190,7 @@ public abstract class MixinInGameHud {
 	}
 
 	@Inject(method = "renderStatusBars", at = @At("HEAD"))
-	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) { // moof code
+	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) {
 		// TransplantSMP.LOGGER.info("renderStatusBars injected");
 
 		if(this.client.player == null) {
@@ -223,83 +213,5 @@ public abstract class MixinInGameHud {
 		} else {
 			HUDRenderUtil.renderHungerBars(matrices, this.getRiddenEntity(), this.scaledHeight, this.scaledWidth, transplants, this.ticks, this.random);
 		}
-		/*
-		if(armor) { // skin transplant
-			int x;
-
-			int i = MathHelper.ceil(this.client.player.getHealth());
-			int j = this.renderHealthValue;
-			int m = this.scaledWidth / 2 - 91;
-			float f = Math.max((float) this.client.player.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float) Math.max(j, i));
-			int p = MathHelper.ceil(this.client.player.getAbsorptionAmount());
-			int q = MathHelper.ceil((f + (float) p) / 2.0F / 10.0F); // shifts up based on how many hearts
-			int r = Math.max(10 - (q - 2), 3);
-			int s = o - (q - 1) * r - 10; // height stuff which i don't understand
-			int u = this.client.player.getArmor() - 20; // shift back by 20 to handle already-drawn textures
-
-			if(this.client.player.getArmor() == 0) {
-				return;
-			}
-
-			// Absorption doesn't get stacked when the player max health is <= 20 (10 hearts, aka vanilla).
-			// So, calculate the shift from 0 absorption -> 4 absorption at 20 health
-			// 0 absorption, s = o + 10
-			// 4 absorption, s = o + 20
-			// so in theory, we can call InGameHud.drawTexture(matrices, x, s + 10, u, v, width, height) with this
-
-			for (int w = 0; w < transplants; w++) { // render however many extra there are
-				x = m + w * 8;
-				if (w * 2 + 1 < u) {
-					self.drawTexture(matrices, x, s - 10, 34, 9, 9, 9);
-				}
-
-				if (w * 2 + 1 == u) {
-					self.drawTexture(matrices, x, s - 10, 25, 9, 9, 9);
-				}
-
-				if (w * 2 + 1 > u) {
-					self.drawTexture(matrices, x, s - 10, 16, 9, 9, 9);
-				}
-			}
-		} else { // stomach transplant
-			if(this.getRiddenEntity() != null) {
-				return;
-			}
-
-			// Hopefully I can straight copy-paste this crap into here and just shift it up
-			int k = this.client.player.getHungerManager().getFoodLevel() - 20;
-
-			int n = this.scaledWidth / 2 + 91;
-			int y;
-			int z;
-			int aa;
-			int ab;
-			int ac;
-			for(y = 0; y < transplants; ++y) {
-				z = o;
-				aa = 16;
-				ab = 0;
-				if (this.client.player.hasStatusEffect(StatusEffects.HUNGER)) {
-					aa += 36;
-					ab = 13;
-				}
-
-				if (this.client.player.getHungerManager().getSaturationLevel() <= 0.0F && this.ticks % (k * 3 + 1) == 0) {
-					z = o + (this.random.nextInt(3) - 1);
-				}
-
-				ac = n - y * 8 - 9;
-				// why 10? it apparently works for the previous one so YOLO (also it shifts around by 10)
-				self.drawTexture(matrices, ac, z - 10, 16 + ab * 9, 27, 9, 9); // wtf why is this different
-				if (y * 2 + 1 < k) {
-					self.drawTexture(matrices, ac, z - 10, aa + 36, 27, 9, 9);
-				}
-
-				if (y * 2 + 1 == k) {
-					self.drawTexture(matrices, ac, z - 10, aa + 45, 27, 9, 9);
-				}
-			}
-		}
-		*/
 	}
 }

@@ -38,11 +38,6 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 		this.maxFoodLevel = foodLevel;
 	}
 
-	@Override
-	public int getMaxFoodLevel() {
-		return this.maxFoodLevel;
-	}
-
 	@Inject(method = "update", at = @At("HEAD"))
 	public void stealPlayerEntityAndRunChecks(PlayerEntity player, CallbackInfo ci) {
 		this.transplantable = (ITransplantable) player;

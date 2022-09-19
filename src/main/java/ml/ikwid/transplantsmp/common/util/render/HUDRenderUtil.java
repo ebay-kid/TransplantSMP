@@ -19,9 +19,8 @@ public class HUDRenderUtil {
         int o = scaledHeight - 39;
         int x;
         int i = MathHelper.ceil(MinecraftClient.getInstance().player.getHealth());
-        int j = renderHealthValue;
         int m = scaledWidth / 2 - 91;
-        float f = Math.max((float) MinecraftClient.getInstance().player.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float) Math.max(j, i));
+        float f = Math.max((float) MinecraftClient.getInstance().player.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float) Math.max(renderHealthValue, i)); // renderHealthValue aka "j"
         int p = MathHelper.ceil(MinecraftClient.getInstance().player.getAbsorptionAmount());
         int q = MathHelper.ceil((f + (float) p) / 2.0F / 10.0F); // shifts up based on how many hearts
         int r = Math.max(10 - (q - 2), 3);

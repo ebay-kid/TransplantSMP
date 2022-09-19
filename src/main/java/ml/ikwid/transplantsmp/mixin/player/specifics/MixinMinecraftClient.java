@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(MinecraftClient.class)
-public class MixinMinecraftClient {
+public abstract class MixinMinecraftClient {
 	@Shadow public ClientPlayerEntity player;
 
 	@ModifyConstant(method = "handleInputEvents", constant = @Constant(intValue = 9, ordinal = 0))

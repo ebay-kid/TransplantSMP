@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 /**
- * The gamerule change is only logged server-side, but it needs to be accessed client-side for the ARM_HASTE_BALANCE_AMOUNT in {@link ml.ikwid.transplantsmp.common.gamerule.GameruleRegister} to work visually.
+ * The gamerule change is only logged server-side, but it needs to be accessed client-side for the gamerules in {@link ml.ikwid.transplantsmp.common.gamerule.GameruleRegister} to work visually.
  */
 
 @Mixin(GameRuleCommand.class)
-public class MixinGameRuleCommand {
+public abstract class MixinGameRuleCommand {
     @Inject(method = "executeSet", at = @At("TAIL"))
     private static <T extends GameRules.Rule<T>> void sendToClients(CommandContext<ServerCommandSource> context, GameRules.Key<T> key, CallbackInfoReturnable<Integer> cir) {
         if(key.getTranslationKey().equals("gamerule.armBalanceAmount")) {

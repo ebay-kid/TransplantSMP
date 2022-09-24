@@ -7,8 +7,12 @@ import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 public class TransplantSMPClient implements ClientModInitializer {
@@ -16,6 +20,8 @@ public class TransplantSMPClient implements ClientModInitializer {
 	public static TransplantType transplantType;
 	public static double armHasteBalanceAmount = 1;
 	public static boolean balanceArm = false;
+
+	public static KeyBinding hotbarSwapKeybind;
 
 	@Override
 	public void onInitializeClient() {
@@ -28,5 +34,7 @@ public class TransplantSMPClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(NetworkingIDs.BALANCE_ARM_TOGGLE_S2C, NetworkingHandlerClient::updateArmBalanceToggle);
 
 		ClientLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE_S2C, NetworkingHandlerClient::handleHandshakeClientSide);
+
+		hotbarSwapKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.transplantsmp.hotbar_swap", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KeyBinding.INVENTORY_CATEGORY));
 	}
 }

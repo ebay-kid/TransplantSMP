@@ -8,6 +8,7 @@
     "AccessorPlayerScreenHandler",
     "appleskin.MixinHUDOverlayHandler",
     "inventory.MixinSlot",
+    "player.MixinGameRuleCommand",
     "player.MixinKillCommand",
     "player.MixinLivingEntity",
     "player.MixinPlayerEntity",

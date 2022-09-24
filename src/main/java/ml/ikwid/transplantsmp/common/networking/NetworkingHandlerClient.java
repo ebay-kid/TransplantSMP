@@ -3,6 +3,7 @@ package ml.ikwid.transplantsmp.common.networking;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import ml.ikwid.transplantsmp.TransplantSMP;
+import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.client.screen.ChooseTransplantScreen;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
@@ -51,5 +52,15 @@ public class NetworkingHandlerClient {
 
 	public static void setTransplantNeededScreen(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
 		minecraftClient.execute(() -> minecraftClient.setScreen(new ChooseTransplantScreen()));
+	}
+
+	public static void updateArmBalanceAmount(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
+		double amount = packetByteBuf.readDouble();
+		minecraftClient.execute(() -> TransplantSMPClient.armHasteBalanceAmount = amount);
+	}
+
+	public static void updateArmBalanceToggle(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
+		boolean toggle = packetByteBuf.readBoolean();
+		minecraftClient.execute(() -> TransplantSMPClient.balanceArm = toggle);
 	}
 }

@@ -1,5 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
@@ -34,5 +35,7 @@ public abstract class MixinDebugHud {
 		ITransplantable transplantable = (ITransplantable) playerEntity;
 		debugText.add("transplant smp -- transplant type: " + transplantable.getTransplantType() + ", transplanted amt: " + transplantable.getTransplantedAmount());
 		debugText.add("armor -- bars: " + playerEntity.getArmor() + ", toughness: " + playerEntity.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS) + ", kb res: " + playerEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
+		debugText.add("arm -- cooldown/tick: " + playerEntity.getAttackCooldownProgressPerTick());
+		debugText.add("gamerules: " + playerEntity.world.getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get());
 	}
 }

@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
 import net.minecraft.world.GameRules;
 
+
 public class GameruleRegister {
 
     public static GameRules.Key<GameRules.BooleanRule> SHOULD_BALANCE_ARM;

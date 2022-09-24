@@ -8,6 +8,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.List;
+
 public class NetworkingUtil {
 	public static void sendTransplantTypeUpdate(String type, ServerPlayerEntity player) {
 		PacketByteBuf buf3 = PacketByteBufs.create();
@@ -28,5 +30,23 @@ public class NetworkingUtil {
 		((ITransplantable) player).setIsSettingTransplant(true);
 
 		ServerPlayNetworking.send(player, NetworkingIDs.NEEDS_TRANSPLANT_S2C, PacketByteBufs.empty());
+	}
+
+	public static void sendArmHasteBalanceAmountUpdate(List<ServerPlayerEntity> players, double newValue) {
+		PacketByteBuf buf = PacketByteBufs.create();
+		buf.writeDouble(newValue);
+
+		for (ServerPlayerEntity player : players) {
+			ServerPlayNetworking.send(player, NetworkingIDs.ARM_HASTE_BALANCE_AMOUNT_S2C, buf);
+		}
+	}
+
+	public static void sendArmBalanceToggleUpdate(List<ServerPlayerEntity> players, boolean newValue) {
+		PacketByteBuf buf = PacketByteBufs.create();
+		buf.writeBoolean(newValue);
+
+		for (ServerPlayerEntity player : players) {
+			ServerPlayNetworking.send(player, NetworkingIDs.BALANCE_ARM_TOGGLE_S2C, buf);
+		}
 	}
 }

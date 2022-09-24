@@ -2,13 +2,17 @@ package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Unique
 @Mixin(PlayerEntity.class)
@@ -84,5 +88,19 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 					break;
 			}
 		}
+	}
+
+	@Unique
+	private float armAmountScale() {
+		return (float) (1 + this.getTransplantedAmount() * this.self.world.getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get() / 20d);
+	}
+
+	@Redirect(method = "getAttackCooldownProgressPerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
+	private double calcArmBalance2(PlayerEntity instance, EntityAttribute entityAttribute) {
+		double ret = instance.getAttributeValue(entityAttribute);
+		if(this.self.world.getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM) && this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
+			ret += this.armAmountScale();
+		}
+		return ret;
 	}
 }

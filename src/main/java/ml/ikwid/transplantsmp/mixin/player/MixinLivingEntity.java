@@ -1,7 +1,6 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.common.TransplantType;
-import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -22,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity {
 	private final LivingEntity self = (LivingEntity)(Object) this;
-	private final ITransplantable transplantable = (ITransplantable) self;
 
 	@Inject(method = "getAttributeValue", at = @At("TAIL"), cancellable = true)
 	private void changeAttributeReturns(EntityAttribute attribute, CallbackInfoReturnable<Double> cir) {
@@ -50,9 +48,6 @@ public abstract class MixinLivingEntity {
 
 						if (item instanceof ArmorItem armorItem) {
 							double prot = armorItem.getProtection();
-							if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
-								prot *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_BAR_BALANCE_AMOUNT).get();
-							}
 
 							ret += prot;
 						}
@@ -73,9 +68,6 @@ public abstract class MixinLivingEntity {
 				}
 				if(transplantable.getTransplantedAmount() < 0) {
 					ret *= 1 + transplantable.getTransplantedAmount() / 20.0d; // transplanted amount always negative, this is the same as (20 + amount)/20, which scales down the return value
-					if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
-						ret *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_DECREASING_BALANCE_AMOUNT).get();
-					}
 				} else if(transplantable.getTransplantedAmount() > 0){
 					for(int i = Constants.EXTRA_ARMOR_START_LOC; i <= Constants.EXTRA_ARMOR_START_LOC + 3; i++) {
 						Item item = playerEntity.getInventory().getStack(i).getItem();
@@ -83,9 +75,6 @@ public abstract class MixinLivingEntity {
 
 						if(item instanceof ArmorItem armorItem) {
 							float toughness = armorItem.getToughness();
-							if(playerEntity.world.getGameRules().get(GameruleRegister.SHOULD_BALANCE_ARMOR).get()) {
-								toughness *= playerEntity.world.getGameRules().get(GameruleRegister.ARMOR_TOUGHNESS_INCREASING_BALANCE_AMOUNT).get();
-							}
 							ret += toughness;
 						}
 					}
@@ -113,6 +102,9 @@ public abstract class MixinLivingEntity {
 
 	@Redirect(method = "modifyAppliedDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getProtectionAmount(Ljava/lang/Iterable;Lnet/minecraft/entity/damage/DamageSource;)I"))
 	private int scaleProtection(Iterable<ItemStack> equipment, DamageSource source) {
-		return (int)(EnchantmentHelper.getProtectionAmount(equipment, source) * (this.transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT && this.transplantable.getTransplantedAmount() < 0 ? 1.0d + this.transplantable.getTransplantedAmount() / 20.0d : 1));
+		if(this instanceof ITransplantable transplantable) {
+			return (int) (EnchantmentHelper.getProtectionAmount(equipment, source) * (transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT && transplantable.getTransplantedAmount() < 0 ? 1.0d + transplantable.getTransplantedAmount() / 20.0d : 1));
+		}
+		return EnchantmentHelper.getProtectionAmount(equipment, source);
 	}
 }

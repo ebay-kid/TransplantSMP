@@ -163,8 +163,7 @@ public abstract class MixinPlayerInventory implements Inventory, Nameable {
 					continue;
 				}
 
-				int finalI = i; // apparently i need this
-				itemStack.damage((int)amount, this.player, player -> player.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, finalI)));
+				itemStack.damage((int)amount, this.player, player -> {});
 			}
 		}
 	}

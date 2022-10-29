@@ -38,6 +38,7 @@ public class CommandRegister {
 		 */
 		LiteralCommandNode<ServerCommandSource> setTransplantTypeServer = CommandManager
 				.literal("setplayertype")
+				.requires((source) -> source.hasPermissionLevel(2))
 					.then(
 						CommandManager
 							.argument("player", EntityArgumentType.player())

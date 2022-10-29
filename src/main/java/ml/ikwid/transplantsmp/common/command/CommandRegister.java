@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -17,6 +18,7 @@ public class CommandRegister {
 			.redirect(transplantSMP)
 			.build();
 
+		/* Debugging commands
 		LiteralCommandNode<ServerCommandSource> setTransplantCount = CommandManager
 			.literal("setcount")
 				.then(
@@ -33,6 +35,19 @@ public class CommandRegister {
 							.executes(CmdSetTransplantType::run)
 				)
 			.build();
+		 */
+		LiteralCommandNode<ServerCommandSource> setTransplantTypeServer = CommandManager
+				.literal("setplayertype")
+					.then(
+						CommandManager
+							.argument("player", EntityArgumentType.player())
+								.then(
+									CommandManager
+										.argument("type", StringArgumentType.greedyString())
+											.executes(CmdSetTransplantTypeServer::run)
+								)
+					)
+				.build();
 		LiteralCommandNode<ServerCommandSource> getOrganItem = CommandManager
 			.literal("itemize")
 				.then(
@@ -54,8 +69,8 @@ public class CommandRegister {
 		dispatcher.getRoot().addChild(transplantSMP);
 		dispatcher.getRoot().addChild(alias);
 
-		transplantSMP.addChild(setTransplantCount);
-		transplantSMP.addChild(setTransplantType);
+		//transplantSMP.addChild(setTransplantCount);
+		//transplantSMP.addChild(setTransplantType);
 		transplantSMP.addChild(getOrganItem);
 		transplantSMP.addChild(dumpInventory);
 		transplantSMP.addChild(getArmorInfo);

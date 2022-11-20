@@ -7,6 +7,7 @@
   "mixins": [
     "AccessorPlayerScreenHandler",
     "appleskin.MixinHUDOverlayHandler",
+    "inventory.MixinCraftingResultSlot",
     "inventory.MixinSlot",
     "player.MixinGameRuleCommand",
     "player.MixinKillCommand",

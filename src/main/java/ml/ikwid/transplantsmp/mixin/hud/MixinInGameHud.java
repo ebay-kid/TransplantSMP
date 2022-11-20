@@ -97,8 +97,8 @@ public abstract class MixinInGameHud {
 		for(int i = 0; i < draws; i++) {
 			// keep matrices, y, u, v, height as these will be constant (i hope)
 
-			instance.drawTexture(matrices, x, y, u, v, Constants.OUTER_SLOT_WIDTH - 1, height);
-			x += (Constants.OUTER_SLOT_WIDTH - 1);
+			instance.drawTexture(matrices, x, y, u, v, Constants.OUTER_SLOT_WIDTH, height);
+			x += Constants.OUTER_SLOT_WIDTH - 1;
 		}
 	}
 
@@ -111,7 +111,7 @@ public abstract class MixinInGameHud {
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		
 		int i = this.scaledWidth / 2;
-		return (i - 91) + transplantable.xShift() + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * (Constants.OUTER_SLOT_WIDTH - 1)); // mimic the previous shifts
+		return (i - 92) + transplantable.xShift() + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * (Constants.OUTER_SLOT_WIDTH - 1)); // mimic the previous shifts
 	}
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 9))

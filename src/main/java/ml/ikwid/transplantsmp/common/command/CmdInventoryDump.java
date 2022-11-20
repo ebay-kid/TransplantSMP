@@ -13,6 +13,7 @@ import net.minecraft.util.collection.DefaultedList;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class CmdInventoryDump {
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		ServerPlayerEntity player = ctx.getSource().getPlayer();

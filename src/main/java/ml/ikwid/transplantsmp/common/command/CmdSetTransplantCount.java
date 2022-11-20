@@ -7,6 +7,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
+@SuppressWarnings("unused")
 public class CmdSetTransplantCount {
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		ITransplantable transplantable = (ITransplantable)(ctx.getSource().getPlayer());

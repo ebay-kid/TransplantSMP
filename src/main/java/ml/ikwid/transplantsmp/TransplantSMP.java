@@ -5,12 +5,16 @@ import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerServer;
+import ml.ikwid.transplantsmp.common.recipe.RecipeOrganItem;
+import ml.ikwid.transplantsmp.common.recipe.RecipeOrganItemRecipeSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +45,9 @@ public class TransplantSMP implements ModInitializer {
 		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE_S2C, NetworkingHandlerServer::handleHandshakeServerSide);
 
 		GameruleRegister.register();
+
+		Registry.register(Registry.RECIPE_SERIALIZER, RecipeOrganItemRecipeSerializer.ID, RecipeOrganItemRecipeSerializer.INSTANCE);
+		// Registry.register(Registry.RECIPE_TYPE, new Identifier(RecipeOrganItem.Type.ID), RecipeOrganItem.Type.INSTANCE);
 
 		LOGGER.info("time for medical transplants");
 	}

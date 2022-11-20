@@ -35,7 +35,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		super(title);
 	}
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	@Inject(method = "render", at = @At("TAIL"))
 	private void debug(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if(DEBUG) {

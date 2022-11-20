@@ -8,6 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class CmdGetArmorInfo {
 	public static int run(CommandContext<ServerCommandSource> ctx) {
 		ServerPlayerEntity playerEntity = ctx.getSource().getPlayer();

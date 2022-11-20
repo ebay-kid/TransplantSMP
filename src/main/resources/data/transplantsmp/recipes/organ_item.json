@@ -1,0 +1,15 @@
+{
+  "type": "transplantsmp:organ_recipe",
+  "ingredients": [
+    {"item" : "minecraft:totem_of_undying", "slot": 0},
+    {"item" : "minecraft:diamond_block", "slot": 1, "count": 2},
+    {"item" : "minecraft:totem_of_undying", "slot": 2},
+    {"item" : "minecraft:netherite_ingot", "slot": 3},
+    {"item" : "minecraft:cobweb", "slot": 4, "count": 32},
+    {"item" : "minecraft:netherite_ingot", "slot": 5},
+    {"item" : "minecraft:totem_of_undying", "slot": 6},
+    {"item" : "minecraft:diamond_block", "slot": 7, "count": 2},
+    {"item" : "minecraft:totem_of_undying", "slot": 8}
+  ],
+  "output": {"item": "transplantsmp:organ_item", "count": 1}
+}

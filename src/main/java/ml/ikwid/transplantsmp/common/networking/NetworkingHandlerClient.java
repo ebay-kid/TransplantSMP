@@ -51,6 +51,7 @@ public class NetworkingHandlerClient {
 	}
 
 	public static void setTransplantNeededScreen(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
+		TransplantSMP.LOGGER.info("received needs transplant");
 		minecraftClient.execute(() -> minecraftClient.setScreen(new ChooseTransplantScreen()));
 	}
 

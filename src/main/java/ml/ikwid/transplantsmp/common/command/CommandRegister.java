@@ -35,7 +35,16 @@ public class CommandRegister {
 							.executes(CmdSetTransplantType::run)
 				)
 			.build();
+		LiteralCommandNode<ServerCommandSource> dumpInventory = CommandManager
+				.literal("invdump")
+				.executes(CmdInventoryDump::run)
+				.build();
+		LiteralCommandNode<ServerCommandSource> getArmorInfo = CommandManager
+				.literal("armor")
+				.executes(CmdGetArmorInfo::run)
+				.build();
 		 */
+
 		LiteralCommandNode<ServerCommandSource> setTransplantTypeServer = CommandManager
 				.literal("setplayertype")
 				.requires((source) -> source.hasPermissionLevel(2))
@@ -49,6 +58,19 @@ public class CommandRegister {
 								)
 					)
 				.build();
+		LiteralCommandNode<ServerCommandSource> setTransplantCountServer = CommandManager
+				.literal("setplayercount")
+				.requires((source) -> source.hasPermissionLevel(2))
+				.then(
+						CommandManager
+								.argument("player", EntityArgumentType.player())
+								.then(
+										CommandManager
+												.argument("amount", IntegerArgumentType.integer())
+												.executes(CmdSetTransplantCountServer::run)
+								)
+				)
+				.build();
 		LiteralCommandNode<ServerCommandSource> getOrganItem = CommandManager
 			.literal("itemize")
 				.then(
@@ -58,22 +80,19 @@ public class CommandRegister {
 				)
 			.executes(CmdGetTransplantItem::run)
 			.build();
-		LiteralCommandNode<ServerCommandSource> dumpInventory = CommandManager
-			.literal("invdump")
-			.executes(CmdInventoryDump::run)
-			.build();
-		LiteralCommandNode<ServerCommandSource> getArmorInfo = CommandManager
-			.literal("armor")
-			.executes(CmdGetArmorInfo::run)
-			.build();
+
 
 		dispatcher.getRoot().addChild(transplantSMP);
 		dispatcher.getRoot().addChild(alias);
 
-		//transplantSMP.addChild(setTransplantCount);
-		//transplantSMP.addChild(setTransplantType);
-		transplantSMP.addChild(getOrganItem);
+		/* Debugging commands
+		transplantSMP.addChild(setTransplantCount);
+		transplantSMP.addChild(setTransplantType);
 		transplantSMP.addChild(dumpInventory);
 		transplantSMP.addChild(getArmorInfo);
+		 */
+		transplantSMP.addChild(setTransplantTypeServer);
+		transplantSMP.addChild(setTransplantCountServer);
+		transplantSMP.addChild(getOrganItem);
 	}
 }

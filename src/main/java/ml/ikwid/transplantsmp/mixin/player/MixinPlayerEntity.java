@@ -3,6 +3,7 @@ package ml.ikwid.transplantsmp.mixin.player;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.fabricmc.api.EnvType;
@@ -11,10 +12,13 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.Objects;
 
 @Unique
 @Mixin(PlayerEntity.class)
@@ -94,10 +98,20 @@ public abstract class MixinPlayerEntity implements ITransplantable {
 
 	@Environment(EnvType.CLIENT)
 	@Redirect(method = "getAttackCooldownProgressPerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
-	private double balanceArm(PlayerEntity instance, EntityAttribute entityAttribute) {
+	private double balanceArmClient(PlayerEntity instance, EntityAttribute entityAttribute) {
 		double attrVal = instance.getAttributeValue(entityAttribute);
 		if(TransplantSMPClient.balanceArm && this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
-			attrVal += (1 + this.getTransplantedAmount() * TransplantSMPClient.armHasteBalanceAmount / 20d);
+			attrVal += ((1.0d + this.getTransplantedAmount()) * TransplantSMPClient.armHasteBalanceAmount / 20d);
+		}
+		return attrVal;
+	}
+
+	@Environment(EnvType.SERVER)
+	@Redirect(method = "getAttackCooldownProgressPerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D"))
+	private double balanceArmServer(PlayerEntity instance, EntityAttribute entityAttribute) {
+		double attrVal = instance.getAttributeValue(entityAttribute);
+		if(Objects.requireNonNull(self.getServer()).getOverworld().getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM) && this.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
+			attrVal += ((1.0d + this.getTransplantedAmount()) * self.getServer().getOverworld().getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get() / 20d);
 		}
 		return attrVal;
 	}

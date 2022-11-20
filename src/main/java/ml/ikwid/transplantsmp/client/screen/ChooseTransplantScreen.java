@@ -22,10 +22,10 @@ public class ChooseTransplantScreen extends Screen {
 	protected final boolean background;
 	private int index = 0;
 
-	private int height = Objects.requireNonNull(client.currentScreen).height;
-	private int width = client.currentScreen.width;
+	private int height = client.getWindow().getHeight();
+	private int width = client.getWindow().getWidth();
 
-	private final ButtonWidget leftArrow = new ButtonWidget(5, client.currentScreen.height - 14, 10, 10, Text.of("<"), b -> {
+	private final ButtonWidget leftArrow = new ButtonWidget(5, this.height - 14, 10, 10, Text.of("<"), b -> {
 		if(this.index > 0) {
 			index--;
 		}
@@ -37,7 +37,7 @@ public class ChooseTransplantScreen extends Screen {
 		}
 	});
 
-	private final ButtonWidget choose = new ButtonWidget(client.currentScreen.width - 50, leftArrow.y, 40, 10, Text.of("Choose"), b -> {
+	private final ButtonWidget choose = new ButtonWidget(this.width - 50, leftArrow.y, 40, 10, Text.of("Choose"), b -> {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeString(TransplantType.transplantTypes[index].toString());
 		ClientPlayNetworking.send(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, buf);

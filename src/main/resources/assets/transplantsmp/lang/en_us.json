@@ -8,7 +8,8 @@
   "key.hotbar.16": "Hotbar Slot 16",
   "key.hotbar.17": "Hotbar Slot 17",
   "key.hotbar.18": "Hotbar Slot 18",
-  "key.transplantsmp.hotbar_swap": "Hotbar Slot 19",
+  "key.transplantsmp.hotbar_swap": "Access Second Hotbar",
   "gamerule.armBalancing": "Arm Transplant Balancing Toggle",
-  "gamerule.armBalanceAmount" : "Arm Transplant Balance Amount"
+  "gamerule.armBalanceAmount" : "Arm Transplant Balance Amount",
+  "item.transplantsmp.organ_item" : "Organ Item"
 }

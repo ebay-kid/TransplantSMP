@@ -35,7 +35,6 @@ public class NetworkingHandlerClient {
 		minecraftClient.execute(() -> {
 			//noinspection ConstantConditions
 			((ITransplantable)(minecraftClient.player)).setTransplantedAmount(count, true, false);
-			TransplantSMP.LOGGER.info("count updated -client, count = " + count);
 		});
 	}
 
@@ -45,13 +44,10 @@ public class NetworkingHandlerClient {
 			//noinspection ConstantConditions
 			((ITransplantable)(minecraftClient.player)).setTransplantType(TransplantType.get(type), true);
 			minecraftClient.setScreen(null);
-
-			TransplantSMP.LOGGER.info("type updated -client, type = " + type);
 		});
 	}
 
 	public static void setTransplantNeededScreen(MinecraftClient minecraftClient, ClientPlayNetworkHandler clientPlayNetworkHandler, PacketByteBuf packetByteBuf, PacketSender packetSender) {
-		TransplantSMP.LOGGER.info("received needs transplant");
 		minecraftClient.execute(() -> minecraftClient.setScreen(new ChooseTransplantScreen()));
 	}
 

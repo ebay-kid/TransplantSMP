@@ -3,7 +3,6 @@ package ml.ikwid.transplantsmp.common.recipe;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import ml.ikwid.transplantsmp.TransplantSMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -48,7 +47,6 @@ public class RecipeOrganItemRecipeSerializer implements RecipeSerializer<RecipeO
         Item outputItem = Registry.ITEM.getOrEmpty(new Identifier(recipeJSON.output.get("item").getAsString())).orElseThrow(() -> new JsonSyntaxException("RecipeOrganItem: JSON is missing item"));
         ItemStack output = new ItemStack(outputItem, recipeJSON.output.get("count") == null ? 1 : recipeJSON.output.get("count").getAsInt());
 
-        TransplantSMP.LOGGER.info("read json -> recipe");
         return new RecipeOrganItem(id, ingredientsAndCounts, output);
     }
 
@@ -66,7 +64,6 @@ public class RecipeOrganItemRecipeSerializer implements RecipeSerializer<RecipeO
             }
         }
 
-        TransplantSMP.LOGGER.info("read packet -> recipe");
         return new RecipeOrganItem(id, ingredientsAndCounts, buf.readItemStack());
     }
 
@@ -86,6 +83,5 @@ public class RecipeOrganItemRecipeSerializer implements RecipeSerializer<RecipeO
             }
         }
         buf.writeItemStack(recipe.getOutput());
-        TransplantSMP.LOGGER.info("write recipe -> packet");
     }
 }

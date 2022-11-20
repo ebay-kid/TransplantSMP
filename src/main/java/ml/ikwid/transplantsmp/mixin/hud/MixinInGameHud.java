@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -37,7 +36,6 @@ public abstract class MixinInGameHud {
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 4))
 	private int armorBars(int constant) {
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in armor bars");
 			return constant;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
@@ -54,7 +52,6 @@ public abstract class MixinInGameHud {
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 5))
 	private int hungerBars(int constant) {
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in hunger bars");
 			return constant;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
@@ -71,7 +68,6 @@ public abstract class MixinInGameHud {
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 10, ordinal = 6))
 	private int airModifier(int constant) { // shift air bubbles if necessary
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in air");
 			return constant;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
@@ -86,7 +82,6 @@ public abstract class MixinInGameHud {
 	@Redirect(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
 	private void drawEveryHotbarSlotNeeded(InGameHud instance, MatrixStack matrices, int x, int y, int u, int v, int width, int height) {
 		if(this.client.player == null) {
-			// TransplantSMP.LOGGER.info("this.client.player in draw every slot");
 			instance.drawTexture(matrices, x, y, u, v, width, height);
 			return;
 		}
@@ -105,7 +100,6 @@ public abstract class MixinInGameHud {
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 1), index = 1)
 	private int fixSelectedSlotLocation(int x) {
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player on fixing selected slot");
 			return x;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
@@ -122,7 +116,6 @@ public abstract class MixinInGameHud {
 	@Inject(method = "renderHotbar", at = @At("TAIL"))
 	private void renderHotbarItems(float tickDelta, MatrixStack matrices, CallbackInfo ci) {
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in render hotbar items");
 			return;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
@@ -191,10 +184,7 @@ public abstract class MixinInGameHud {
 
 	@Inject(method = "renderStatusBars", at = @At("HEAD"))
 	private void drawMoreBars(MatrixStack matrices, CallbackInfo ci) {
-		// TransplantSMP.LOGGER.info("renderStatusBars injected");
-
 		if(this.client.player == null) {
-			TransplantSMP.LOGGER.info("this.client.player in draw more bars");
 			return;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);

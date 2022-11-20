@@ -3,8 +3,8 @@
 ## If Lifesteal SMP met Origins SMP
 
 ### Requirements:
-- Fabric Loader (>= 0.14.8)
-- Fabric API (>= 0.56.0)
+- Fabric Loader (>= 0.14.9)
+- Fabric API (>= 0.62.0)
 - Installation on both client and server
 - Friends
 
@@ -37,9 +37,12 @@ Skin Transplant:
 Armor bars.
 
 Vanilla defaults: 10 bars max.
-You are able to equip 2 sets of armor at once (with this transplant). This 2nd set of armor cannot have ANY enchantments or curses, as it will have no effect.
+You are able to equip 2 sets of armor at once (with this transplant).
+This 2nd set of armor cannot have ANY enchantments or curses, as it will have no effect.
+
 If you have MORE than 10 bars, the extra armor bars will come into effect.
-If you have LESS than 10 bars, then you will only feel the effect of that amount of armor bars. (If you have full diamond and no 2nd set, and you have 9 bars of armor, the 10th armor bar from full diamond will have no effect.)
+If you have LESS than 10 bars, then you will only feel the effect of that amount of armor bars.
+(i.e. If you have full diamond and no 2nd set, and you have 9 bars of armor, the 10th armor bar from full diamond will have no effect.)
 ```
 
 Stomach Transplant:
@@ -57,6 +60,4 @@ Saturation caps are scaled accordingly.
 https://www.youtube.com/playlist?list=PL5biciXbHO_xIDkh_xhxcY0TBVdb-MJ9G
 
 ##### Mod compatibility:
-Unknown.
-
-~~Wrecking mod compat, one line at a time.~~
+Not too bad (comes with AppleSkin compat), report any incompatibilities in the Issues tab and I'll look into it.

@@ -1,6 +1,5 @@
 package ml.ikwid.transplantsmp.common.recipe;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
@@ -24,11 +23,6 @@ public class RecipeOrganItem implements CraftingRecipe {
         this.id = id;
         this.ingredientsAndCounts = ingredientsAndCounts;
         this.output = output;
-
-        TransplantSMP.LOGGER.info("RecipeOrganItem made");
-        for(var i : ingredientsAndCounts) {
-            TransplantSMP.LOGGER.info("Ingredient: " + i.key().toJson().toString() + " Count: " + i.value());
-        }
     }
 
     @Override
@@ -38,11 +32,9 @@ public class RecipeOrganItem implements CraftingRecipe {
         }
         for(int i = 0; i < 9; i++) {
             if(ingredientsAndCounts.get(i).key() == Ingredient.EMPTY || ingredientsAndCounts.get(i).value() == 0) {
-                TransplantSMP.LOGGER.info("RecipeOrganItem: Empty ingredient or count at slot " + i);
                 continue;
             }
             if(!(ingredientsAndCounts.get(i).key().test(inventory.getStack(i)) && ingredientsAndCounts.get(i).value() <= inventory.getStack(i).getCount())) {
-                TransplantSMP.LOGGER.info("RecipeOrganItem: Ingredient or count at slot " + i + " (" + inventory.getStack(i).getName().getString() + ", count " + inventory.getStack(i).getCount() + ") does not match targeted " + ingredientsAndCounts.get(i).key() + " " + ingredientsAndCounts.get(i).value());
                 return false;
             }
         }

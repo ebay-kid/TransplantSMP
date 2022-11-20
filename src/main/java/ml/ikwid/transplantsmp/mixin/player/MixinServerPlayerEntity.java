@@ -49,8 +49,6 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Unique
 	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType) {
-		TransplantSMP.LOGGER.info("update transplants -server, amount = " + this.transplanted);
-
 		if(updateType) {
 			NetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
 		}

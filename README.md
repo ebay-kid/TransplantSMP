@@ -5,7 +5,7 @@
 ### Requirements:
 - Fabric Loader (>= 0.14.9)
 - Fabric API (>= 0.62.0)
-- Installation on both client and server
+- Installation on both client and server, and both client and server must have the same version of the mod.
 - Friends
 
 ### Mod compatibility:

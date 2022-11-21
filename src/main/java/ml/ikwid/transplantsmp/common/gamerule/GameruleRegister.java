@@ -8,9 +8,11 @@ import net.minecraft.world.GameRules;
 public class GameruleRegister {
     public static GameRules.Key<GameRules.BooleanRule> SHOULD_BALANCE_ARM;
     public static GameRules.Key<DoubleRule> ARM_HASTE_BALANCE_AMOUNT;
+    public static GameRules.Key<GameRules.BooleanRule> NO_NETHERITE_SKIN_SECONDARY;
 
     public static void register() {
         SHOULD_BALANCE_ARM = GameRuleRegistry.register("armBalancing", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
-        ARM_HASTE_BALANCE_AMOUNT = GameRuleRegistry.register("armBalanceAmount", GameRules.Category.PLAYER, GameRuleFactory.createDoubleRule(1.0));
+        ARM_HASTE_BALANCE_AMOUNT = GameRuleRegistry.register("armBalanceAmount", GameRules.Category.PLAYER, GameRuleFactory.createDoubleRule(0.1));
+        NO_NETHERITE_SKIN_SECONDARY = GameRuleRegistry.register("noNetheriteSkinSecondary", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
     }
 }

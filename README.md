@@ -55,6 +55,11 @@ If you have LESS than 10 bars, the minimum bars to heal with are scaled down acc
 Saturation caps are scaled accordingly.
 ```
 
+### Gamerules:
+- `armBalancing` (default: `false`) : If true, Arm Transplant users get an increase in attack speed (not mining speed). A decrease will occur if the player has lost slots.
+- `armBalanceAmount` (default: `0.1`) : if `armBalancing` is true, this is the amount of attack speed increase/decrease PER gained/lost slot.
+- `noNetheriteSkinSecondary` (default: `false`) : If true, Netherite armor will not be able to be used as a secondary set of armor for Skin Transplant users.
+
 ##### Why is it called Transplant SMP?
 
 https://www.youtube.com/playlist?list=PL5biciXbHO_xIDkh_xhxcY0TBVdb-MJ9G

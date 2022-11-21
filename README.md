@@ -8,6 +8,12 @@
 - Installation on both client and server
 - Friends
 
+### Mod compatibility:
+Not too bad (comes with AppleSkin compat), report any incompatibilities in the Issues tab and I'll look into it.
+
+### Usage:
+The mod comes with a handful of QOL features (mainly Arm Transplant) and a crafting recipe for an Organ Item.
+
 ### Transplants:
 - Heart Transplant
 - Arm Transplant
@@ -30,15 +36,19 @@ Hotbar slots.
 Vanilla defaults: 9 Hotbar slots.
 If you have MORE slots, they will be added to the hotbar.
 If you have LESS slots, they will be removed in the same order they were added.
+
+If gamerule `armBalancing` is `true`, then you will also receive a small increase/decrease
+(dep. on more/less slots respectively) in attack speed (not mining speed!) based on the number of slots you have.
 ```
 
 Skin Transplant:
 ```
 Armor bars.
 
-Vanilla defaults: 10 bars max.
-You are able to equip 2 sets of armor at once (with this transplant).
-This 2nd set of armor cannot have ANY enchantments or curses, as it will have no effect.
+Vanilla defaults: 10 bars max, one set of armor.
+
+You are able to equip 2 sets of armor at once.
+(Enchantments from the second set have no effect).
 
 If you have MORE than 10 bars, the extra armor bars will come into effect.
 If you have LESS than 10 bars, then you will only feel the effect of that amount of armor bars.
@@ -61,8 +71,4 @@ Saturation caps are scaled accordingly.
 - `noNetheriteSkinSecondary` (default: `false`) : If true, Netherite armor will not be able to be used as a secondary set of armor for Skin Transplant users.
 
 ##### Why is it called Transplant SMP?
-
 https://www.youtube.com/playlist?list=PL5biciXbHO_xIDkh_xhxcY0TBVdb-MJ9G
-
-##### Mod compatibility:
-Not too bad (comes with AppleSkin compat), report any incompatibilities in the Issues tab and I'll look into it.

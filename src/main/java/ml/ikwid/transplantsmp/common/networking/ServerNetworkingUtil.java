@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.List;
 
-public class NetworkingUtil {
+public class ServerNetworkingUtil {
 	public static void sendTransplantTypeUpdate(String type, ServerPlayerEntity player) {
 		PacketByteBuf buf3 = PacketByteBufs.create();
 		buf3.writeString(type);

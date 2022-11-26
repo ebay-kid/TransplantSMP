@@ -11,7 +11,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-public class CmdGetTransplantItem {
+public class CmdItemize {
 	private static final CommandException nonPlayer = new CommandException(Text.of("Cannot take organs from a non-player..."));
 	private static final CommandException notEnough = new CommandException(Text.of("Not enough organs"));
 	private static final CommandException badAmount = new CommandException(Text.of("Nice try bucko."));
@@ -19,11 +19,11 @@ public class CmdGetTransplantItem {
 		int amount = 2;
 		try {
 			amount = IntegerArgumentType.getInteger(ctx, "amount") * 2;
-			if(amount < 0) {
-				throw badAmount;
-			}
 		} catch (Exception e) {
-			// moof.
+			// im smart
+		}
+		if(amount < 0) {
+			throw badAmount;
 		}
 		ServerPlayerEntity serverPlayerEntity = ctx.getSource().getPlayer();
 		ITransplantable transplantable = (ITransplantable)(serverPlayerEntity);
@@ -40,11 +40,15 @@ public class CmdGetTransplantItem {
 				throw notEnough;
 			}
 		} else {
-			if(transplanted - amount > -18) {
+			if(transplanted - amount >= -18) {
 				transplantable.setTransplantedAmount(transplanted - amount, true, false);
 			} else {
 				throw notEnough;
 			}
+		}
+		if(amount > 32) {
+			serverPlayerEntity.giveItemStack(new ItemStack(ItemRegister.ORGAN_ITEM, 16));
+			amount -= 32;
 		}
 		serverPlayerEntity.giveItemStack(new ItemStack(ItemRegister.ORGAN_ITEM, amount / 2));
 		return 1;

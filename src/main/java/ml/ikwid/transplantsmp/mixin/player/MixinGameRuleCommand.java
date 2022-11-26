@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
 import com.mojang.brigadier.context.CommandContext;
-import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
+import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
 import net.minecraft.server.command.GameRuleCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,11 +24,11 @@ public abstract class MixinGameRuleCommand {
         if(key.getTranslationKey().equals("gamerule.armBalanceAmount")) {
             double val = context.getArgument("value", Double.class);
             List<ServerPlayerEntity> players = context.getSource().getServer().getPlayerManager().getPlayerList();
-            NetworkingUtil.sendArmHasteBalanceAmountUpdate(players, val);
+            ServerNetworkingUtil.sendArmHasteBalanceAmountUpdate(players, val);
         } else if(key.getTranslationKey().equals("gamerule.armBalancing")) {
             boolean val = context.getArgument("value", Boolean.class);
             List<ServerPlayerEntity> players = context.getSource().getServer().getPlayerManager().getPlayerList();
-            NetworkingUtil.sendArmBalanceToggleUpdate(players, val);
+            ServerNetworkingUtil.sendArmBalanceToggleUpdate(players, val);
         }
     }
 }

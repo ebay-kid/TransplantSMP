@@ -3,7 +3,7 @@ package ml.ikwid.transplantsmp.mixin.player;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
-import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
+import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -25,13 +25,13 @@ public abstract class MixinPlayerManager {
 	private void sendScreenIfNeeded(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
 		ITransplantable transplantable = (ITransplantable) player;
 		if(transplantable.getTransplantType() == null) {
-			NetworkingUtil.sendTransplantNeedsChoose(player);
+			ServerNetworkingUtil.sendTransplantNeedsChoose(player);
 			TransplantSMP.LOGGER.info("nothing found, sent needs transplant");
 		} else {
 			transplantable.updateTransplants(true, true);
 		}
 
-		NetworkingUtil.sendArmBalanceToggleUpdate(List.of(player), this.server.getOverworld().getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM));
-		NetworkingUtil.sendArmHasteBalanceAmountUpdate(List.of(player), this.server.getOverworld().getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get());
+		ServerNetworkingUtil.sendArmBalanceToggleUpdate(List.of(player), this.server.getOverworld().getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM));
+		ServerNetworkingUtil.sendArmHasteBalanceAmountUpdate(List.of(player), this.server.getOverworld().getGameRules().get(GameruleRegister.ARM_HASTE_BALANCE_AMOUNT).get());
 	}
 }

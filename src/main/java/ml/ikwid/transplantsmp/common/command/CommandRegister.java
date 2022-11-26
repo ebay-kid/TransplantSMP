@@ -76,9 +76,9 @@ public class CommandRegister {
 				.then(
 					CommandManager
 						.argument("amount", IntegerArgumentType.integer())
-							.executes(CmdGetTransplantItem::run)
+							.executes(CmdItemize::run)
 				)
-			.executes(CmdGetTransplantItem::run)
+			.executes(CmdItemize::run)
 			.build();
 
 

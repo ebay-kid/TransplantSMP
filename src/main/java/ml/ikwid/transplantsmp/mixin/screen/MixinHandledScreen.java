@@ -11,13 +11,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
@@ -30,6 +28,8 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 	@Shadow public abstract T getScreenHandler();
 
 	@Shadow protected int backgroundWidth;
+
+	@Shadow protected int backgroundHeight;
 
 	protected MixinHandledScreen(Text title) {
 		super(title);
@@ -54,7 +54,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 		int x = this.x;
 		int y = this.y;
-		int height = 166; // default HandledScreen value
+		int height = 166; // default HandledScreen value, TODO: fix this for beacon too cuz im 98% sure it breaks
 
 		int bottom = y + height;
 
@@ -84,14 +84,8 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 		return ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
 	}
 
-	/**
-	 * Slight side effect of forcing you to use the drop button but idc that's the superior way
-	 *
-	 * @author 6Times
-	 * @reason Allow Arm/Skin transplant users to click outside of bounds
-	 */
-	@Overwrite
-	protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
-		return false;
+	@Redirect(method = "isClickOutsideBounds", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;backgroundHeight:I", opcode = Opcodes.GETFIELD))
+	private int fixBackgroundHeight(HandledScreen<?> handledScreen) {
+		return ((AccessorHandledScreen) handledScreen).getBackgroundHeight() + Constants.HOTBAR_SPACE_IN_INV_SCREEN; // whyyyyyy is code randomly copied instead of calling super
 	}
 }

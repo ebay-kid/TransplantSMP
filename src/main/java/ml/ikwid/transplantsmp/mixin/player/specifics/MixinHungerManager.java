@@ -7,6 +7,7 @@ import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -64,8 +65,12 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 		return (int)(0.9 * (transplantable.getTransplantedAmount() + 20));
 	}
 
-	@ModifyConstant(method = "isNotFull", constant = @Constant(intValue = 20, ordinal = 0))
-	private int betterNotFull(int constant) {
-		return this.maxFoodLevel;
+	/**
+	 * @author 6Times
+	 * @reason idk what im doing but this works so idc
+	 */
+	@Overwrite
+	public boolean isNotFull() {
+		return this.foodLevel < this.maxFoodLevel;
 	}
 }

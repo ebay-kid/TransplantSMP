@@ -5,15 +5,18 @@ import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CraftingScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
@@ -32,5 +35,10 @@ public abstract class MixinInventoryScreen extends AbstractInventoryScreen<Playe
 				this.drawTexture(matrices, this.x - Constants.OUTER_SLOT_WIDTH + 4, this.y + 7 + i * (Constants.OUTER_SLOT_HEIGHT - 4), 7, this.backgroundHeight - 25, Constants.OUTER_SLOT_WIDTH - 4, Constants.OUTER_SLOT_HEIGHT - 5);
 			}
 		}
+	}
+
+	@Redirect(method = "isClickOutsideBounds", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;backgroundHeight:I", opcode = Opcodes.GETFIELD, ordinal = 0))
+	private int fixBackgroundHeight(InventoryScreen instance) {
+		return ((AccessorHandledScreen) instance).getBackgroundHeight() + Constants.HOTBAR_SPACE_IN_INV_SCREEN; // whyyyyyy is code randomly copied instead of calling super
 	}
 }

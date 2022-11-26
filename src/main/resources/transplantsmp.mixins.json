@@ -28,9 +28,13 @@
     "player.specifics.MixinGameOptions",
     "player.specifics.MixinKeyBinding",
     "player.specifics.MixinMinecraftClient",
+    "screen.AccessorHandledScreen",
     "screen.MixinHandledScreen",
     "screen.MixinInventoryScreen",
-    "screen.MixinRecipeBookWidget"
+    "screen.MixinRecipeBookWidget",
+    "screen.ihateminecraftnotcallingsuper.MixinAbstractFurnaceScreen",
+    "screen.ihateminecraftnotcallingsuper.MixinCraftingScreen",
+    "screen.ihateminecraftnotcallingsuper.MixinLoomScreen"
   ],
   "injectors": {
     "defaultRequire": 1

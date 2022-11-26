@@ -3,13 +3,12 @@ package ml.ikwid.transplantsmp.mixin.player;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
-import ml.ikwid.transplantsmp.common.networking.NetworkingUtil;
+import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
 import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -46,18 +45,31 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		}
 	}
 
-	@Unique
+	@Override
+	public void setTransplantedAmount(int organs, boolean updateCount, boolean updateType) {
+		int prev = this.getTransplantedAmount();
+		this.transplanted = organs;
+		if(illegalTransplantAmount()) {
+			this.transplanted = prev;
+			TransplantSMP.LOGGER.info("illegal amount of " + organs);
+			return;
+		}
+		if(organs < prev && 20 + organs < this.self.getHealth()) {
+			this.self.setHealth(20 + organs);
+		}
+		this.updateTransplants(updateCount, updateType);
+	}
+
 	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType) {
+		super.updateTransplants(updateCount, updateType);
 		if(updateType) {
-			NetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
+			ServerNetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
 		}
 
 		if(updateCount) {
-			NetworkingUtil.sendTransplantCountUpdate(this.self);
+			ServerNetworkingUtil.sendTransplantCountUpdate(this.self);
 		}
-
-		super.updateTransplants(updateCount, updateType);
 	}
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
@@ -95,5 +107,10 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Override
 	public boolean getIsSettingTransplant() {
 		return this.isSettingTransplant;
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void iHateClientSideServerSideDesyncWithTheHungerManagerPleaseFixMojangThankYouIDontWantToKeepSendingPacketEveryTick(CallbackInfo ci) {
+		ServerNetworkingUtil.sendTransplantCountUpdate(this.self);
 	}
 }

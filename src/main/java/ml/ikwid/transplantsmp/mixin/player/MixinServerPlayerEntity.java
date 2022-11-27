@@ -54,7 +54,7 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 			TransplantSMP.LOGGER.info("illegal amount of " + organs);
 			return;
 		}
-		if(organs < prev && 20 + organs < this.self.getHealth()) {
+		if(this.transplantType == TransplantType.HEART_TRANSPLANT && organs < prev && 20 + organs < this.self.getHealth()) {
 			this.self.setHealth(20 + organs);
 		}
 		this.updateTransplants(updateCount, updateType);

@@ -3,9 +3,9 @@ package ml.ikwid.transplantsmp.common.networking;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import ml.ikwid.transplantsmp.TransplantSMP;
+import ml.ikwid.transplantsmp.api.TransplantTypes;
 import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.client.screen.ChooseTransplantScreen;
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -42,7 +42,7 @@ public class NetworkingHandlerClient {
 		String type = packetByteBuf.readString();
 		minecraftClient.execute(() -> {
 			//noinspection ConstantConditions
-			((ITransplantable)(minecraftClient.player)).setTransplantType(TransplantType.get(type), true);
+			((ITransplantable)(minecraftClient.player)).setTransplantType(TransplantTypes.get(type), true);
 			minecraftClient.setScreen(null);
 		});
 	}

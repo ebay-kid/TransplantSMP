@@ -1,7 +1,8 @@
 package ml.ikwid.transplantsmp.common.networking;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantTypes;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -40,7 +41,7 @@ public class NetworkingHandlerServer {
 		minecraftServer.execute(() -> {
 			ITransplantable transplantable = (ITransplantable) player;
 			if(transplantable.getTransplantType() == null) {
-				TransplantType transplantType = TransplantType.get(chosenType);
+				TransplantType transplantType = TransplantTypes.get(chosenType);
 
 				transplantable.setTransplantedAmount(0, false, false);
 				transplantable.setTransplantType(transplantType, true);

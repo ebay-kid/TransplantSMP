@@ -1,10 +1,12 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantTypes;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
 import ml.ikwid.transplantsmp.common.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,7 +32,7 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
 	public void readTransplantData(NbtCompound nbt, CallbackInfo ci) {
 		String transplantStored = nbt.getString("transplantType");
-		if(transplantStored.equals("") || TransplantType.get(transplantStored) == null) {
+		if(transplantStored.equals("") || TransplantTypes.get(transplantStored) == null) {
 			this.transplanted = 0;
 			this.setTransplantType(null, false); // make sure it's null
 
@@ -39,35 +41,21 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 			// Don't do any updates here because we can't send any packets yet.
 			// Update in MixinPlayerManager at tail after everything is initialized.
 			this.setTransplantedAmount(nbt.getInt("transplanted"), false, false);
-			this.setTransplantType(Objects.requireNonNull(TransplantType.get(transplantStored)), false);
+			this.setTransplantType(Objects.requireNonNull(TransplantTypes.get(transplantStored)), false);
 
 			TransplantSMP.LOGGER.info("found something, doesn't need new transplant");
 		}
 	}
 
 	@Override
-	public void setTransplantedAmount(int organs, boolean updateCount, boolean updateType) {
-		int prev = this.getTransplantedAmount();
-		this.transplanted = organs;
-		if(illegalTransplantAmount()) {
-			this.transplanted = prev;
-			TransplantSMP.LOGGER.info("illegal amount of " + organs);
-			return;
-		}
-		if(this.transplantType == TransplantType.HEART_TRANSPLANT && organs < prev && 20 + organs < this.self.getHealth()) {
-			this.self.setHealth(20 + organs);
-		}
-		this.updateTransplants(updateCount, updateType);
-	}
-
-	@Override
-	public void updateTransplants(boolean updateCount, boolean updateType) {
-		super.updateTransplants(updateCount, updateType);
+	public void updateTransplants(boolean updateCount, boolean updateType, TransplantType prevType, int prevAmt, int newAmt) {
 		if(updateType) {
+			prevType.resetTransplantServer(self);
 			ServerNetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
 		}
 
 		if(updateCount) {
+			this.transplantType.updateCountServer(self, prevAmt, newAmt);
 			ServerNetworkingUtil.sendTransplantCountUpdate(this.self);
 		}
 	}
@@ -80,8 +68,9 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		}
 
 		this.transplantOrgan(false);
-		if(damageSource.getAttacker() instanceof ServerPlayerEntity) {
-			((ITransplantable) damageSource.getAttacker()).transplantOrgan(true);
+		Entity entity;
+		if((entity = damageSource.getAttacker()) != null && entity.isPlayer()) { // should be changed to capture the death message translatable text, TODO when can test
+			((ITransplantable) entity).transplantOrgan(true);
 		}
 	}
 
@@ -92,11 +81,7 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		this.setTransplantedAmount(oldTransplantable.getTransplantedAmount(), false, false);
 		this.setTransplantType(oldTransplantable.getTransplantType(), true);
 
-		if(this.getTransplantType() == TransplantType.HEART_TRANSPLANT) {
-			self.setHealth(20 + this.getTransplantedAmount()); // make sure heart ppl spawn with full hearts
-		} else if(this.getTransplantType() == TransplantType.STOMACH_TRANSPLANT) {
-			self.getHungerManager().setFoodLevel(20 + this.getTransplantedAmount()); // make sure stomach ppl spawn with full hunger
-		}
+		this.transplantType.onPlayerRespawn(self, this.getTransplantedAmount());
 	}
 
 	@Override

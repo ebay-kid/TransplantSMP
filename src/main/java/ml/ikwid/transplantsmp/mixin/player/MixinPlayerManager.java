@@ -28,7 +28,7 @@ public abstract class MixinPlayerManager {
 			ServerNetworkingUtil.sendTransplantNeedsChoose(player);
 			TransplantSMP.LOGGER.info("nothing found, sent needs transplant");
 		} else {
-			transplantable.updateTransplants(true, true);
+			transplantable.updateTransplants(true, true, transplantable.getTransplantType(), transplantable.getTransplantedAmount(), transplantable.getTransplantedAmount());
 		}
 
 		ServerNetworkingUtil.sendArmBalanceToggleUpdate(List.of(player), this.server.getOverworld().getGameRules().getBoolean(GameruleRegister.SHOULD_BALANCE_ARM));

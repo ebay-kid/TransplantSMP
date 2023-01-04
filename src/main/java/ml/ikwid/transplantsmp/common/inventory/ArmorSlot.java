@@ -1,10 +1,9 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
 import com.mojang.datafixers.util.Pair;
-import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.mixin.AccessorPlayerScreenHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -79,7 +78,7 @@ public class ArmorSlot extends Slot {
 
 	@Override
 	public boolean isEnabled() {
-		return !this.isExtraArmor || this.transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT;
+		return !this.isExtraArmor || this.transplantable.getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT;
 	}
 
 	@Unique

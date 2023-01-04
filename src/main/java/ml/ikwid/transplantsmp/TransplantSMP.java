@@ -4,14 +4,13 @@ import ml.ikwid.transplantsmp.common.command.CommandRegister;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
-import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerServer;
+import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import ml.ikwid.transplantsmp.common.recipe.RecipeOrganItemRecipeSerializer;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -55,6 +54,7 @@ public class TransplantSMP implements ModInitializer {
 			return !(entity instanceof ServerPlayerEntity) || !((ITransplantable) entity).getIsSettingTransplant(); // if the entity is a player and is setting their transplant, don't let them take damage
 		});
 
+		RegisterTransplants.registerAll();
 		LOGGER.info("time for medical transplants");
 	}
 }

@@ -1,6 +1,6 @@
 package ml.ikwid.transplantsmp.common.item;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -22,15 +22,11 @@ public class OrganItem extends Item {
 
 		ITransplantable transplantable = (ITransplantable) playerEntity;
 		ItemStack stack = playerEntity.getStackInHand(hand);
-		if(transplantable.getTransplantType() == TransplantType.ARM_TRANSPLANT) {
-			if(transplantable.getTransplantedAmount() >= 18) {
-				return TypedActionResult.pass(stack);
-			}
-		} else {
-			if(transplantable.getTransplantedAmount() >= 20) {
-				return TypedActionResult.pass(stack);
-			}
+		TransplantType transplantType = transplantable.getTransplantType();
+		if(!transplantType.canTransplant(transplantable.getTransplantedAmount() + transplantType.getDefaultChangeByAmount())) {
+			return TypedActionResult.pass(stack);
 		}
+
 		transplantable.transplantOrgan(true);
 
 		stack.decrement(1);

@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.client;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerClient;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import net.fabricmc.api.ClientModInitializer;

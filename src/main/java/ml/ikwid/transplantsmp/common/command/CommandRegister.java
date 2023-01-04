@@ -17,10 +17,9 @@ public class CommandRegister {
 			.literal("ts")
 			.redirect(transplantSMP)
 			.build();
-
-		/* Debugging commands
 		LiteralCommandNode<ServerCommandSource> setTransplantCount = CommandManager
 			.literal("setcount")
+			.requires(source -> source.hasPermissionLevel(2))
 				.then(
 					CommandManager
 						.argument("count", IntegerArgumentType.integer())
@@ -29,6 +28,7 @@ public class CommandRegister {
 			.build();
 		LiteralCommandNode<ServerCommandSource> setTransplantType = CommandManager
 			.literal("settype")
+			.requires(source -> source.hasPermissionLevel(2))
 				.then(
 					CommandManager
 						.argument("type", StringArgumentType.greedyString())
@@ -36,41 +36,42 @@ public class CommandRegister {
 				)
 			.build();
 		LiteralCommandNode<ServerCommandSource> dumpInventory = CommandManager
-				.literal("invdump")
-				.executes(CmdInventoryDump::run)
-				.build();
+			.literal("invdump")
+			.requires(source -> source.hasPermissionLevel(2))
+			.executes(CmdInventoryDump::run)
+			.build();
 		LiteralCommandNode<ServerCommandSource> getArmorInfo = CommandManager
-				.literal("armor")
-				.executes(CmdGetArmorInfo::run)
-				.build();
-		 */
+			.literal("armor")
+			.requires(source -> source.hasPermissionLevel(2))
+			.executes(CmdGetArmorInfo::run)
+			.build();
 
 		LiteralCommandNode<ServerCommandSource> setTransplantTypeServer = CommandManager
-				.literal("setplayertype")
-				.requires((source) -> source.hasPermissionLevel(2))
-					.then(
-						CommandManager
-							.argument("player", EntityArgumentType.player())
-								.then(
-									CommandManager
-										.argument("type", StringArgumentType.greedyString())
-											.executes(CmdSetTransplantTypeServer::run)
-								)
-					)
-				.build();
-		LiteralCommandNode<ServerCommandSource> setTransplantCountServer = CommandManager
-				.literal("setplayercount")
-				.requires((source) -> source.hasPermissionLevel(2))
+			.literal("setplayertype")
+			.requires(source -> source.hasPermissionLevel(2))
 				.then(
-						CommandManager
-								.argument("player", EntityArgumentType.player())
-								.then(
-										CommandManager
-												.argument("amount", IntegerArgumentType.integer())
-												.executes(CmdSetTransplantCountServer::run)
-								)
+					CommandManager
+						.argument("player", EntityArgumentType.player())
+							.then(
+								CommandManager
+									.argument("type", StringArgumentType.greedyString())
+										.executes(CmdSetTransplantTypeServer::run)
+							)
 				)
-				.build();
+			.build();
+		LiteralCommandNode<ServerCommandSource> setTransplantCountServer = CommandManager
+			.literal("setplayercount")
+			.requires(source -> source.hasPermissionLevel(2))
+			.then(
+					CommandManager
+							.argument("player", EntityArgumentType.player())
+							.then(
+									CommandManager
+											.argument("amount", IntegerArgumentType.integer())
+											.executes(CmdSetTransplantCountServer::run)
+							)
+			)
+			.build();
 		LiteralCommandNode<ServerCommandSource> getOrganItem = CommandManager
 			.literal("itemize")
 				.then(
@@ -85,12 +86,11 @@ public class CommandRegister {
 		dispatcher.getRoot().addChild(transplantSMP);
 		dispatcher.getRoot().addChild(alias);
 
-		/* Debugging commands
 		transplantSMP.addChild(setTransplantCount);
 		transplantSMP.addChild(setTransplantType);
 		transplantSMP.addChild(dumpInventory);
 		transplantSMP.addChild(getArmorInfo);
-		 */
+
 		transplantSMP.addChild(setTransplantTypeServer);
 		transplantSMP.addChild(setTransplantCountServer);
 		transplantSMP.addChild(getOrganItem);

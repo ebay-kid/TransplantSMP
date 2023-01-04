@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CraftingResultSlot.class)
-public class MixinCraftingResultSlot {
+public abstract class MixinCraftingResultSlot {
     @Shadow @Final private CraftingInventory input;
 
     @Inject(method = "onTakeItem", at = @At("HEAD"))

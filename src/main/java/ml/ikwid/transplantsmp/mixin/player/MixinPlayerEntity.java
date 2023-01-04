@@ -12,23 +12,33 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class MixinPlayerEntity implements ITransplantable {
 	@Unique
 	protected TransplantType transplantType;
+	/**
+	 * Internal unit: +/- 1 per kill/death
+	 */
 	@Unique
 	protected int transplanted = 0;
 
 	@Override
-	public int getTransplantedAmount() {
-		return (this.transplanted * this.transplantType.getDefaultChangeByAmount()) / 2;
+	public int getRawTransplantedAmount() {
+		return this.transplanted;
 	}
 
 	@Override
-	public void setTransplantedAmount(int organs, boolean updateCount, boolean updateType) {
+	public int getTransplantedAmount() {
+		return this.transplanted * this.transplantType.getDefaultChangeByAmount();
+	}
+
+	@Override
+	public boolean setTransplantedAmount(int organs, boolean updateCount, boolean updateType) {
 		if(!this.transplantType.canTransplant(organs)) {
 			TransplantSMP.LOGGER.info("illegal amount of " + organs);
-			return;
+			return false;
 		}
 		int prev = this.getTransplantedAmount();
 		this.setTransplantedAmount(organs);
 		this.updateTransplants(updateCount, updateType, this.getTransplantType(), prev, organs);
+
+		return true;
 	}
 
 	@Override

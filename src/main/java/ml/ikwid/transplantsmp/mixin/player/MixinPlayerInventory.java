@@ -1,7 +1,8 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.ArmTransplant;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.entity.damage.DamageSource;
@@ -57,6 +58,10 @@ public abstract class MixinPlayerInventory implements Inventory, Nameable {
 
 	private ITransplantable transplantable;
 
+	private int getHotbarDraws() {
+		return this.transplantable.getTransplantType() == RegisterTransplants.ARM_TRANSPLANT ? ((ArmTransplant) (this.transplantable.getTransplantType())).getHotbarDraws(this.player) : 9;
+	}
+
 	@Redirect(method = "readNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;clear()V", ordinal = 0))
 	private void noClear(DefaultedList<?> instance) { // LLLL even though i don't need it i don't think
 	}
@@ -94,7 +99,7 @@ public abstract class MixinPlayerInventory implements Inventory, Nameable {
 	public int getEmptySlot() {
 		for(int i = 0; i < this.main.size(); i++) {
 			if(isValidHotbarIndex(i)) {
-				if(i > this.transplantable.getHotbarDraws() - 1) {
+				if(i > this.getHotbarDraws() - 1) {
 					continue;
 				}
 			}
@@ -110,37 +115,37 @@ public abstract class MixinPlayerInventory implements Inventory, Nameable {
 
 	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 0))
 	private int increaseCheckedHotbar2(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 1))
 	private int increaseCheckedHotbar3(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 2))
 	private int increaseCheckedHotbar4(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "getSwappableHotbarSlot", constant = @Constant(intValue = 9, ordinal = 3))
 	private int increaseCheckedHotbar5(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 0))
 	private int increaseCheckedHotbar6(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 1))
 	private int increaseCheckedHotbar7(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "scrollInHotbar", constant = @Constant(intValue = 9, ordinal = 2))
 	private int increaseCheckedHotbar8(int constant) {
-		return transplantable.getHotbarDraws();
+		return this.getHotbarDraws();
 	}
 
 	@ModifyConstant(method = "getOccupiedSlotWithRoomForStack", constant = @Constant(intValue = 40, ordinal = 0))
@@ -155,7 +160,7 @@ public abstract class MixinPlayerInventory implements Inventory, Nameable {
 
 	@Inject(method = "damageArmor", at = @At("TAIL"))
 	private void damageSecondSet(DamageSource damageSource, float amount, int[] slots, CallbackInfo ci) {
-		if(((ITransplantable)(this.player)).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+		if(((ITransplantable)(this.player)).getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT) {
 			for(int i = Constants.EXTRA_ARMOR_START_LOC; i < Constants.EXTRA_ARMOR_START_LOC + 4; i++) {
 				ItemStack itemStack = this.main.get(i);
 				if (damageSource.isFire() && itemStack.getItem().isFireproof() || !(itemStack.getItem() instanceof ArmorItem)) {

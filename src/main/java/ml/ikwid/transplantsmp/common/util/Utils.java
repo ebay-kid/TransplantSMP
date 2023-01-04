@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.common.util;
 
 import com.mojang.authlib.GameProfile;
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.server.BannedPlayerEntry;
 import net.minecraft.server.BannedPlayerList;
@@ -30,14 +30,15 @@ public class Utils {
 	}
 
 	public static boolean bannableAmount(ITransplantable transplantable) {
-		return transplantable.getTransplantType() == TransplantType.ARM_TRANSPLANT ? transplantable.getTransplantedAmount() <= -16 : transplantable.getTransplantedAmount() <= -18;
+		TransplantType transplantType = transplantable.getTransplantType();
+		return transplantType.canTransplant((transplantable.getTransplantedAmount() - transplantType.getDefaultChangeByAmount()));
 	}
 
 	public static void ban(ServerPlayerEntity serverPlayerEntity) {
 		GameProfile playerProfile = serverPlayerEntity.getGameProfile();
 
 		BannedPlayerList bannedPlayerList = Objects.requireNonNull(serverPlayerEntity.getServer()).getPlayerManager().getUserBanList();
-		bannedPlayerList.add(new BannedPlayerEntry(playerProfile, null, "The all-powerful server", null, "You died too much (SO BAD XD)"));
+		bannedPlayerList.add(new BannedPlayerEntry(playerProfile, null, "TransplantSMP Mod", null, "Died too much"));
 
 		serverPlayerEntity.networkHandler.disconnect(Text.translatable("multiplayer.disconnect.banned"));
 	}

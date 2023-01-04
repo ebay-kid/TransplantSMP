@@ -1,7 +1,6 @@
 package ml.ikwid.transplantsmp.common.imixins;
 
 import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.util.Constants;
 
 public interface ITransplantable {
 	/*
@@ -15,12 +14,13 @@ public interface ITransplantable {
 	}
 	 */
 
+	int getRawTransplantedAmount();
 	int getTransplantedAmount();
 
-	void setTransplantedAmount(int organs, boolean updateCount, boolean updateType);
+	boolean setTransplantedAmount(int organs, boolean updateCount, boolean updateType);
 
 	default void transplantOrgan(boolean gain) {
-		this.setTransplantedAmount(this.getTransplantedAmount() + (gain ? Constants.TRANSPLANT_GIVES : -Constants.TRANSPLANT_GIVES), true, false);
+		this.setTransplantedAmount(this.getTransplantedAmount() + (gain ? 1 : -1), true, false);
 	}
 
 	TransplantType getTransplantType();

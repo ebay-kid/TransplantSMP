@@ -37,7 +37,7 @@ public class CmdItemize {
 		if(!type.canTransplant(transplantable.getTransplantedAmount() - (amount * type.getDefaultChangeByAmount()))) {
 			throw notEnough;
 		}
-		transplantable.setTransplantedAmount(transplantable.getTransplantedAmount() - (amount * type.getDefaultChangeByAmount()), true, false);
+		transplantable.setTransplantedAmount(transplantable.getRawTransplantedAmount() - amount, true, false);
 
 		if(amount > 32) {
 			serverPlayerEntity.giveItemStack(new ItemStack(ItemRegister.ORGAN_ITEM, 16));

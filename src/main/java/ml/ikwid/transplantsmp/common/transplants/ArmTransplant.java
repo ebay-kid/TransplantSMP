@@ -1,7 +1,10 @@
 package ml.ikwid.transplantsmp.common.transplants;
 
 import ml.ikwid.transplantsmp.api.TransplantType;
+import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
@@ -36,5 +39,13 @@ public class ArmTransplant extends TransplantType {
 
     @Override
     public void onPlayerRespawn(ServerPlayerEntity player, int amount) { // nothing
+    }
+
+    public int getHotbarDraws(PlayerEntity player) {
+        return ((ITransplantable) player).getRawTransplantedAmount() + 9;
+    }
+
+    public int xShift(PlayerEntity player) {
+        return -((this.getHotbarDraws(player) - 9) * Constants.OUTER_SLOT_WIDTH / 2);
     }
 }

@@ -1,7 +1,8 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,7 @@ public abstract class MixinLivingEntity {
 
 	@Inject(method = "getAttributeValue", at = @At("TAIL"), cancellable = true)
 	private void changeAttributeReturns(EntityAttribute attribute, CallbackInfoReturnable<Double> cir) {
-		if(self instanceof PlayerEntity playerEntity && ((ITransplantable) playerEntity).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+		if(self instanceof PlayerEntity playerEntity && ((ITransplantable) playerEntity).getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT) {
 			ITransplantable transplantable = (ITransplantable) playerEntity;
 			double ret = 0;
 			boolean setRet = false;
@@ -103,7 +104,7 @@ public abstract class MixinLivingEntity {
 	@Redirect(method = "modifyAppliedDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getProtectionAmount(Ljava/lang/Iterable;Lnet/minecraft/entity/damage/DamageSource;)I"))
 	private int scaleProtection(Iterable<ItemStack> equipment, DamageSource source) {
 		if(this instanceof ITransplantable transplantable) {
-			return (int) (EnchantmentHelper.getProtectionAmount(equipment, source) * (transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT && transplantable.getTransplantedAmount() < 0 ? 1.0d + transplantable.getTransplantedAmount() / 20.0d : 1));
+			return (int) (EnchantmentHelper.getProtectionAmount(equipment, source) * (transplantable.getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT && transplantable.getTransplantedAmount() < 0 ? 1.0d + transplantable.getTransplantedAmount() / 20.0d : 1));
 		}
 		return EnchantmentHelper.getProtectionAmount(equipment, source);
 	}

@@ -2,6 +2,8 @@ package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.ArmTransplant;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -13,7 +15,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,10 +30,12 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 	@Shadow protected int backgroundWidth;
 
-	@Shadow protected int backgroundHeight;
-
 	protected MixinHandledScreen(Text title) {
 		super(title);
+	}
+
+	private int getHotbarDraws(ITransplantable transplantable) {
+		return transplantable.getTransplantType() == RegisterTransplants.ARM_TRANSPLANT ? ((ArmTransplant) (transplantable.getTransplantType())).getHotbarDraws(MinecraftClient.getInstance().player) : 9;
 	}
 
 	private static final boolean DEBUG = false;
@@ -58,7 +61,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 		int bottom = y + height;
 
-		int draws = ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
+		int draws = getHotbarDraws((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player)));
 		if(draws > 9) {
 			this.drawTexture(matrices, x, bottom, 0, height - Constants.HOTBAR_SPACE_IN_INV_SCREEN, this.backgroundWidth, Constants.HOTBAR_SPACE_IN_INV_SCREEN);
 		}
@@ -66,7 +69,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 9))
 	private int fixHotkey(int constant) {
-		return ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
+		return getHotbarDraws((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player)));
 	}
 
 	@ModifyConstant(method = "onMouseClick(I)V", constant = @Constant(intValue = 40))
@@ -81,7 +84,7 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> extends Screen
 
 	@ModifyConstant(method = "handleHotbarKeyPressed", constant = @Constant(intValue = 9))
 	private int fixHotkey2(int constant) {
-		return ((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player))).getHotbarDraws();
+		return getHotbarDraws((ITransplantable) (Objects.requireNonNull(MinecraftClient.getInstance().player)));
 	}
 
 	@Redirect(method = "isClickOutsideBounds", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;backgroundHeight:I", opcode = Opcodes.GETFIELD))

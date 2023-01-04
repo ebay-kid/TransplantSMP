@@ -1,7 +1,9 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.ArmTransplant;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.common.util.Utils;
 import ml.ikwid.transplantsmp.common.util.render.HUDRenderUtil;
@@ -41,9 +43,9 @@ public abstract class MixinInGameHud {
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		// TransplantSMP.LOGGER.info("armor bars, current = " + transplantable.getTransplantType().toString() + ", " + transplantable.getTransplantedAmount());
 		
-		if(transplantable.getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+		if(transplantable.getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT) {
 			// TransplantSMP.LOGGER.info("is skin transplant");
-			return 10 + Math.min(transplantable.getHalvedTransplantedAmount(), 0);
+			return 10 + Math.min(transplantable.getRawTransplantedAmount(), 0);
 		}
 		// TransplantSMP.LOGGER.info("not skin transplant");
 		return constant;
@@ -57,9 +59,9 @@ public abstract class MixinInGameHud {
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		// TransplantSMP.LOGGER.info("hunger bars, current = " + transplantable.getTransplantType().toString() + ", " + transplantable.getTransplantedAmount());
 		
-		if(transplantable.getTransplantType() == TransplantType.STOMACH_TRANSPLANT) {
+		if(transplantable.getTransplantType() == RegisterTransplants.STOMACH_TRANSPLANT) {
 			// TransplantSMP.LOGGER.info("is stomach transplant");
-			return 10 + Math.min(transplantable.getHalvedTransplantedAmount(), 0);
+			return 10 + Math.min(transplantable.getRawTransplantedAmount(), 0);
 		}
 		// TransplantSMP.LOGGER.info("not stomach transplant");
 		return constant;
@@ -72,7 +74,7 @@ public abstract class MixinInGameHud {
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		
-		if(transplantable.getTransplantType() == TransplantType.STOMACH_TRANSPLANT && transplantable.getTransplantedAmount() > 0) {
+		if(transplantable.getTransplantType() == RegisterTransplants.STOMACH_TRANSPLANT && transplantable.getTransplantedAmount() > 0) {
 			// TransplantSMP.LOGGER.info("shifted air");
 			return 0;
 		}
@@ -86,9 +88,14 @@ public abstract class MixinInGameHud {
 			return;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
-		
-		int draws = transplantable.getHotbarDraws(); // shift to handle the other transplants/vanilla
-		x += transplantable.xShift();
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
+		int draws = armTransplant.getHotbarDraws(this.client.player); // shift to handle the other transplants/vanilla
+		x += armTransplant.xShift(this.client.player);
+
 		for(int i = 0; i < draws; i++) {
 			// keep matrices, y, u, v, height as these will be constant (i hope)
 
@@ -103,9 +110,14 @@ public abstract class MixinInGameHud {
 			return x;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
-		
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return x;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
 		int i = this.scaledWidth / 2;
-		return (i - 92) + transplantable.xShift() + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * (Constants.OUTER_SLOT_WIDTH - 1)); // mimic the previous shifts
+
+		return (i - 92) + armTransplant.xShift(this.client.player) + (Utils.translateSlotToHotbar(this.client.player.getInventory().selectedSlot) * (Constants.OUTER_SLOT_WIDTH - 1)); // mimic the previous shifts
 	}
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 9))
@@ -119,6 +131,11 @@ public abstract class MixinInGameHud {
 			return;
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
 		// TransplantSMP.LOGGER.info("rendering hotbar items.");
 		int i = this.scaledWidth / 2;
 
@@ -127,8 +144,8 @@ public abstract class MixinInGameHud {
 
 		int m = 1; // idk wtf this does
 		
-		for(int n = 0; n < transplantable.getHotbarDraws(); n++) {
-			o = i - 91 + transplantable.xShift() + n * (Constants.OUTER_SLOT_WIDTH - 1) + 3;
+		for(int n = 0; n < armTransplant.getHotbarDraws(this.client.player); n++) {
+			o = i - 91 + armTransplant.xShift(this.client.player) + n * (Constants.OUTER_SLOT_WIDTH - 1) + 3;
 
 			this.renderHotbarItem(o, p, tickDelta, this.client.player, this.client.player.getInventory().main.get(Utils.translateHotbarToSlot(n)), m);
 		}
@@ -139,15 +156,18 @@ public abstract class MixinInGameHud {
 		if(this.client.player == null) {
 			return x;
 		}
-		return x + ((ITransplantable)(this.client.player)).xShift();
+		ITransplantable transplantable = (ITransplantable) (this.client.player);
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return x;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
+		return x + armTransplant.xShift(this.client.player);
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 3), index = 1)
 	private int leftOffHandShift(int x) {
-		if(this.client.player == null) {
-			return x;
-		}
-		return x - ((ITransplantable)(this.client.player)).xShift(); // not sure about this one
+		return xShifter(x);
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V", ordinal = 1), index = 0)
@@ -155,31 +175,41 @@ public abstract class MixinInGameHud {
 		if(this.client.player == null) {
 			return x;
 		}
-		return x + ((ITransplantable)(this.client.player)).xShift();
+		ITransplantable transplantable = (ITransplantable) (this.client.player);
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return x;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
+		return x + armTransplant.xShift(this.client.player);
 	}
 
 	@ModifyArg(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V", ordinal = 2), index = 0)
 	private int rightOffHandShift2(int x) {
+		return xShifter(x);
+	}
+
+	private int xShifter(int x) {
 		if(this.client.player == null) {
 			return x;
 		}
-		return x - ((ITransplantable)(this.client.player)).xShift();
+		ITransplantable transplantable = (ITransplantable) (this.client.player);
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return x;
+		}
+
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
+		return x - armTransplant.xShift(this.client.player);
 	}
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 6, ordinal = 0))
 	private int leftAttackIndShift(int constant) {
-		if(this.client.player == null) {
-			return constant;
-		}
-		return constant - ((ITransplantable)(this.client.player)).xShift();
+		return xShifter(constant);
 	}
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 22, ordinal = 7))
 	private int rightAttackIndShift(int constant) {
-		if(this.client.player == null) {
-			return constant;
-		}
-		return constant - ((ITransplantable)(this.client.player)).xShift();
+		return xShifter(constant);
 	}
 
 	@Inject(method = "renderStatusBars", at = @At("HEAD"))
@@ -189,13 +219,13 @@ public abstract class MixinInGameHud {
 		}
 		ITransplantable transplantable = (ITransplantable) (this.client.player);
 		
-		int transplants = transplantable.getHalvedTransplantedAmount();
+		int transplants = transplantable.getRawTransplantedAmount();
 		TransplantType transplantType = transplantable.getTransplantType();
-		if((transplantType != TransplantType.SKIN_TRANSPLANT && transplantType != TransplantType.STOMACH_TRANSPLANT) || transplants <= 0) {
+		if((transplantType == RegisterTransplants.HEART_TRANSPLANT || transplantType == RegisterTransplants.ARM_TRANSPLANT) || transplants <= 0) {
 			return;
 		}
 
-		boolean armor = (transplantType == TransplantType.SKIN_TRANSPLANT);
+		boolean armor = (transplantType == RegisterTransplants.SKIN_TRANSPLANT);
 
 		// int o = this.scaledHeight - 39; // used either way
 		if(armor) {

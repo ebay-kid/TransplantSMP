@@ -1,11 +1,10 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.common.TransplantType;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.CraftingScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,7 +28,7 @@ public abstract class MixinInventoryScreen extends AbstractInventoryScreen<Playe
 
 	@Inject(method = "drawBackground", at = @At("TAIL"))
 	private void drawArmorSlots(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-		if(((ITransplantable)(Objects.requireNonNull(Objects.requireNonNull(this.client).player))).getTransplantType() == TransplantType.SKIN_TRANSPLANT) {
+		if(((ITransplantable)(Objects.requireNonNull(Objects.requireNonNull(this.client).player))).getTransplantType() == RegisterTransplants.SKIN_TRANSPLANT) {
 			RenderSystem.setShaderTexture(0, InventoryScreen.BACKGROUND_TEXTURE);
 			for(int i = 0; i < 4; i++) {
 				this.drawTexture(matrices, this.x - Constants.OUTER_SLOT_WIDTH + 4, this.y + 7 + i * (Constants.OUTER_SLOT_HEIGHT - 4), 7, this.backgroundHeight - 25, Constants.OUTER_SLOT_WIDTH - 4, Constants.OUTER_SLOT_HEIGHT - 5);

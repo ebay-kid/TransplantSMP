@@ -2,6 +2,8 @@ package ml.ikwid.transplantsmp.mixin.player.specifics;
 
 import ml.ikwid.transplantsmp.client.TransplantSMPClient;
 import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.common.transplants.ArmTransplant;
+import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,14 +21,24 @@ public abstract class MixinMinecraftClient {
 
 	@ModifyConstant(method = "handleInputEvents", constant = @Constant(intValue = 9, ordinal = 0))
 	private int increaseCheckedHotkeys(int constant) {
-		return ((ITransplantable) (this.player)).getHotbarDraws();
+		ITransplantable transplantable = (ITransplantable) player;
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return constant;
+		}
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
+		return armTransplant.getHotbarDraws(player);
 	}
 
 	@Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I", opcode = Opcodes.PUTFIELD))
 	private void allowSecondaryHotkeyMethod(PlayerInventory instance, int value) {
+		ITransplantable transplantable = (ITransplantable) player;
+		if(transplantable.getTransplantType() != RegisterTransplants.ARM_TRANSPLANT) {
+			return;
+		}
+		ArmTransplant armTransplant = (ArmTransplant) (transplantable.getTransplantType());
 		if(value < 9 && TransplantSMPClient.hotbarSwapKeybind.isPressed()) {
 			int ret = value + 9;
-			if(ret < ((ITransplantable) (this.player)).getHotbarDraws()) {
+			if(ret < armTransplant.getHotbarDraws(player)) {
 				instance.selectedSlot = ret;
 				return;
 			}

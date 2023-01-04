@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.client.screen;
 
-import ml.ikwid.transplantsmp.common.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantType;
+import ml.ikwid.transplantsmp.api.TransplantTypes;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,6 +14,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
@@ -25,6 +27,8 @@ public class ChooseTransplantScreen extends Screen {
 	private int height = client.getWindow().getHeight();
 	private int width = client.getWindow().getWidth();
 
+	protected final TransplantType[] transplantTypes = (TransplantType[]) Arrays.stream(TransplantTypes.getTransplantTypes().toArray()).toArray(); // wtf
+
 	private final ButtonWidget leftArrow = new ButtonWidget(5, this.height - 14, 10, 10, Text.of("<"), b -> {
 		if(this.index > 0) {
 			index--;
@@ -32,14 +36,14 @@ public class ChooseTransplantScreen extends Screen {
 	});
 
 	private final ButtonWidget rightArrow = new ButtonWidget(leftArrow.x + 15, leftArrow.y, 10, 10, Text.of(">"), b -> {
-		if (this.index < TransplantType.transplantTypes.length - 1) {
+		if (this.index < this.transplantTypes.length - 1) {
 			this.index++;
 		}
 	});
 
 	private final ButtonWidget choose = new ButtonWidget(this.width - 50, leftArrow.y, 40, 10, Text.of("Choose"), b -> {
 		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeString(TransplantType.transplantTypes[index].toString());
+		buf.writeString(this.transplantTypes[index].toString());
 		ClientPlayNetworking.send(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, buf);
 	});
 
@@ -82,7 +86,7 @@ public class ChooseTransplantScreen extends Screen {
 
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
-		String desc = TransplantType.transplantTypes[index].getDescription();
+		String desc = this.transplantTypes[index].getDescription();
 		String[] descLines = desc.split("\n");
 
 		for(int i = 0; i < descLines.length; i++) {

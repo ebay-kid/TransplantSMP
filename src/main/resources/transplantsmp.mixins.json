@@ -31,7 +31,6 @@
     "screen.AccessorHandledScreen",
     "screen.MixinHandledScreen",
     "screen.MixinInventoryScreen",
-    "screen.MixinRecipeBookWidget",
     "screen.ihateminecraftnotcallingsuper.MixinAbstractFurnaceScreen",
     "screen.ihateminecraftnotcallingsuper.MixinCraftingScreen",
     "screen.ihateminecraftnotcallingsuper.MixinLoomScreen"

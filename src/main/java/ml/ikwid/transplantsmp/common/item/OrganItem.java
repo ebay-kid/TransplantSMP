@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.common.item;
 
 import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

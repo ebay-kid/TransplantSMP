@@ -17,21 +17,21 @@ public class StomachTransplant extends TransplantType {
     }
 
     @Override
-    public void resetTransplantClient(ClientPlayerEntity player) { // nothing
+    public void onResetTransplantClient(ClientPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) {
+    public void onUpdateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) {
         updateHungerManager(player, newAmount);
     }
 
     @Override
-    public void resetTransplantServer(ServerPlayerEntity player) {
+    public void onResetTransplantServer(ServerPlayerEntity player) {
         player.getHungerManager().setFoodLevel(20);
     }
 
     @Override
-    public void updateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) {
+    public void onUpdateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) {
         updateHungerManager(player, newAmount);
     }
 

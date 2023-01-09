@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.KillCommand;
 import net.minecraft.server.command.ServerCommandSource;

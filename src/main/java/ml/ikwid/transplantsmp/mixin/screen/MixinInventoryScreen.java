@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;

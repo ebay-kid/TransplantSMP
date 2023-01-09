@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
 import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.transplants.ArmTransplant;
 import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
@@ -20,6 +20,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
+@SuppressWarnings("DuplicatedCode") // no idea how i'd abstract that code
 @Mixin(InGameHud.class)
 public abstract class MixinInGameHud {
 	@Shadow private int scaledWidth;
@@ -122,7 +125,7 @@ public abstract class MixinInGameHud {
 
 	@ModifyConstant(method = "renderHotbar", constant = @Constant(intValue = 9))
 	private int replaceForLoop(int constant) {
-		return 0; // skip the original
+		return ((ITransplantable) (Objects.requireNonNull(this.client.player))).getTransplantType() == RegisterTransplants.ARM_TRANSPLANT ? 0 : 9; // skip the original
 	}
 
 	@Inject(method = "renderHotbar", at = @At("TAIL"))

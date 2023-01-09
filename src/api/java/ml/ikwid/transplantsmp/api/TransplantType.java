@@ -2,6 +2,7 @@ package ml.ikwid.transplantsmp.api;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A generic wrapper for a TransplantType.
@@ -15,11 +16,11 @@ public abstract class TransplantType {
 
     /**
      * Creates a new TransplantType.
-     * @param name                  The name of the TransplantType. This should be unique and should NOT include spaces (throws IllegalArgumentException if it does).
+     * @param name                  The name of the TransplantType. This should be unique (perhaps follow the MC Identifier structure of mod_id:name) and should NOT include spaces (throws IllegalArgumentException if it does).
      * @param description           The description of the TransplantType. This will be shown to the player.
      * @param defaultChangeByAmount The default amount to increment/decrement the transplanted amount by. This should be the amount of change after a kill/death (or organ item use/acquire).
      */
-    public TransplantType(String name, String description, int defaultChangeByAmount) {
+    public TransplantType(@NotNull String name, @NotNull String description, int defaultChangeByAmount) {
         if(name.contains(" ")) {
             throw new IllegalArgumentException("TransplantType name cannot contain spaces. Offending type: " + name);
         }
@@ -79,29 +80,29 @@ public abstract class TransplantType {
 
     /**
      * This method should reset the relevant attributes affected by this TransplantType to their default values on the given CLIENT-SIDE player.
-     * @param player The client-side player to reset the attributes of.
+     * @param player The client-side player to reset the attributes of. Guaranteed not-null.
      */
-    public abstract void resetTransplantClient(ClientPlayerEntity player);
+    public abstract void onResetTransplantClient(ClientPlayerEntity player);
 
     /**
      * This method should update the relevant attributes affected by this TransplantType to their new values on the given CLIENT-SIDE player. The new value is guaranteed to be legal according to {@link #canTransplant(int)}.
      * @param player    The client-side player to update the attributes of.
      * @param newAmount The new amount of organs. This is guaranteed to be a legal amount by {@link #canTransplant(int)}, but is NOT guaranteed to be an increment by the amount from {@link #getDefaultChangeByAmount()}.
      */
-    public abstract void updateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount);
+    public abstract void onUpdateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount);
 
     /**
      * This method should reset the relevant attributes affected by this TransplantType to their default values on the given SERVER-SIDE player.
      * @param player The server-side player to reset the attributes of.
      */
-    public abstract void resetTransplantServer(ServerPlayerEntity player);
+    public abstract void onResetTransplantServer(ServerPlayerEntity player);
 
     /**
      * This method should update the relevant attributes affected by this TransplantType to their new values on the given SERVER-SIDE player. The new value is guaranteed to be legal according to {@link #canTransplant(int)}.
      * @param player    The server-side player to update the attributes of.
      * @param newAmount The new amount of organs. This is guaranteed to be a legal amount by {@link #canTransplant(int)}, but is NOT guaranteed to be an increment by the amount from {@link #getDefaultChangeByAmount()}.
      */
-    public abstract void updateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount);
+    public abstract void onUpdateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount);
 
     /**
      * If the player respawns after dying and certain data needs to be set properly (ex. heart players should be respawned with the correct num of hearts), this method should be implemented.

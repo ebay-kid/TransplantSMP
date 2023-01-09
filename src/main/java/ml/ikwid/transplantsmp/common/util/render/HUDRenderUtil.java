@@ -11,14 +11,15 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 
-@SuppressWarnings("ConstantConditions")
+import java.util.Objects;
+
 @Environment(EnvType.CLIENT)
 public class HUDRenderUtil {
     public static void renderArmorBars(MatrixStack matrices, int scaledHeight, int renderHealthValue, int scaledWidth, int transplants) {
         InGameHud inGameHud = MinecraftClient.getInstance().inGameHud;
         int o = scaledHeight - 39;
         int x;
-        int i = MathHelper.ceil(MinecraftClient.getInstance().player.getHealth());
+        int i = MathHelper.ceil(Objects.requireNonNull(MinecraftClient.getInstance().player).getHealth());
         int m = scaledWidth / 2 - 91;
         float f = Math.max((float) MinecraftClient.getInstance().player.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH), (float) Math.max(renderHealthValue, i)); // renderHealthValue aka "j"
         int p = MathHelper.ceil(MinecraftClient.getInstance().player.getAbsorptionAmount());
@@ -55,7 +56,7 @@ public class HUDRenderUtil {
         int o = scaledHeight - 39;
 
         // Hopefully I can straight copy-paste this crap into here and just shift it up
-        int k = MinecraftClient.getInstance().player.getHungerManager().getFoodLevel() - 20;
+        int k = Objects.requireNonNull(MinecraftClient.getInstance().player).getHungerManager().getFoodLevel() - 20;
 
         int n = scaledWidth / 2 + 91;
         int y;

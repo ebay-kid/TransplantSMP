@@ -2,8 +2,7 @@ package ml.ikwid.transplantsmp.common.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import net.minecraft.command.CommandException;
 import net.minecraft.item.ItemStack;
@@ -32,12 +31,9 @@ public class CmdItemize {
 			throw nonPlayer;
 		}
 
-		TransplantType type = transplantable.getTransplantType();
-
-		if(!type.canTransplant(transplantable.getTransplantedAmount() - (amount * type.getDefaultChangeByAmount()))) {
+		if(!transplantable.setTransplantedAmount(transplantable.getRawTransplantedAmount() - amount, true)) {
 			throw notEnough;
 		}
-		transplantable.setTransplantedAmount(transplantable.getRawTransplantedAmount() - amount, true, false);
 
 		if(amount > 32) {
 			serverPlayerEntity.giveItemStack(new ItemStack(ItemRegister.ORGAN_ITEM, 16));

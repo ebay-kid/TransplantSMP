@@ -1,8 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.player.specifics;
 
-import ml.ikwid.transplantsmp.TransplantSMP;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.imixins.IStomachTransplanted;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,17 +46,10 @@ public abstract class MixinHungerManager implements IStomachTransplanted {
 
 	@ModifyConstant(method = "update", constant = @Constant(intValue = 18))
 	public int scaledHealingValue(int original) {
-		if(transplantable == null) {
-			TransplantSMP.LOGGER.warn("HungerManager failed to steal the transplantable");
+		if(this.transplantable == null || this.transplantable.getTransplantType() != RegisterTransplants.STOMACH_TRANSPLANT || this.transplantable.getTransplantedAmount() >= 0) {
 			return original; // hopefully never happens.
 		}
 
-		if(transplantable.getTransplantType() != RegisterTransplants.STOMACH_TRANSPLANT) {
-			return original;
-		}
-		if(transplantable.getTransplantedAmount() >= 0) {
-			return original;
-		}
 		return (int)(0.9 * (transplantable.getTransplantedAmount() + 20));
 	}
 

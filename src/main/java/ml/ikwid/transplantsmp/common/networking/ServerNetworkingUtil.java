@@ -1,6 +1,6 @@
 package ml.ikwid.transplantsmp.common.networking;
 
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -21,7 +21,7 @@ public class ServerNetworkingUtil {
 		ITransplantable transplantable = (ITransplantable) player;
 
 		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeInt(transplantable.getTransplantedAmount());
+		buf.writeInt(transplantable.getRawTransplantedAmount());
 		ServerPlayNetworking.send(player, NetworkingIDs.UPDATE_TRANSPLANT_COUNT_S2C, buf);
 	}
 

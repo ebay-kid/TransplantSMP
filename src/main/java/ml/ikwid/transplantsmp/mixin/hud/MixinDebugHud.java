@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.mixin.hud;
 
 import ml.ikwid.transplantsmp.client.TransplantSMPClient;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.client.network.ClientPlayerEntity;

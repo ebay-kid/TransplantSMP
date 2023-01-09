@@ -15,19 +15,19 @@ public class SkinTransplant extends TransplantType {
     }
 
     @Override
-    public void resetTransplantClient(ClientPlayerEntity player) { // nothing
+    public void onResetTransplantClient(ClientPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
+    public void onUpdateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
     }
 
     @Override
-    public void resetTransplantServer(ServerPlayerEntity player) { // nothing
+    public void onResetTransplantServer(ServerPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) { // nothing
+    public void onUpdateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) { // nothing
     }
 
     @Override

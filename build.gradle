@@ -8,6 +8,11 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+apply plugin: 'fabric-loom'
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
 sourceSets {
     api {
         java {
@@ -90,6 +95,10 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
+}
+
+tasks.withType(Jar) {
+    from sourceSets.api.output
 }
 
 task apiJar(type: Jar) {

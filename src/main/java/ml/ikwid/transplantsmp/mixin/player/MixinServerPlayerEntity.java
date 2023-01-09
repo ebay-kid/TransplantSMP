@@ -3,9 +3,8 @@ package ml.ikwid.transplantsmp.mixin.player;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.api.TransplantTypes;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
-import ml.ikwid.transplantsmp.common.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
@@ -24,9 +23,10 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 
 	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
 	public void writeTransplantData(NbtCompound nbt, CallbackInfo ci) {
-		nbt.putString("transplantType", this.transplantType.toString());
-
-		nbt.putInt("transplanted", this.transplanted);
+		if(!this.isSettingTransplant) {
+			nbt.putString("transplantType", this.transplantType.toString());
+			nbt.putInt("transplanted", this.transplanted);
+		}
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
@@ -40,8 +40,8 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		} else {
 			// Don't do any updates here because we can't send any packets yet.
 			// Update in MixinPlayerManager at tail after everything is initialized.
-			this.setTransplantedAmount(nbt.getInt("transplanted"), false, false);
 			this.setTransplantType(Objects.requireNonNull(TransplantTypes.get(transplantStored)), false);
+			this.setTransplantedAmount(nbt.getInt("transplanted"), false);
 
 			TransplantSMP.LOGGER.info("found something, doesn't need new transplant");
 		}
@@ -50,38 +50,39 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType, TransplantType prevType, int prevAmt, int newAmt) {
 		if(updateType) {
-			prevType.resetTransplantServer(self);
+			if(prevType != null) {
+				prevType.onResetTransplantServer(self);
+			}
 			ServerNetworkingUtil.sendTransplantTypeUpdate(this.getTransplantType().toString(), this.self);
 		}
 
 		if(updateCount) {
-			this.transplantType.updateCountServer(self, prevAmt, newAmt);
+			this.transplantType.onUpdateCountServer(self, prevAmt, newAmt);
 			ServerNetworkingUtil.sendTransplantCountUpdate(this.self);
 		}
 	}
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
 	private void transplant(DamageSource damageSource, CallbackInfo ci) {
-		if(Utils.bannableAmount((ITransplantable) (this.self))) {
-			Utils.ban(this.self);
-			return;
-		}
-
 		this.transplantOrgan(false);
 		Entity entity;
 		if((entity = damageSource.getAttacker()) != null && entity.isPlayer()) { // should be changed to capture the death message translatable text, TODO when can test
-			((ITransplantable) entity).transplantOrgan(true);
+			this.transplantOrgan(true);
 		}
 	}
 
 	@Inject(method = "copyFrom", at = @At("TAIL"))
 	private void copyTransplantData(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
-		ITransplantable oldTransplantable = (ITransplantable) oldPlayer;
+		if(!alive) {
+			ITransplantable oldTransplantable = (ITransplantable) oldPlayer;
 
-		this.setTransplantedAmount(oldTransplantable.getTransplantedAmount(), false, false);
-		this.setTransplantType(oldTransplantable.getTransplantType(), true);
+			this.setTransplantedAmount(oldTransplantable.getTransplantedAmount(), false);
+			this.setTransplantType(oldTransplantable.getTransplantType(), true);
 
-		this.transplantType.onPlayerRespawn(self, this.getTransplantedAmount());
+			this.transplantType.onPlayerRespawn(self, this.getTransplantedAmount());
+		} else {
+			iHateClientSideServerSideDesyncWithTheHungerManagerPleaseFixMojangThankYouIDontWantToKeepSendingPacketEveryTick(null);
+		}
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public abstract class MixinServerPlayerEntity extends MixinPlayerEntity {
 		return this.isSettingTransplant;
 	}
 
-	@Inject(method = "tick", at = @At("TAIL"))
+	// @Inject(method = "tick", at = @At("TAIL"))
 	private void iHateClientSideServerSideDesyncWithTheHungerManagerPleaseFixMojangThankYouIDontWantToKeepSendingPacketEveryTick(CallbackInfo ci) {
 		ServerNetworkingUtil.sendTransplantCountUpdate(this.self);
 	}

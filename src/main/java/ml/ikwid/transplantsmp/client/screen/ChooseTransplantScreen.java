@@ -14,7 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
@@ -24,43 +23,38 @@ public class ChooseTransplantScreen extends Screen {
 	protected final boolean background;
 	private int index = 0;
 
-	private int height = client.getWindow().getHeight();
-	private int width = client.getWindow().getWidth();
-
-	protected final TransplantType[] transplantTypes = (TransplantType[]) Arrays.stream(TransplantTypes.getTransplantTypes().toArray()).toArray(); // wtf
-
-	private final ButtonWidget leftArrow = new ButtonWidget(5, this.height - 14, 10, 10, Text.of("<"), b -> {
-		if(this.index > 0) {
-			index--;
-		}
-	});
-
-	private final ButtonWidget rightArrow = new ButtonWidget(leftArrow.x + 15, leftArrow.y, 10, 10, Text.of(">"), b -> {
-		if (this.index < this.transplantTypes.length - 1) {
-			this.index++;
-		}
-	});
-
-	private final ButtonWidget choose = new ButtonWidget(this.width - 50, leftArrow.y, 40, 10, Text.of("Choose"), b -> {
-		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeString(this.transplantTypes[index].toString());
-		ClientPlayNetworking.send(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, buf);
-	});
-
-	private final ButtonWidget[] widgets = { leftArrow, rightArrow, choose };
+	protected final TransplantType[] transplantTypes = TransplantTypes.getTransplantTypes().toArray(new TransplantType[4]);
 
 	public ChooseTransplantScreen() {
 		super(Text.of("Choose a transplant"));
 		this.background = true;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void init() {
 		super.init();
 
-		addDrawableChild(this.leftArrow);
-		addDrawableChild(this.rightArrow);
-		addDrawableChild(this.choose);
+		int height = Objects.requireNonNull(client.currentScreen).height;
+		int width = client.currentScreen.width;
+
+		ButtonWidget leftArrow = this.addDrawableChild(new ButtonWidget(5, height - 14, 10, 10, Text.of("<"), b -> {
+			if (this.index > 0) {
+				index--;
+			}
+		}));
+
+		ButtonWidget rightArrow = this.addDrawableChild(new ButtonWidget(leftArrow.x + 15, leftArrow.y, 10, 10, Text.of(">"), b -> {
+			if (this.index < this.transplantTypes.length - 1) {
+				this.index++;
+			}
+		}));
+
+		ButtonWidget choose = this.addDrawableChild(new ButtonWidget(width - 50, leftArrow.y, 40, 10, Text.of("Choose"), b -> {
+			PacketByteBuf buf = PacketByteBufs.create();
+			buf.writeString(this.transplantTypes[index].toString());
+			ClientPlayNetworking.send(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, buf);
+		}));
 	}
 
 	@Override
@@ -74,24 +68,15 @@ public class ChooseTransplantScreen extends Screen {
 
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		if(Objects.requireNonNull(client.currentScreen).height != this.height || client.currentScreen.width != this.width) {
-			for(ButtonWidget widget : widgets) {
-				widget.y = client.currentScreen.height - 14;
-			}
-			this.choose.x = client.currentScreen.width - 50;
-
-			this.width = client.currentScreen.width;
-			this.height = client.currentScreen.height;
-		}
-
 		this.renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
 		String desc = this.transplantTypes[index].getDescription();
 		String[] descLines = desc.split("\n");
 
+		// Centers the description lines
 		for(int i = 0; i < descLines.length; i++) {
 			String descLine = descLines[i];
-			textRenderer.draw(matrices, descLine, (client.currentScreen.width - (descLine.length() * 5)) / 2.0f, ((client.currentScreen.height - (descLines.length * 17)) / 2.0f) + i * 17, 0xCCCCCC);
+			textRenderer.draw(matrices, descLine, (Objects.requireNonNull(client.currentScreen).width - (descLine.length() * 5)) / 2.0f, ((client.currentScreen.height - (descLines.length * 17)) / 2.0f) + i * 17, 0xCCCCCC); // amazing code
 		}
 	}
 

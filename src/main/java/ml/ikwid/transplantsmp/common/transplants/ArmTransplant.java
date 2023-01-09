@@ -1,7 +1,7 @@
 package ml.ikwid.transplantsmp.common.transplants;
 
 import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,19 +22,19 @@ public class ArmTransplant extends TransplantType {
     }
 
     @Override
-    public void resetTransplantClient(ClientPlayerEntity player) { // nothing
+    public void onResetTransplantClient(ClientPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
+    public void onUpdateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
     }
 
     @Override
-    public void resetTransplantServer(ServerPlayerEntity player) { // nothing
+    public void onResetTransplantServer(ServerPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) { // nothing
+    public void onUpdateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) { // nothing
     }
 
     @Override

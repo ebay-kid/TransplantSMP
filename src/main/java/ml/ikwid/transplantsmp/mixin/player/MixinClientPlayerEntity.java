@@ -35,12 +35,12 @@ public abstract class MixinClientPlayerEntity extends MixinPlayerEntity {
 
 	@Override
 	public void updateTransplants(boolean updateCount, boolean updateType, TransplantType prevType, int prevAmt, int newAmt) {
-		if(updateType) {
-			prevType.resetTransplantClient(self);
+		if(updateType && prevType != null) {
+			prevType.onResetTransplantClient(self);
 		}
 
 		if(updateCount) {
-			this.transplantType.updateCountClient(self, prevAmt, newAmt);
+			this.transplantType.onUpdateCountClient(self, prevAmt, newAmt);
 		}
 	}
 }

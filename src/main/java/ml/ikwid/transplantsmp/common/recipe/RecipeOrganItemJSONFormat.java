@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * Define the JSON format for the Organ Item recipe.
+ * Defines the JSON format for the Organ Item recipe.
  * The JSON format should be as such:
  * <pre>
  * {

@@ -1,16 +1,15 @@
 package ml.ikwid.transplantsmp.common.util;
 
 import com.mojang.authlib.GameProfile;
-import ml.ikwid.transplantsmp.api.TransplantType;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
 import net.minecraft.server.BannedPlayerEntry;
 import net.minecraft.server.BannedPlayerList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Utils {
+public final class Utils {
 	/**
 	 * Translates the selected slot to a hotbar number.
 	 * @param selSlot The index of the slot in the inventory
@@ -29,12 +28,7 @@ public class Utils {
 		return slot < 9 ? slot : slot + Constants.EXTRA_HOTBAR_START_LOC - 9;
 	}
 
-	public static boolean bannableAmount(ITransplantable transplantable) {
-		TransplantType transplantType = transplantable.getTransplantType();
-		return transplantType.canTransplant((transplantable.getTransplantedAmount() - transplantType.getDefaultChangeByAmount()));
-	}
-
-	public static void ban(ServerPlayerEntity serverPlayerEntity) {
+	public static void ban(@NotNull ServerPlayerEntity serverPlayerEntity) {
 		GameProfile playerProfile = serverPlayerEntity.getGameProfile();
 
 		BannedPlayerList bannedPlayerList = Objects.requireNonNull(serverPlayerEntity.getServer()).getPlayerManager().getUserBanList();

@@ -18,15 +18,15 @@ public class HeartTransplant extends TransplantType {
     }
 
     @Override
-    public void resetTransplantClient(ClientPlayerEntity player) { // nothing
+    public void onResetTransplantClient(ClientPlayerEntity player) { // nothing
     }
 
     @Override
-    public void updateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
+    public void onUpdateCountClient(ClientPlayerEntity player, int previousAmount, int newAmount) { // nothing
     }
 
     @Override
-    public void resetTransplantServer(ServerPlayerEntity player) {
+    public void onResetTransplantServer(ServerPlayerEntity player) {
         EntityAttributeInstance attribute = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (attribute == null) {
             TransplantSMP.LOGGER.warn("uh oh");
@@ -36,7 +36,7 @@ public class HeartTransplant extends TransplantType {
     }
 
     @Override
-    public void updateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) {
+    public void onUpdateCountServer(ServerPlayerEntity player, int previousAmount, int newAmount) {
         EntityAttributeInstance attribute = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
         if (attribute == null) {
             TransplantSMP.LOGGER.warn("attribute shouldn't be null uhhh you're kinda screwed");

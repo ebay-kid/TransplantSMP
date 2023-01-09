@@ -2,7 +2,7 @@ package ml.ikwid.transplantsmp.mixin.player;
 
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.networking.ServerNetworkingUtil;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;

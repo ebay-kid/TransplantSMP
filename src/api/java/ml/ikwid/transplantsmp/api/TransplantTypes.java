@@ -1,6 +1,7 @@
 package ml.ikwid.transplantsmp.api;
 
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -16,7 +17,7 @@ public final class TransplantTypes {
     private TransplantTypes() {
     }
 
-    private static final ReferenceArraySet<TransplantType> transplantTypes = new ReferenceArraySet<>(4);
+    private static final ReferenceArraySet<TransplantType> transplantTypes = new ReferenceArraySet<>(4); // 4 to handle the default types.
 
     /**
      * Gets the {@link TransplantType} with the given name.
@@ -45,7 +46,7 @@ public final class TransplantTypes {
      * Registers a {@link TransplantType}. This will throw an IllegalArgumentException if the TransplantType is already registered.
      * @param transplantType An instance of the {@link TransplantType} to register.
      */
-    public static void register(TransplantType transplantType) {
+    public static void register(@NotNull TransplantType transplantType) {
         if(!transplantTypes.add(transplantType)) {
             throw new IllegalArgumentException("TransplantType " + transplantType + " is already registered!");
         }

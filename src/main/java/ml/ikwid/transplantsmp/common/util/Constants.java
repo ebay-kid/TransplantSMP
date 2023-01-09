@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
  * <p>
  * Index values are 0 based
  */
-public class Constants {
+public final class Constants {
 	public static final int EXTRA_HOTBAR_START_LOC = 9;
 	public static final int EXTRA_ARMOR_START_LOC = EXTRA_HOTBAR_START_LOC + 36; // 9 for the hotbar, 27 for the rest of inv
 	public static final int NEW_ARMOR_START_LOC = EXTRA_ARMOR_START_LOC + 4;

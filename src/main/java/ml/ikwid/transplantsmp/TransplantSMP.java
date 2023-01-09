@@ -2,7 +2,7 @@ package ml.ikwid.transplantsmp;
 
 import ml.ikwid.transplantsmp.common.command.CommandRegister;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.item.ItemRegister;
 import ml.ikwid.transplantsmp.common.networking.NetworkingHandlerServer;
 import ml.ikwid.transplantsmp.common.networking.NetworkingIDs;
@@ -43,7 +43,7 @@ public class TransplantSMP implements ModInitializer {
 
 		ServerPlayNetworking.registerGlobalReceiver(NetworkingIDs.CHOOSE_TRANSPLANT_TYPE_C2S, NetworkingHandlerServer::chosenTransplantType);
 
-		ServerLoginConnectionEvents.QUERY_START.register(NetworkingHandlerServer::handshake);
+		ServerLoginConnectionEvents.QUERY_START.register(NetworkingHandlerServer::handshakeInit);
 		ServerLoginNetworking.registerGlobalReceiver(NetworkingIDs.HANDSHAKE_S2C, NetworkingHandlerServer::handleHandshakeServerSide);
 
 		GameruleRegister.register();

@@ -3,7 +3,7 @@ package ml.ikwid.transplantsmp.common.networking;
 import ml.ikwid.transplantsmp.TransplantSMP;
 import ml.ikwid.transplantsmp.api.TransplantType;
 import ml.ikwid.transplantsmp.api.TransplantTypes;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 
 @SuppressWarnings("unused")
 public class NetworkingHandlerServer {
-	public static void handshake(ServerLoginNetworkHandler serverLoginNetworkHandler, MinecraftServer minecraftServer, PacketSender packetSender, ServerLoginNetworking.LoginSynchronizer loginSynchronizer) {
+	public static void handshakeInit(ServerLoginNetworkHandler serverLoginNetworkHandler, MinecraftServer minecraftServer, PacketSender packetSender, ServerLoginNetworking.LoginSynchronizer loginSynchronizer) {
 		packetSender.sendPacket(NetworkingIDs.HANDSHAKE_S2C, PacketByteBufs.empty());
 	}
 
@@ -43,8 +43,8 @@ public class NetworkingHandlerServer {
 			if(transplantable.getTransplantType() == null) {
 				TransplantType transplantType = TransplantTypes.get(chosenType);
 
-				transplantable.setTransplantedAmount(0, false, false);
 				transplantable.setTransplantType(transplantType, true);
+				transplantable.setTransplantedAmount(0, true);
 
 				TransplantSMP.LOGGER.info("transplant chosen for " + player.getName().getString());
 				player.removeStatusEffect(StatusEffects.RESISTANCE);

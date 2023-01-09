@@ -2,7 +2,7 @@ package ml.ikwid.transplantsmp.common.inventory;
 
 import com.mojang.datafixers.util.Pair;
 import ml.ikwid.transplantsmp.common.gamerule.GameruleRegister;
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import ml.ikwid.transplantsmp.common.util.Constants;
 import ml.ikwid.transplantsmp.mixin.AccessorPlayerScreenHandler;

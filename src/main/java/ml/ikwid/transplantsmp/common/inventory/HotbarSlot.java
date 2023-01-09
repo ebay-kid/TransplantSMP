@@ -1,6 +1,6 @@
 package ml.ikwid.transplantsmp.common.inventory;
 
-import ml.ikwid.transplantsmp.common.imixins.ITransplantable;
+import ml.ikwid.transplantsmp.api.ITransplantable;
 import ml.ikwid.transplantsmp.common.transplants.RegisterTransplants;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -21,6 +21,6 @@ public class HotbarSlot extends Slot {
 
 	@Override
 	public boolean isEnabled() {
-		return this.transplantable.getTransplantType() == RegisterTransplants.ARM_TRANSPLANT && this.getIndex() < this.transplantable.getTransplantedAmount() + 9;
+		return this.transplantable.getTransplantType() == RegisterTransplants.ARM_TRANSPLANT ? this.getIndex() < this.transplantable.getTransplantedAmount() + 9 : this.getIndex() < 9;
 	}
 }
